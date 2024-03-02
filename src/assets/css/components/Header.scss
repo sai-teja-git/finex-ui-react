@@ -1,0 +1,287 @@
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    height: $header-height;
+    border-bottom: 1px solid var(--header-border);
+    padding: 0px 10px;
+
+    .head-left {
+        display: flex;
+        align-items: center;
+
+        .logo {
+            height: 55px;
+            outline: none;
+            transition: all 0.2s ease;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &-image {
+                display: inline-block;
+                height: 40px;
+                width: 125px;
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: left center;
+                background-image: url(/src/assets/images/logos/finex-logo.png);
+            }
+
+            img {
+                height: 40px;
+                width: 125px;
+            }
+        }
+
+        .menu {
+            margin-left: 15px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    }
+
+    .head-right {
+        .head-option {
+            &:not(:last-child) {
+                margin-right: 10px;
+            }
+
+            .user-profile {
+                $image-size: 35px;
+                overflow: hidden;
+                height: $image-size;
+                width: $image-size;
+                display: inline-block;
+                vertical-align: middle;
+                border-radius: 50%;
+                border: 1px solid var(--header-border);
+
+                img {
+                    height: 100%;
+                    width: 100%;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}
+
+.logout-option {
+    font-size: 15px;
+    transition: 0.3s ease all;
+    cursor: pointer;
+    color: var(--logout-init);
+
+    &:hover {
+        font-size: 17px;
+        transition: 0.3s ease all;
+        color: var(--logout-hover);
+    }
+}
+
+.profile-data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 18px;
+
+    .profile-image {
+        $image-size: 8rem;
+        overflow: hidden;
+        height: $image-size;
+        width: $image-size;
+        display: inline-block;
+        vertical-align: middle;
+        border-radius: 50%;
+        border: 1px solid var(--header-border);
+
+        img {
+            height: 100%;
+            width: 100%;
+            cursor: pointer;
+        }
+    }
+
+    .user-name {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+}
+
+.theme-action {
+    margin: 10px;
+    border: var(--border-mid-solid-one-px);
+    padding: 16px;
+    border-radius: 10px;
+
+    .title {
+        margin-bottom: 10px;
+    }
+
+    .theme-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .switch-theme {
+            border: var(--border-max-solid-one-px);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: $hover-transition;
+
+            i {
+                margin-right: 5px;
+            }
+
+            &.light {
+                &:before {
+                    content: var(--theme-switch-light-svg);
+                    margin-right: 5px;
+                    position: relative;
+                    top: 3px;
+                }
+            }
+
+            &.active,
+            &:hover {
+                transition: $hover-transition;
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 12px var(--primary-color);
+            }
+        }
+    }
+}
+
+.profile-details {
+    margin: 16px 10px 10px 10px;
+    height: calc(100vh - 385px);
+    overflow: auto;
+
+    .profile-item {
+        &:not(:last-child) {
+            margin-bottom: 5px;
+        }
+
+        .details {
+            padding: 10px;
+
+            .title {
+                font-size: 13px;
+                font-weight: 500;
+
+                i {
+                    width: 16px;
+                }
+            }
+
+            .value {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 5px;
+            }
+
+            &.editable {
+                transition: 380ms ease all;
+                border-radius: 10px;
+
+                .edit-menu {
+                    display: none;
+
+                    i {
+                        cursor: pointer;
+                        margin-right: 5px;
+                    }
+                }
+
+                &:hover,
+                &.selected {
+                    background: var(--header-profile-edit-hover-bg);
+                    transition: 380ms ease all;
+
+                    .edit-menu {
+                        display: flex;
+                    }
+                }
+
+
+                .enable-edit {
+                    transition: height 1s linear;
+                    margin-top: 5px;
+
+                    input {
+                        background: transparent;
+                        color: #fff;
+                    }
+
+                    .actions {
+                        margin-top: 10px;
+                        display: flex;
+                        flex-shrink: 0;
+                        flex-wrap: wrap;
+                        align-items: center;
+                        justify-content: flex-end;
+
+                        .spinner-border {
+                            --bs-spinner-width: 25px;
+                            --bs-spinner-height: 25px;
+                        }
+
+                        >* {
+                            margin: 0px 3px;
+                        }
+
+                        i {
+                            font-size: 25px;
+
+                            &.submit {
+                                cursor: pointer;
+                                color: #249724;
+
+                                &:hover {
+                                    color: #1fb356;
+                                }
+                            }
+
+                            &.cancel {
+                                cursor: pointer;
+                                color: #bf5b5b;
+
+                                &:hover {
+                                    color: #f87171;
+                                }
+                            }
+                        }
+                    }
+
+                    .selection {
+                        .dropdown-menu {
+                            .search {
+                                padding: 0px 7px;
+                                margin-bottom: 7px;
+                            }
+
+                            .options {
+                                max-height: 230px;
+                                overflow-y: auto;
+                            }
+                        }
+                    }
+
+                    input:-webkit-autofill,
+                    input:-webkit-autofill:focus {
+                        transition: background-color 600000s 0s, color 600000s 0s;
+                    }
+                }
+            }
+        }
+    }
+}

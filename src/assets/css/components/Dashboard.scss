@@ -1,0 +1,142 @@
+@import "../theme/ThemeMain.scss";
+@import "../util/mixins.scss";
+
+.overall-container {
+    display: flex;
+
+    @include mobile() {
+        display: grid;
+        width: 100%;
+        gap: 15px;
+    }
+
+    .overall-block {
+        width: 20%;
+        border: var(--border-low-solid-one-px);
+        padding: 10px;
+        border-radius: 10px;
+        background: var(--low-solid);
+
+        .placeholder {
+            border-radius: 6px;
+            color: #fff;
+        }
+
+        &:not(:last-child) {
+            margin-right: 18px;
+        }
+
+        .icon {
+            height: 40px;
+            width: 40px;
+            border: var(--border-low-solid-one-px);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            margin-left: 5px;
+            color: #ffffff;
+
+            .placeholder {
+                height: 40px;
+                width: 40px;
+                border-radius: 50%;
+            }
+        }
+
+        .amount {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+
+            @include mobile() {
+                .placeholder {
+                    width: 20vh;
+                }
+            }
+        }
+
+        .name {
+            @include mobile() {
+                .placeholder {
+                    width: 21vh;
+                }
+            }
+        }
+
+        .remarks {
+            font-size: 13px;
+            color: #fff;
+            font-weight: 500;
+            text-wrap: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        &.spend {
+            background: var(--dashboard-spend-card-background);
+            border-color: var(--dashboard-spend-card-border-color);
+
+            .icon {
+                background: var(--dashboard-spend-card-icon-background);
+                border-color: var(--dashboard-spend-card-icon-background);
+            }
+        }
+
+        &.estimation {
+            background: #ffd1744f;
+            border-color: #6154394f;
+
+            .icon {
+                background: #ffbd33de;
+                border-color: #ffbd33de;
+            }
+        }
+
+        &.income {
+            background: #74dd984f;
+            border-color: #365f444f;
+
+            .icon {
+                background: #3dd856e6;
+                border-color: #3dd856e6;
+            }
+        }
+
+        &.max {
+            background: #9074af4f;
+            border-color: #5244614f;
+
+            .icon {
+                background: #b877ffe0;
+                border-color: #b877ffe0;
+            }
+        }
+
+        &.year-total {
+            background: #59a5bd4f;
+            border-color: #3e6b794f;
+
+            .icon {
+                background: #237c9b;
+                border-color: #237c9b;
+            }
+        }
+
+        @include mobile() {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .icon {
+                margin-bottom: 0px;
+            }
+
+            .block-right {
+                text-align: end;
+            }
+        }
+    }
+}

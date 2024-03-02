@@ -1,0 +1,65 @@
+.app-body {
+    color: var(--color) !important;
+}
+
+.page {
+    padding: 12px 16px;
+    height: calc(100vh - $header-height);
+    margin-left: $menu-closed-width;
+    transition: .3s;
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 45px;
+        margin-bottom: 12px;
+
+        .page-title {
+            font-size: 20px;
+        }
+
+        .page-options {
+            display: flex;
+            align-items: center;
+
+            .option {
+                &:not(:last-child) {
+                    margin-right: 10px;
+                }
+            }
+        }
+    }
+
+    .page-body {
+        height: calc(100vh - 145px);
+        overflow: auto;
+    }
+}
+
+.page-wrapper {
+    &.menu-open {
+        .page {
+            margin-left: $menu-width;
+            transition: .3s;
+        }
+    }
+}
+
+
+.page-not-found {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+}
+
+.currency {
+    display: flex;
+    align-items: center;
+
+    .symbol {
+        margin-right: 5px;
+    }
+}

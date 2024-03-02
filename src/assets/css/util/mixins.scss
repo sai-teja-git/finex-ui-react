@@ -1,0 +1,54 @@
+@mixin media($var) {
+    $condition: '(max-width:$var)';
+
+    @media condition {
+        @content;
+    }
+}
+
+$breakpoints: (
+    mobile : 600px,
+    tab : 768px,
+    laptop: 992px,
+    largeScreen:1200px
+);
+
+@mixin mediaInclude($keys...) {
+    @each $key in $keys {
+        @media (max-width: map-get($breakpoints, $key)) {
+            @content
+        }
+    }
+}
+
+;
+
+@mixin mobile() {
+    @media (max-width:600px) {
+        @content;
+    }
+}
+
+@mixin tab() {
+    @media (max-width:768px) {
+        @content;
+    }
+}
+
+@mixin laptop() {
+    @media (min-width:992px) {
+        @content;
+    }
+}
+
+@mixin largeScreen() {
+    @media (min-width:1200px) {
+        @content;
+    }
+}
+
+@mixin largeScreenMin() {
+    @media (min-width:1200px) {
+        @content;
+    }
+}
