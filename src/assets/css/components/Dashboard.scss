@@ -58,6 +58,8 @@
         }
 
         .name {
+            color: #fff;
+
             @include mobile() {
                 .placeholder {
                     width: 21vh;
@@ -85,42 +87,42 @@
         }
 
         &.estimation {
-            background: #ffd1744f;
-            border-color: #6154394f;
+            background: var(--dashboard-estimation-card-background);
+            border-color: var(--dashboard-estimation-card-border-color);
 
             .icon {
-                background: #ffbd33de;
-                border-color: #ffbd33de;
+                background: var(--dashboard-estimation-card-icon-background);
+                border-color: var(--dashboard-estimation-card-icon-background);
             }
         }
 
         &.income {
-            background: #74dd984f;
-            border-color: #365f444f;
+            background: var(--dashboard-income-card-background);
+            border-color: var(--dashboard-income-card-border-color);
 
             .icon {
-                background: #3dd856e6;
-                border-color: #3dd856e6;
+                background: var(--dashboard-income-card-icon-background);
+                border-color: var(--dashboard-income-card-icon-background);
             }
         }
 
         &.max {
-            background: #9074af4f;
-            border-color: #5244614f;
+            background: var(--dashboard-max-card-background);
+            border-color: var(--dashboard-max-card-border-color);
 
             .icon {
-                background: #b877ffe0;
-                border-color: #b877ffe0;
+                background: var(--dashboard-max-card-icon-background);
+                border-color: var(--dashboard-max-card-icon-background);
             }
         }
 
         &.year-total {
-            background: #59a5bd4f;
-            border-color: #3e6b794f;
+            background: var(--dashboard-avg-card-background);
+            border-color: var(--dashboard-avg-card-border-color);
 
             .icon {
-                background: #237c9b;
-                border-color: #237c9b;
+                background: var(--dashboard-avg-card-icon-background);
+                border-color: var(--dashboard-avg-card-icon-background);
             }
         }
 

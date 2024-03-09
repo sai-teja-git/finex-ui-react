@@ -19,8 +19,8 @@ export default function Dashboard() {
             return <>
                 <div className="overall-container placeholder-glow">
                     {
-                        Array(5).fill(null).map(() => (
-                            <div className="overall-block" >
+                        Array(5).fill(null).map((e, i) => (
+                            <div className="overall-block" key={i} >
                                 <div className="block-left">
                                     <div className="icon">
                                         <span className="placeholder col-2"></span>

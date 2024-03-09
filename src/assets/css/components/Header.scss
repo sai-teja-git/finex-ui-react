@@ -27,7 +27,7 @@
                 background-size: contain;
                 background-repeat: no-repeat;
                 background-position: left center;
-                background-image: url(/src/assets/images/logos/finex-logo.png);
+                background-image: var(--app-logo);
             }
 
             img {
