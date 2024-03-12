@@ -142,6 +142,32 @@ export default function Dashboard() {
                         {overallDataCard()}
                     </div>
                 </div>
+                <div className="col-9 mt-3">
+                    <div className="custom-table" style={{ height: "200px", overflow: "auto" }}>
+                        <table className="sticky-head">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Count</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    Array(10).fill(0).map((e, i) => (
+                                        <tr key={i}>
+                                            <td>Category-{i + 1}</td>
+                                            <td><Currency value={(i + 1) * 10} /></td>
+                                            <td>{i + 1}</td>
+                                            <td>Remarks----{i + 1}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </>
     )

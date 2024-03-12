@@ -1,0 +1,43 @@
+.custom-table {
+    table {
+        border-collapse: collapse;
+        background: transparent;
+        border-radius: 6px;
+        overflow: hidden;
+        width: 100%;
+        margin: 0 auto;
+        position: relative;
+
+        * {
+            position: relative
+        }
+
+        td,
+        th {
+            padding-left: 8px
+        }
+
+        thead tr {
+            height: 50px;
+            background: var(--table-head-background);
+            font-size: 16px;
+        }
+
+        tbody tr {
+            height: 45px;
+            border-bottom: 1px solid var(--table-row-border);
+
+            &:last-child {
+                border: 0;
+            }
+        }
+
+        tbody {
+            background: var(--table-body-background);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(7.8px);
+            -webkit-backdrop-filter: blur(7.8px);
+        }
+    }
+}
