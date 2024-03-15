@@ -134,38 +134,74 @@ export default function Dashboard() {
         }
     }
 
-    return (
-        <>
-            <div className="row">
-                <div className="col-12">
-                    <div className="card-body">
-                        {overallDataCard()}
+    function overallDataNewCard(){
+        return <>
+        <div className="overview">
+            {
+                Array(4).fill(0).map((e,i)=>(
+
+            <div className="overview-block">
+                <div className="block-left">
+                    <div className="amount">
+                            <Currency value={overall_card_details["total_spends"] ? overall_card_details["total_spends"] : 0} />
+                    </div>
+                    <div className="name">
+                        Spends
                     </div>
                 </div>
-                <div className="col-9 mt-3">
-                    <div className="custom-table" style={{ height: "200px", overflow: "auto" }}>
-                        <table className="sticky-head">
-                            <thead>
-                                <tr>
-                                    <th>Category</th>
-                                    <th>Amount</th>
-                                    <th>Count</th>
-                                    <th>Remarks</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    Array(10).fill(0).map((e, i) => (
-                                        <tr key={i}>
-                                            <td>Category-{i + 1}</td>
-                                            <td><Currency value={(i + 1) * 10} /></td>
-                                            <td>{i + 1}</td>
-                                            <td>Remarks----{i + 1}</td>
-                                        </tr>
-                                    ))
-                                }
-                            </tbody>
-                        </table>
+                <div className="block-right">
+                    <div className="icon">
+                            <i className="fa-solid fa-money-bill-trend-up"></i>
+                    </div>
+                </div>
+            </div>
+                ))
+            }
+        </div>
+        </>
+    }
+
+    return (
+        <>
+            <div className="page-body no-header">
+                <div className="row m-0">
+                    <div className="col-12 p-0">
+                        <div className="card-body">
+                            {overallDataNewCard()}
+                        </div>
+                    </div>
+                    <div className="col-lg-8 col-md-12 col-sm-12 mt-3 ps-0">
+                        <div className="card">
+                            <div className="card-header">
+                                Spends Data
+                            </div>
+                            <div className="card-body p-0">
+                                <div className="custom-table">
+                                    <table className="sticky-head">
+                                        <thead>
+                                            <tr>
+                                                <th>Category</th>
+                                                <th>Amount</th>
+                                                <th>Count</th>
+                                                <th>Remarks</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                Array(10).fill(0).map((e, i) => (
+                                                    <tr key={i}>
+                                                        <td>Category-{i + 1}</td>
+                                                        <td><Currency value={(i + 1) * 10} /></td>
+                                                        <td>{i + 1}</td>
+                                                        <td>Remarks----{i + 1}</td>
+                                                    </tr>
+                                                ))
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -34,6 +34,9 @@
     .page-body {
         height: calc(100vh - 145px);
         overflow: auto;
+        &.no-header{
+            height: calc(100vh - 85px);
+        }
     }
 }
 
