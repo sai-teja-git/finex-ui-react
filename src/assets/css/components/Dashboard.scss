@@ -148,19 +148,17 @@
 
     @include mobile() {
         display: grid;
-        width: 100%;
-        gap: 15px;
     }
 
     &-block {
         width: 25%;
-        border: 1px solid #3c3c3c;
+        border: 1px solid var(--dashboard-overview-block-br-color);
         padding: 10px 15px;
         border-radius: 10px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: linear-gradient(130deg, #2a2a2a, #644d93);
+        background: linear-gradient(130deg, var(--dashboard-linear-color1), #644d93);
 
         .placeholder {
             border-radius: 6px;
@@ -171,14 +169,23 @@
             margin-right: 18px;
         }
 
+        @include mobile() {
+            width: 100%;
+            gap: 15px;
+
+            &:not(:last-child) {
+                margin-right: 0px;
+                margin-bottom: 18px;
+            }
+        }
+
         .block-left {
             .amount {
-                color:#fff;
                 font-size: 35px;
             }
 
             .name {
-                color: #cdcdcd;
+                color: var(--dashboard-overview-block-name-color);
             }
         }
 
@@ -189,10 +196,67 @@
                 align-items: center;
                 height: 40px;
                 width: 40px;
-                border: var(--border-low-solid-one-px);
-                background: var(--low-solid);
+                border: var(--dashboard-overview-block-icon-bg-color);
+                background: var(--dashboard-overview-block-icon-bg-color);
                 border-radius: 13px;
+                color: #fff;
             }
+        }
+
+        &.spend {
+            background: var(--dashboard-spend-background);
+
+            .block-right {
+                .icon {
+                    border: var(--dashboard-overview-spent-icon-bg-color);
+                    background: var(--dashboard-overview-spent-icon-bg-color);
+                }
+            }
+        }
+
+        &.income {
+            background: var(--dashboard-income-background);
+
+            .block-right {
+                .icon {
+                    border: var(--dashboard-overview-income-icon-bg-color);
+                    background: var(--dashboard-overview-income-icon-bg-color);
+                }
+            }
+        }
+
+        &.estimation {
+            background: var(--dashboard-estimation-background);
+
+            .block-right {
+                .icon {
+                    border: var(--dashboard-overview-estimation-icon-bg-color);
+                    background: var(--dashboard-overview-estimation-icon-bg-color);
+                }
+            }
+        }
+
+        &.avg {
+            background: var(--dashboard-avg-background);
+
+            .block-right {
+                .icon {
+                    border: var(--dashboard-overview-avg-icon-bg-color);
+                    background: var(--dashboard-overview-avg-icon-bg-color);
+                }
+            }
+        }
+    }
+}
+
+.day-wise-spends {
+    height: 250px;
+}
+
+.month-max {
+    &.card {
+        .card-body {
+            height: 281px;
         }
     }
 }

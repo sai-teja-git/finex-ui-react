@@ -1,10 +1,14 @@
 [app-data-theme="light"] {
     --app-logo: url(/src/assets/images/logos/finex-logo-dark.png);
     --primary-color: #7330f9;
+    // --primary-color: #fd8233;
     --primary-color-hover: #712cf91a;
     --app-page-background: #ffffff;
 
-    --header-border: #dbdbdb;
+    --app-scroll-bg: #fff;
+    --app-scroll-color: #b1b1b1;
+
+    --header-border: #d0d0d0;
     --menu-active-background: #b3b3b380;
 
     --page-background: #fff;
@@ -48,7 +52,20 @@
     --dashboard-avg-card-border-color: #97c0ce;
     --dashboard-avg-card-icon-background: #237c9b;
 
+    --dashboard-linear-color1: #dfdfdf;
+    --dashboard-spend-background: #f9f9f9;
+    --dashboard-estimation-background: #f9f9f9;
+    --dashboard-income-background: #f9f9f9;
+    --dashboard-avg-background: #f9f9f9;
+    --dashboard-overview-block-br-color: #dbdbdb;
+    --dashboard-overview-block-name-color: #555555;
+    --dashboard-overview-block-icon-bg-color: #a4a4a49e;
+    --dashboard-overview-spent-icon-bg-color: #f94f73;
+    --dashboard-overview-estimation-icon-bg-color: #ffb212;
+    --dashboard-overview-income-icon-bg-color: #26cf42;
+    --dashboard-overview-avg-icon-bg-color: #237c9b;
+
     --table-head-background: #d0d0d0;
-    --table-body-background: #e5e5e5;
+    --table-body-background: #efefef;
     --table-row-border: #ffffff;
 }

@@ -2,17 +2,90 @@ import { useEffect, useState } from "react";
 
 import "../../assets/css/components/Dashboard.scss";
 import Currency from "../../components/Currency";
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
+import moment from "moment-timezone";
+import helperService from "../../services/helper-functions.service"
 
 export default function Dashboard() {
 
     const [load_overall_data, setOverallDataLoader] = useState(true);
-    const [overall_card_details, setOverallCardDetails] = useState<Record<string, any>>({})
+    const [overall_card_details, setOverallCardDetails] = useState<Record<string, any>>({});
+    const [chart_options, setChartOptions] = useState({})
 
     useEffect(() => {
         setTimeout(() => {
             setOverallDataLoader(false)
         }, 1000)
+        setChart()
     }, [])
+
+    function setChart() {
+        let spends_till_now = 0;
+        let categ_arr: any[] = [];
+        let spends_arr: any[] = [];
+        const month_end = new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate();
+        for (let i = 1; i <= month_end; i++) {
+            const this_day = new Date(new Date().getFullYear(), new Date().getMonth(), i);
+            const spend = i === 1 ? 0 : helperService.generateRandom(100, 500);
+            spends_till_now += spend;
+            categ_arr.push(moment(this_day).format("DD"))
+            spends_arr.push({ y: spend })
+        }
+        const options = {
+            chart: {
+                backgroundColor: "transparent",
+                type: "spline",
+            },
+            title: {
+                text: 'Day Wise Spends'
+            },
+            xAxis: {
+                categories: categ_arr,
+            },
+            yAxis: {
+                title: {
+                    text: "",
+                    useHTML: true
+                },
+                gridLineWidth: 0,
+                minorGridLineWidth: 0,
+                endOnTick: false,
+                maxPadding: 0.1
+            },
+            tooltip: {
+                pointFormat: '{series.name} <b>{point.y}</b><br/>',
+                shared: true
+            },
+            accessibility: {
+                enabled: false
+            },
+            credits: {
+                enabled: false
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                column: {
+                    borderWidth: 0
+                },
+                area: {
+                    marker: {
+                        enabled: false,
+                        radius: 0,
+                    }
+                },
+            },
+            series: [
+                {
+                    name: 'Spends',
+                    color: "#fa4b42",
+                    data: spends_arr
+                },]
+        };
+        setChartOptions(options)
+    }
 
     function overallDataCard() {
         if (load_overall_data) {
@@ -134,30 +207,70 @@ export default function Dashboard() {
         }
     }
 
-    function overallDataNewCard(){
+    function overallDataNewCard() {
         return <>
-        <div className="overview">
-            {
-                Array(4).fill(0).map((e,i)=>(
-
-            <div className="overview-block">
-                <div className="block-left">
-                    <div className="amount">
+            <div className="overview">
+                <div className="overview-block spend">
+                    <div className="block-left">
+                        <div className="amount">
                             <Currency value={overall_card_details["total_spends"] ? overall_card_details["total_spends"] : 0} />
+                        </div>
+                        <div className="name">
+                            Spends
+                        </div>
                     </div>
-                    <div className="name">
-                        Spends
+                    <div className="block-right">
+                        <div className="icon">
+                            <i className="fa-solid fa-money-bill-trend-up"></i>
+                        </div>
                     </div>
                 </div>
-                <div className="block-right">
-                    <div className="icon">
-                            <i className="fa-solid fa-money-bill-trend-up"></i>
+                <div className="overview-block estimation">
+                    <div className="block-left">
+                        <div className="amount">
+                            <Currency value={overall_card_details["total_estimations"] ? overall_card_details["total_estimations"] : 0} />
+                        </div>
+                        <div className="name">
+                            Estimation
+                        </div>
+                    </div>
+                    <div className="block-right">
+                        <div className="icon">
+                            <i className="fa-solid fa-file-invoice"></i>
+                        </div>
+                    </div>
+                </div>
+                <div className="overview-block income">
+                    <div className="block-left">
+                        <div className="amount">
+                            <Currency value={overall_card_details["total_income"] ? overall_card_details["total_income"] : 0} />
+                        </div>
+                        <div className="name">
+                            Income
+                        </div>
+                    </div>
+                    <div className="block-right">
+                        <div className="icon">
+                            <i className="fa-solid fa-hand-holding-dollar"></i>
+                        </div>
+                    </div>
+                </div>
+                <div className="overview-block avg">
+                    <div className="block-left">
+                        <div className="amount">
+                            <Currency value={overall_card_details["spend_avg"] ? overall_card_details["spend_avg"] : 0} />
+                        </div>
+                        <div className="name">
+                            Average Spends
+                        </div>
+                    </div>
+                    <div className="block-right">
+                        <div className="icon">
+                            <i className="fa-solid fa-chart-bar"></i>
+                        </div>
                     </div>
                 </div>
             </div>
-                ))
-            }
-        </div>
         </>
     }
 
@@ -170,12 +283,12 @@ export default function Dashboard() {
                             {overallDataNewCard()}
                         </div>
                     </div>
-                    <div className="col-lg-8 col-md-12 col-sm-12 mt-3 ps-0">
+                    {/* <div className="col-lg-8 col-md-12 col-sm-12 mt-3 ps-0">
                         <div className="card">
                             <div className="card-header">
                                 Spends Data
                             </div>
-                            <div className="card-body p-0">
+                            <div className="card-body p-0" style={{ height: "200px", overflow: "auto" }}>
                                 <div className="custom-table">
                                     <table className="sticky-head">
                                         <thead>
@@ -200,6 +313,24 @@ export default function Dashboard() {
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
+                    </div> */}
+                </div>
+                <div className="row m-0 mt-3">
+                    <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 ps-0 pe-1">
+                        <div className="card">
+                            <div className="card-body" style={{}}>
+                                <div>
+                                    <HighchartsReact containerProps={{ className: "day-wise-spends" }} highcharts={Highcharts} options={chart_options} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-xl-3 col-lg-3 col-md-6 col-sm-12 pe-0 ps-3">
+                        <div className="card month-max">
+                            <div className="card-body">
+                                {/* AA */}
                             </div>
                         </div>
                     </div>
