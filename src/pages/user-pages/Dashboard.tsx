@@ -318,7 +318,7 @@ export default function Dashboard() {
                     </div> */}
                 </div>
                 <div className="row m-0 mt-3">
-                    <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 ps-0 pe-1">
+                    <div className="col-12 p-0">
                         <div className="card">
                             <div className="card-body" style={{}}>
                                 <div>
@@ -327,11 +327,16 @@ export default function Dashboard() {
                             </div>
                         </div>
                     </div>
-                    <div className="col-xl-3 col-lg-3 col-md-6 col-sm-12 pe-0 ps-3">
-                        <div className="card month-max">
-                            <div className="card-body">
-                                {/* AA */}
-                            </div>
+                </div>
+                <div className="row m-0">
+                    <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 mt-3 ps-0 pe-xl-2 pe-lg-2 pe-md-0 pe-0">
+                        <div className="card">
+                            <div className="card-body"></div>
+                        </div>
+                    </div>
+                    <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 mt-3 pe-0 ps-xl-2 ps-lg-2 ps-md-0 ps-0">
+                        <div className="card">
+                            <div className="card-body"></div>
                         </div>
                     </div>
                 </div>
