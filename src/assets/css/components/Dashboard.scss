@@ -253,10 +253,64 @@
     height: 250px;
 }
 
-.month-max {
-    &.card {
-        .card-body {
-            height: 281px;
+.max-value {
+    border: 1px solid var(--dashboard-overview-block-br-color);
+    padding: 16px;
+    border-radius: 10px;
+    background: var(--dashboard-max-block-bg);
+
+    .value-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .value-data {
+            .value {
+                font-size: 35px;
+            }
+
+            .title {
+                font-size: 20px;
+            }
+        }
+
+        .icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 45px;
+            width: 45px;
+            border: var(--dashboard-max-block-icon-bg-color);
+            background: var(--dashboard-max-block-icon-bg-color);
+            border-radius: 13px;
+            color: #fff;
+        }
+
+    }
+
+    .category-data {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .name {
+            color: var(--dashboard-max-block-categ-name-color);
+        }
+
+        .percentage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 45px;
+            font-weight: 600;
+
+            &.green {
+                color: var(--dashboard-max-block-percentage-green);
+            }
+
+            &.red {
+                color: var(--dashboard-max-block-percentage-red);
+            }
         }
     }
 }

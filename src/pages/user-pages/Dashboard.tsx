@@ -283,7 +283,20 @@ export default function Dashboard() {
                             {overallDataNewCard()}
                         </div>
                     </div>
-                    {/* <div className="col-lg-8 col-md-12 col-sm-12 mt-3 ps-0">
+                </div>
+                <div className="row m-0 mt-3">
+                    <div className="col-12 p-0">
+                        <div className="card">
+                            <div className="card-body" style={{}}>
+                                <div>
+                                    <HighchartsReact containerProps={{ className: "day-wise-spends" }} highcharts={Highcharts} options={chart_options} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="row m-0">
+                    <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 mt-3 ps-0 pe-xl-2 pe-lg-2 pe-md-0 pe-0">
                         <div className="card">
                             <div className="card-header">
                                 Spends Data
@@ -315,28 +328,40 @@ export default function Dashboard() {
                                 </div>
                             </div>
                         </div>
-                    </div> */}
-                </div>
-                <div className="row m-0 mt-3">
-                    <div className="col-12 p-0">
-                        <div className="card">
-                            <div className="card-body" style={{}}>
-                                <div>
-                                    <HighchartsReact containerProps={{ className: "day-wise-spends" }} highcharts={Highcharts} options={chart_options} />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="row m-0">
-                    <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12 mt-3 ps-0 pe-xl-2 pe-lg-2 pe-md-0 pe-0">
-                        <div className="card">
-                            <div className="card-body"></div>
-                        </div>
                     </div>
                     <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 mt-3 pe-0 ps-xl-2 ps-lg-2 ps-md-0 ps-0">
-                        <div className="card">
-                            <div className="card-body"></div>
+                        <div className="row m-0">
+                            <div className="col-xl-12 col-lg-12 col-md-6 col-sm-12 ps-0 pe-xl-0 pe-lg-0 pe-md-2 pe-0">
+                                <div className="max-value">
+                                    <div className="value-group">
+                                        <div className="value-data">
+                                            <div className="value">
+                                                <Currency value={1000} />
+                                            </div>
+                                            <div className="title">
+                                                Month Max On
+                                            </div>
+                                        </div>
+                                        <div className="icon">
+                                            {/* <i className="fa-solid fa-arrow-trend-up"></i> */}
+                                            <i className="fa-solid fa-home"></i>
+                                        </div>
+                                    </div>
+                                    <div className="category-data">
+                                        <div className="name">
+                                            Home
+                                        </div>
+                                        <div className="percentage red">
+                                            21%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="pie-graph col-xl-12 col-lg-12 col-md-6 col-sm-12 pe-0 ps-xl-0 ps-lg-0 ps-md-2 ps-0 mt-xl-3 mt-lg-3 mt-md-0 mt-3">
+                                <div className="card">
+                                    <div className="card-body"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
