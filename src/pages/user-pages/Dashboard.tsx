@@ -4,8 +4,14 @@ import "../../assets/css/components/Dashboard.scss";
 import Currency from "../../components/Currency";
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import SolidGauge from "highcharts/modules/solid-gauge"
 import moment from "moment-timezone";
-import helperService from "../../services/helper-functions.service"
+import helperService from "../../services/helper-functions.service";
+
+import highchartsMore from "highcharts/highcharts-more";
+
+highchartsMore(Highcharts);
+SolidGauge(Highcharts);
 
 export default function Dashboard() {
 
@@ -95,14 +101,11 @@ export default function Dashboard() {
 
             chart: {
                 type: 'solidgauge',
-                height: '110%',
-                // events: {
-                //     render: renderIcons
-                // }
+                backgroundColor: "transparent",
             },
 
             title: {
-                text: 'Multiple KPI gauge',
+                text: 'This Month Total',
                 style: {
                     fontSize: '24px'
                 }
@@ -119,12 +122,15 @@ export default function Dashboard() {
                 pointFormat: '{series.name}<br>' +
                     '<span style="font-size: 2em; color: {point.color}; ' +
                     'font-weight: bold">{point.y}</span>',
-                // positioner: function (labelWidth) {
-                //     return {
-                //         x: (this.chart.chartWidth - labelWidth) / 2,
-                //         y: (this.chart.plotHeight / 2) + 15
-                //     };
-                // }
+                positioner: function (labelWidth: any) {
+                    return {
+                        // x: (this.chart.chartWidth - labelWidth) / 2,
+                        // y: (this.chart.plotHeight / 2) + 15
+                    };
+                }
+            },
+            credits: {
+                enabled: false
             },
 
             pane: {
@@ -301,7 +307,7 @@ export default function Dashboard() {
                             <div className="card-header">
                                 Spends Data
                             </div>
-                            <div className="card-body p-0" style={{ height: "200px", overflow: "auto" }}>
+                            <div className="card-body p-0" style={{ height: "398px", overflow: "auto" }}>
                                 <div className="custom-table">
                                     <table className="sticky-head">
                                         <thead>
@@ -361,7 +367,7 @@ export default function Dashboard() {
                                 <div className="card">
                                     <div className="card-body">
                                         <div>
-                                            {/* <HighchartsReact containerProps={{ className: "day-wise-spends" }} highcharts={Highcharts} options={overall_gauge} /> */}
+                                            <HighchartsReact containerProps={{ className: "day-wise-spends" }} highcharts={Highcharts} options={overall_gauge} />
                                         </div>
                                     </div>
                                 </div>
