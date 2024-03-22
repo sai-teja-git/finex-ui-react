@@ -8,6 +8,10 @@
     margin-left: $menu-closed-width;
     transition: .3s;
 
+    @include mediaBreakPointUp("sm", "md") {
+        margin-left: 0;
+    }
+
     .page-header {
         display: flex;
         justify-content: space-between;
@@ -34,7 +38,8 @@
     .page-body {
         height: calc(100vh - 145px);
         overflow: auto;
-        &.no-header{
+
+        &.no-header {
             height: calc(100vh - 85px);
         }
     }
@@ -45,6 +50,10 @@
         .page {
             margin-left: $menu-width;
             transition: .3s;
+
+            @include mediaBreakPointUp("sm", "md") {
+                margin-left: 0;
+            }
         }
     }
 }

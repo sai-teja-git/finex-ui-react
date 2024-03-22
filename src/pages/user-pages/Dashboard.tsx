@@ -5,6 +5,7 @@ import Currency from "../../components/Currency";
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import SolidGauge from "highcharts/modules/solid-gauge"
+import Accessibility from "highcharts/modules/accessibility"
 import moment from "moment-timezone";
 import helperService from "../../services/helper-functions.service";
 
@@ -12,6 +13,7 @@ import highchartsMore from "highcharts/highcharts-more";
 
 highchartsMore(Highcharts);
 SolidGauge(Highcharts);
+Accessibility(Highcharts);
 
 export default function Dashboard() {
 
@@ -19,11 +21,15 @@ export default function Dashboard() {
     const [overall_card_details, setOverallCardDetails] = useState<Record<string, any>>({});
     const [month_spend_chart, setChartOptions] = useState({})
     const [overall_gauge, setOverallGaugeChart] = useState({})
+    const [dummy_loader, setDummyLoader] = useState(true)
 
     useEffect(() => {
         setTimeout(() => {
             setOverallDataLoader(false)
         }, 1000)
+        setTimeout(() => {
+            setDummyLoader(false)
+        }, 1500)
         setLineChart();
         setGaugeChart()
     }, [])
@@ -96,7 +102,7 @@ export default function Dashboard() {
     }
 
     function setGaugeChart() {
-        const colors = ["#feb56a", "#fa4b42", "#00e272"]
+        const colors = ["#ffb212", "#fa4b42", "#00e272"]
         const options = {
 
             chart: {
@@ -118,15 +124,14 @@ export default function Dashboard() {
                 style: {
                     fontSize: '16px'
                 },
+                useHTML: true,
+                outside: true,
                 valueSuffix: '%',
-                pointFormat: '{series.name}<br>' +
+                pointFormat: '<span class="month-overall-gauge-tooltip-name">{series.name}</span><br>' +
                     '<span style="font-size: 2em; color: {point.color}; ' +
                     'font-weight: bold">{point.y}</span>',
-                positioner: function (labelWidth: any) {
-                    return {
-                        // x: (this.chart.chartWidth - labelWidth) / 2,
-                        // y: (this.chart.plotHeight / 2) + 15
-                    };
+                positioner: function () {
+                    return { x: -15, y: 25 }
                 }
             },
             credits: {
@@ -173,7 +178,7 @@ export default function Dashboard() {
             },
 
             series: [{
-                name: 'Conversion',
+                name: 'Estimation',
                 data: [{
                     color: colors[0],
                     radius: '112%',
@@ -185,7 +190,7 @@ export default function Dashboard() {
                     iconColor: '#303030'
                 }
             }, {
-                name: 'Engagement',
+                name: 'Spends',
                 data: [{
                     color: colors[1],
                     radius: '87%',
@@ -197,7 +202,7 @@ export default function Dashboard() {
                     iconColor: '#ffffff'
                 }
             }, {
-                name: 'Feedback',
+                name: 'Income',
                 data: [{
                     color: colors[2],
                     radius: '62%',
@@ -215,11 +220,14 @@ export default function Dashboard() {
 
     function overallDataNewCard() {
         return <>
-            <div className="overview">
+            <div className={`overview ${dummy_loader && "placeholder-glow"}`} >
                 <div className="overview-block spend">
                     <div className="block-left">
                         <div className="amount">
-                            <Currency value={overall_card_details["total_spends"] ? overall_card_details["total_spends"] : 0} />
+                            {
+                                dummy_loader ? <span className="placeholder col-10"></span> :
+                                    <Currency value={overall_card_details["total_spends"] ? overall_card_details["total_spends"] : 0} />
+                            }
                         </div>
                         <div className="name">
                             Spends
@@ -234,7 +242,10 @@ export default function Dashboard() {
                 <div className="overview-block estimation">
                     <div className="block-left">
                         <div className="amount">
-                            <Currency value={overall_card_details["total_estimations"] ? overall_card_details["total_estimations"] : 0} />
+                            {
+                                dummy_loader ? <span className="placeholder col-10"></span> :
+                                    <Currency value={overall_card_details["total_estimations"] ? overall_card_details["total_estimations"] : 0} />
+                            }
                         </div>
                         <div className="name">
                             Estimation
@@ -249,7 +260,10 @@ export default function Dashboard() {
                 <div className="overview-block income">
                     <div className="block-left">
                         <div className="amount">
-                            <Currency value={overall_card_details["total_income"] ? overall_card_details["total_income"] : 0} />
+                            {
+                                dummy_loader ? <span className="placeholder col-10"></span> :
+                                    <Currency value={overall_card_details["total_income"] ? overall_card_details["total_income"] : 0} />
+                            }
                         </div>
                         <div className="name">
                             Income
@@ -264,7 +278,10 @@ export default function Dashboard() {
                 <div className="overview-block avg">
                     <div className="block-left">
                         <div className="amount">
-                            <Currency value={overall_card_details["spend_avg"] ? overall_card_details["spend_avg"] : 0} />
+                            {
+                                dummy_loader ? <span className="placeholder col-10"></span> :
+                                    <Currency value={overall_card_details["spend_avg"] ? overall_card_details["spend_avg"] : 0} />
+                            }
                         </div>
                         <div className="name">
                             Average Spends
@@ -293,10 +310,18 @@ export default function Dashboard() {
                 <div className="row m-0 mt-3">
                     <div className="col-12 p-0">
                         <div className="card">
-                            <div className="card-body">
-                                <div>
-                                    <HighchartsReact containerProps={{ className: "day-wise-spends" }} highcharts={Highcharts} options={month_spend_chart} />
-                                </div>
+                            <div className="card-body p-1">
+                                {
+                                    dummy_loader ?
+                                        <div className="day-wise-spends placeholder-glow">
+                                            <div className="placeholder col-12"></div>
+                                        </div>
+                                        :
+                                        <div>
+                                            <HighchartsReact containerProps={{ className: "day-wise-spends" }} highcharts={Highcharts} options={month_spend_chart} />
+                                        </div>
+                                }
+
                             </div>
                         </div>
                     </div>
@@ -307,7 +332,7 @@ export default function Dashboard() {
                             <div className="card-header">
                                 Spends Data
                             </div>
-                            <div className="card-body p-0" style={{ height: "398px", overflow: "auto" }}>
+                            <div className="card-body category-table p-0">
                                 <div className="custom-table">
                                     <table className="sticky-head">
                                         <thead>
@@ -318,18 +343,37 @@ export default function Dashboard() {
                                                 <th>Remarks</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            {
-                                                Array(10).fill(0).map((e, i) => (
-                                                    <tr key={i}>
-                                                        <td>Category-{i + 1}</td>
-                                                        <td><Currency value={(i + 1) * 10} /></td>
-                                                        <td>{i + 1}</td>
-                                                        <td>Remarks----{i + 1}</td>
-                                                    </tr>
-                                                ))
-                                            }
-                                        </tbody>
+                                        {
+                                            dummy_loader ?
+                                                <tbody className="placeholder-glow">
+                                                    {
+                                                        Array(10).fill(0).map((e, i) => (
+                                                            <tr key={i}>
+                                                                {
+                                                                    Array(4).fill(0).map((t, j) => (
+                                                                        <td>
+                                                                            <div className="placeholder col-12"></div>
+                                                                        </td>
+                                                                    ))
+                                                                }
+                                                            </tr>
+                                                        ))
+                                                    }
+                                                </tbody>
+                                                :
+                                                <tbody>
+                                                    {
+                                                        Array(10).fill(0).map((e, i) => (
+                                                            <tr key={i}>
+                                                                <td>Category-{i + 1}</td>
+                                                                <td><Currency value={(i + 1) * 10} /></td>
+                                                                <td>{i + 1}</td>
+                                                                <td>Remarks----{i + 1}</td>
+                                                            </tr>
+                                                        ))
+                                                    }
+                                                </tbody>
+                                        }
                                     </table>
                                 </div>
                             </div>
@@ -338,37 +382,71 @@ export default function Dashboard() {
                     <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 mt-3 pe-0 ps-xl-2 ps-lg-2 ps-md-0 ps-0">
                         <div className="row m-0">
                             <div className="col-xl-12 col-lg-12 col-md-6 col-sm-12 ps-0 pe-xl-0 pe-lg-0 pe-md-2 pe-0">
-                                <div className="max-value">
-                                    <div className="value-group">
-                                        <div className="value-data">
-                                            <div className="value">
-                                                <Currency value={1000} />
+                                {
+                                    dummy_loader ?
+                                        <div className="max-value placeholder-glow">
+                                            <div className="value-group">
+                                                <div className="value-data">
+                                                    <div className="value">
+                                                        <div className="placeholder col-8"></div>
+                                                    </div>
+                                                    <div className="title">
+                                                        Month Max On
+                                                    </div>
+                                                </div>
+                                                <div className="icon loading">
+                                                    <div className="placeholder col-12"></div>
+                                                </div>
                                             </div>
-                                            <div className="title">
-                                                Month Max On
+                                            <div className="category-data">
+                                                <div className="name">
+                                                    <div className="placeholder col-6"></div>
+                                                </div>
+                                                <div className="percentage">
+                                                    <div className="placeholder col-10"></div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="icon">
-                                            {/* <i className="fa-solid fa-arrow-trend-up"></i> */}
-                                            <i className="fa-solid fa-home"></i>
+                                        :
+                                        <div className="max-value">
+                                            <div className="value-group">
+                                                <div className="value-data">
+                                                    <div className="value">
+                                                        <Currency value={1000} />
+                                                    </div>
+                                                    <div className="title">
+                                                        Month Max On
+                                                    </div>
+                                                </div>
+                                                <div className="icon">
+                                                    {/* <i className="fa-solid fa-arrow-trend-up"></i> */}
+                                                    <i className="fa-solid fa-home"></i>
+                                                </div>
+                                            </div>
+                                            <div className="category-data">
+                                                <div className="name">
+                                                    Home
+                                                </div>
+                                                <div className="percentage red">
+                                                    21%
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="category-data">
-                                        <div className="name">
-                                            Home
-                                        </div>
-                                        <div className="percentage red">
-                                            21%
-                                        </div>
-                                    </div>
-                                </div>
+                                }
                             </div>
-                            <div className="pie-graph col-xl-12 col-lg-12 col-md-6 col-sm-12 pe-0 ps-xl-0 ps-lg-0 ps-md-2 ps-0 mt-xl-3 mt-lg-3 mt-md-0 mt-3">
+                            <div className="col-xl-12 col-lg-12 col-md-6 col-sm-12 pe-0 ps-xl-0 ps-lg-0 ps-md-2 ps-0 mt-xl-3 mt-lg-3 mt-md-0 mt-3">
                                 <div className="card">
                                     <div className="card-body">
-                                        <div>
-                                            <HighchartsReact containerProps={{ className: "day-wise-spends" }} highcharts={Highcharts} options={overall_gauge} />
-                                        </div>
+                                        {
+                                            dummy_loader ?
+                                                <div className="month-overall-gauge placeholder-glow">
+                                                    <div className="placeholder col-12"></div>
+                                                </div>
+                                                :
+                                                <div>
+                                                    <HighchartsReact containerProps={{ className: "month-overall-gauge" }} highcharts={Highcharts} options={overall_gauge} />
+                                                </div>
+                                        }
                                     </div>
                                 </div>
                             </div>

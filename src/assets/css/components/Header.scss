@@ -7,6 +7,19 @@
     border-bottom: 1px solid var(--header-border);
     padding: 0px 10px;
 
+    .menu {
+        font-size: 24px;
+        cursor: pointer;
+
+        &.left {
+            margin-left: 15px;
+
+            @include mediaBreakPointUp("sm") {
+                display: none;
+            }
+        }
+    }
+
     .head-left {
         display: flex;
         align-items: center;
@@ -35,15 +48,12 @@
                 width: 125px;
             }
         }
-
-        .menu {
-            margin-left: 15px;
-            font-size: 24px;
-            cursor: pointer;
-        }
     }
 
     .head-right {
+        display: flex;
+        align-items: center;
+
         .head-option {
             &:not(:last-child) {
                 margin-right: 10px;
@@ -63,6 +73,14 @@
                     height: 100%;
                     width: 100%;
                     cursor: pointer;
+                }
+            }
+
+            &.menu {
+                display: none;
+
+                @include mediaBreakPointUp("sm") {
+                    display: block;
                 }
             }
         }

@@ -75,11 +75,16 @@ export default function Header() {
                     <div className="logo">
                         <div className="logo-image"></div>
                     </div>
-                    <div className="menu">
+                    <div className="menu left">
                         <i className="fa-solid fa-bars" onClick={toggleMenu}></i>
                     </div>
                 </div>
                 <div className="head-right">
+                    <div className="head-option menu">
+                        <div className="menu">
+                            <i className="fa-solid fa-bars" onClick={toggleMenu}></i>
+                        </div>
+                    </div>
                     <div className="head-option">
                         <div className="user-profile">
                             <img src="/src/assets/images/profile/default-profile-image.png" alt="" data-bs-toggle="offcanvas" data-bs-target="#profileDetails" />

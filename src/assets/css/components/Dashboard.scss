@@ -1,152 +1,10 @@
 @import "../theme/ThemeMain.scss";
 @import "../util/mixins.scss";
 
-.overall-container {
-    display: flex;
-
-    @include mobile() {
-        display: grid;
-        width: 100%;
-        gap: 15px;
-    }
-
-    .overall-block {
-        width: 20%;
-        border: var(--border-low-solid-one-px);
-        padding: 10px;
-        border-radius: 10px;
-        background: var(--low-solid);
-
-        .placeholder {
-            border-radius: 6px;
-            color: #fff;
-        }
-
-        &:not(:last-child) {
-            margin-right: 18px;
-        }
-
-        .icon {
-            height: 40px;
-            width: 40px;
-            border: var(--border-low-solid-one-px);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 10px;
-            margin-left: 5px;
-            color: #ffffff;
-
-            .placeholder {
-                height: 40px;
-                width: 40px;
-                border-radius: 50%;
-            }
-        }
-
-        .amount {
-            font-size: 20px;
-            font-weight: 600;
-            color: #fff;
-
-            @include mobile() {
-                .placeholder {
-                    width: 20vh;
-                }
-            }
-        }
-
-        .name {
-            color: #fff;
-
-            @include mobile() {
-                .placeholder {
-                    width: 21vh;
-                }
-            }
-        }
-
-        .remarks {
-            font-size: 13px;
-            color: #fff;
-            font-weight: 500;
-            text-wrap: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-
-        &.spend {
-            background: var(--dashboard-spend-card-background);
-            border-color: var(--dashboard-spend-card-border-color);
-
-            .icon {
-                background: var(--dashboard-spend-card-icon-background);
-                border-color: var(--dashboard-spend-card-icon-background);
-            }
-        }
-
-        &.estimation {
-            background: var(--dashboard-estimation-card-background);
-            border-color: var(--dashboard-estimation-card-border-color);
-
-            .icon {
-                background: var(--dashboard-estimation-card-icon-background);
-                border-color: var(--dashboard-estimation-card-icon-background);
-            }
-        }
-
-        &.income {
-            background: var(--dashboard-income-card-background);
-            border-color: var(--dashboard-income-card-border-color);
-
-            .icon {
-                background: var(--dashboard-income-card-icon-background);
-                border-color: var(--dashboard-income-card-icon-background);
-            }
-        }
-
-        &.max {
-            background: var(--dashboard-max-card-background);
-            border-color: var(--dashboard-max-card-border-color);
-
-            .icon {
-                background: var(--dashboard-max-card-icon-background);
-                border-color: var(--dashboard-max-card-icon-background);
-            }
-        }
-
-        &.year-total {
-            background: var(--dashboard-avg-card-background);
-            border-color: var(--dashboard-avg-card-border-color);
-
-            .icon {
-                background: var(--dashboard-avg-card-icon-background);
-                border-color: var(--dashboard-avg-card-icon-background);
-            }
-        }
-
-        @include mobile() {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-
-            .icon {
-                margin-bottom: 0px;
-            }
-
-            .block-right {
-                text-align: end;
-            }
-        }
-    }
-}
-
 .overview {
     display: flex;
 
-    @include mobile() {
+    @include mediaBreakPointUp("sm") {
         display: grid;
     }
 
@@ -162,14 +20,14 @@
 
         .placeholder {
             border-radius: 6px;
-            color: #fff;
+            color: var(--app-place-holder-color);
         }
 
         &:not(:last-child) {
             margin-right: 18px;
         }
 
-        @include mobile() {
+        @include mediaBreakPointUp("sm") {
             width: 100%;
             gap: 15px;
 
@@ -180,6 +38,8 @@
         }
 
         .block-left {
+            width: 70%;
+
             .amount {
                 font-size: 35px;
             }
@@ -249,8 +109,44 @@
     }
 }
 
+.category-table {
+    height: 398px;
+    overflow: auto;
+
+    @include mediaBreakPointUp("sm", "md") {
+        height: auto;
+    }
+}
+
 .day-wise-spends {
     height: 250px;
+
+    &.placeholder-glow {
+        .placeholder {
+            height: 100%;
+            border-radius: 3px;
+        }
+    }
+}
+
+.month-overall-gauge {
+    height: 250px;
+
+    &.placeholder-glow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .placeholder {
+            height: 200px;
+            width: 200px;
+            border-radius: 50%;
+        }
+    }
+}
+
+.month-overall-gauge-tooltip-name {
+    color: var(--text-active-color);
 }
 
 .max-value {
@@ -258,6 +154,12 @@
     padding: 16px;
     border-radius: 10px;
     background: var(--dashboard-max-block-bg);
+
+    &.placeholder-glow {
+        .placeholder {
+            border-radius: 6px;
+        }
+    }
 
     .value-group {
         display: flex;
@@ -284,6 +186,17 @@
             background: var(--dashboard-max-block-icon-bg-color);
             border-radius: 13px;
             color: #fff;
+
+            &.loading {
+                background: none;
+                border: none;
+                color: var(--app-place-holder-color);
+            }
+
+            .placeholder {
+                border-radius: 13px;
+                height: 100%;
+            }
         }
 
     }
@@ -295,6 +208,11 @@
 
         .name {
             color: var(--dashboard-max-block-categ-name-color);
+
+            .placeholder {
+                width: 100px;
+                color: var(--app-place-holder-color);
+            }
         }
 
         .percentage {

@@ -37,8 +37,22 @@ export default function Menus() {
         navigate(menu.url)
     }
 
+    /**
+     * The function toggles the "menu-open" class on the ".page-wrapper" element.
+     */
+    function toggleMenu() {
+        if ($(".page-wrapper").hasClass("menu-open")) {
+            $(".page-wrapper").removeClass("menu-open")
+        } else {
+            $(".page-wrapper").addClass("menu-open")
+        }
+    }
+
     return (
         <>
+            <div className="menu-close-option" onClick={toggleMenu}>
+                <i className="fa-solid fa-xmark"></i>
+            </div>
             <div className="menu-list">
                 <ul className="menu-content">
                     {menu_list.map((menu: any) => (

@@ -1,16 +1,17 @@
-@mixin media($var) {
-    $condition: '(max-width:$var)';
-
-    @media condition {
-        @content;
-    }
-}
-
 $breakpoints: (
     mobile : 600px,
     tab : 768px,
     laptop: 992px,
     largeScreen:1200px
+);
+
+$grid-breakpoints: (
+    xs: 0,
+    sm: 576px,
+    md: 768px,
+    lg: 992px,
+    xl: 1200px,
+    xxl: 1400px
 );
 
 @mixin mediaInclude($keys...) {
@@ -23,32 +24,22 @@ $breakpoints: (
 
 ;
 
-@mixin mobile() {
-    @media (max-width:600px) {
-        @content;
+@mixin mediaBreakPointUp($keys...) {
+    @each $key in $keys {
+        @media (max-width: map-get($grid-breakpoints, $key)) {
+            @content
+        }
     }
 }
 
-@mixin tab() {
-    @media (max-width:768px) {
-        @content;
+;
+
+@mixin mediaBreakPointDown($keys...) {
+    @each $key in $keys {
+        @media (min-width: map-get($grid-breakpoints, $key)) {
+            @content
+        }
     }
 }
 
-@mixin laptop() {
-    @media (min-width:992px) {
-        @content;
-    }
-}
-
-@mixin largeScreen() {
-    @media (min-width:1200px) {
-        @content;
-    }
-}
-
-@mixin largeScreenMin() {
-    @media (min-width:1200px) {
-        @content;
-    }
-}
+;
