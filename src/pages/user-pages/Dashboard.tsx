@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import "../../assets/css/components/Dashboard.scss";
+import "../../assets/css/pages/Dashboard.scss";
 import Currency from "../../components/Currency";
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';

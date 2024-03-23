@@ -1,0 +1,24 @@
+.no-data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    .no-data-container {
+        .icon {
+            animation: rotation 5s infinite linear;
+            font-size: 35px;
+            color: var(--no-data-icon-color);
+        }
+
+        .title {
+            font-size: 40px;
+            color: var(--no-data-title-color);
+            font-weight: 500;
+        }
+
+        .text {
+            color: var(--no-data-text-color);
+        }
+    }
+}
