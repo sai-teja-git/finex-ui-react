@@ -1,4 +1,197 @@
+@import "../theme/ThemeMain.scss";
+@import "../util/mixins.scss";
+
 .transactions-page {
     display: flex;
+
+    @include mediaBreakPointUp("sm", "md") {
+        flex-direction: column-reverse;
+    }
+
+    .transactions-data {
+        width: 50%;
+
+        @include mediaBreakPointUp("sm", "md") {
+            width: 100%;
+        }
+
+        &.log {
+            padding-right: 8px;
+
+            @include mediaBreakPointUp("sm", "md") {
+                padding-right: 0;
+                margin-top: 16px;
+            }
+
+            .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                .title {
+                    font-size: 22px;
+
+                    .sub-title {
+                        font-size: 14px;
+                        color: var(--app-sub-text-color);
+                    }
+                }
+
+                .options {
+                    transition: .3s;
+                    color: var(--text-hover-color);
+                    cursor: pointer;
+
+                    &:hover {
+                        transition: .3s;
+                        color: var(--text-active-color);
+                    }
+                }
+            }
+
+            .search {
+                margin: 16px 0px 10px;
+            }
+
+            .body {
+                height: calc(100vh - 240px);
+                overflow: auto;
+
+                @include mediaBreakPointUp("sm", "md") {
+                    height: auto;
+                }
+
+                .transactions-block {
+                    border-top: 1px solid var(--card-border-color);
+                    border-bottom: 1px solid var(--card-border-color);
+                    padding: 16px 10px 16px 0px;
+
+                    @include mediaBreakPointUp("sm", "md") {
+                        padding: 16px 0px;
+                    }
+
+                    &:first-child {
+                        border-top: none;
+                    }
+
+                    &:last-child {
+                        border-bottom: none;
+                    }
+
+                    .transaction-data {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+
+                        .details {
+                            display: flex;
+                            align-items: center;
+
+                            .icon {
+                                height: 50px;
+                                width: 50px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                margin-right: 10px;
+                                border: 1px solid #73737375;
+                                background: #73737375;
+                                border-radius: 10px;
+
+                                &.debit {
+                                    border-color: transparent;
+                                    background: #ff7a7a80;
+                                }
+
+                                &.credit {
+                                    border-color: transparent;
+                                    background: #74dd9880;
+                                }
+                            }
+                        }
+
+                        .value {
+                            .amount {
+                                font-size: 20px;
+                                font-weight: 600;
+
+                                &.debit {
+                                    color: var(--dashboard-max-block-percentage-red);
+                                }
+                            }
+
+                            .transaction-options {
+                                display: flex;
+                                align-items: center;
+                                margin-top: 6px;
+
+                                .option {
+                                    border: 1px solid #47494bd4;
+                                    padding: 4px;
+                                    font-size: 11px;
+                                    border-radius: 6px;
+                                    background: #47494bd4;
+                                    cursor: pointer;
+                                    min-width: 60px;
+                                    text-align: center;
+                                    transition: .3s;
+                                    color: #fff;
+
+                                    &:hover {
+                                        background: #727272;
+                                        border-color: #727272;
+                                    }
+
+                                    &:not(:last-child) {
+                                        margin-right: 10px;
+                                    }
+
+                                    &.delete {
+                                        background: var(--transactions-delete-color);
+                                        border: 1px solid var(--transactions-delete-color);
+
+                                        i {
+                                            margin-right: 6px;
+                                        }
+
+                                        &:hover {
+                                            transition: .3s;
+                                            background: var(--transactions-delete-hover-color);
+                                            border: 1px solid var(--transactions-delete-hover-color);
+                                        }
+                                    }
+
+                                    &.edit {
+                                        transition: .3s;
+                                        background: #8e5734ad;
+                                        border: 1px solid #8e5734ad;
+
+                                        i {
+                                            margin-right: 6px;
+                                        }
+
+                                        &:hover {
+                                            transition: .3s;
+                                            background: #d06e2f;
+                                            border: 1px solid #d06e2f;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+        &.data {
+            padding-left: 8px;
+
+            @include mediaBreakPointUp("sm", "md") {
+                padding-left: 0;
+            }
+        }
+    }
 
 }
