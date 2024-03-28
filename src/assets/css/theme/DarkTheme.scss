@@ -66,6 +66,23 @@
 
     --card-border-color: #434549;
 
+    --transaction-head-bg: #212529;
+    --transactions-icon-color: #73737375;
+    --transactions-option-color: #47494bd4;
+    --transactions-option-hover-color: #727272;
     --transactions-delete-color: #5c1010;
     --transactions-delete-hover-color: #c30101;
+    --transactions-edit-color: #8e5734ad;
+    --transactions-edit-hover-color: #d06e2f;
+
+    --transaction-add-option-hover-bg: #595959;
+    --transaction-add-spend-progress-bar-bg: #ff4b4b47;
+    --transaction-add-spend-progress-bar-fill-bg: #d04343;
+    --transaction-add-spend-icon-bg: #ff4d4d80;
+    --transaction-add-estimation-progress-bar-bg: #ffb21247;
+    --transaction-add-estimation-progress-bar-fill-bg: #ffb212;
+    --transaction-add-estimation-icon-bg: #ffb30f80;
+    --transaction-add-income-progress-bar-bg: #26cf4247;
+    --transaction-add-income-progress-bar-fill-bg: #26cf42;
+    --transaction-add-income-icon-bg: #27ce4380;
 }

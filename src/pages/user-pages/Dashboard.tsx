@@ -347,11 +347,11 @@ export default function Dashboard() {
                                             dummy_loader ?
                                                 <tbody className="placeholder-glow">
                                                     {
-                                                        Array(10).fill(0).map((e, i) => (
+                                                        Array(10).fill(0).map((_e, i) => (
                                                             <tr key={i}>
                                                                 {
-                                                                    Array(4).fill(0).map((t, j) => (
-                                                                        <td>
+                                                                    Array(4).fill(0).map((_t, j) => (
+                                                                        <td key={j}>
                                                                             <div className="placeholder col-12"></div>
                                                                         </td>
                                                                     ))
@@ -363,7 +363,7 @@ export default function Dashboard() {
                                                 :
                                                 <tbody>
                                                     {
-                                                        Array(10).fill(0).map((e, i) => (
+                                                        Array(10).fill(0).map((_e, i) => (
                                                             <tr key={i}>
                                                                 <td>Category-{i + 1}</td>
                                                                 <td><Currency value={(i + 1) * 10} /></td>
