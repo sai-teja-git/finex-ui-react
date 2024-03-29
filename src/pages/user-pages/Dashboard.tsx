@@ -412,7 +412,7 @@ export default function Dashboard() {
                                             <div className="value-group">
                                                 <div className="value-data">
                                                     <div className="value">
-                                                        <Currency value={1000} />
+                                                        <Currency value={1000.68656} />
                                                     </div>
                                                     <div className="title">
                                                         Month Max On

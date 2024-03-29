@@ -5,8 +5,7 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import Accessibility from "highcharts/modules/accessibility";
 import helperService from "../../services/helper-functions.service";
-import { renderToString } from "react-dom/server";
-import CurrencyCode from "../../components/CurrencyCode";
+
 Accessibility(Highcharts);
 
 export default function Transactions() {
@@ -15,7 +14,7 @@ export default function Transactions() {
     const [category_pie, updateCategoryPieChart] = useState({})
 
     useEffect(() => {
-        setCategoryWisePieChart()
+        setCategoryWisePieChart();
     }, [])
 
     function updateTransactionsView() {
@@ -26,8 +25,8 @@ export default function Transactions() {
         }
     }
 
-    function test() {
-        return <div>Hi</div>
+    function addLog(type: string) {
+        $("#transactionLog").offcanvas("show")
     }
 
     function setCategoryWisePieChart() {
@@ -80,7 +79,7 @@ export default function Transactions() {
                 name: item.name,
                 y: curr_value,
                 icon: `<i class="${item.icon}"></i>`,
-                display_value: renderToString(<CurrencyCode />) + " " + curr_value
+                display_value: helperService.formatCurrencyValue(curr_value)
             })
         }
         const options = {
@@ -103,8 +102,23 @@ export default function Transactions() {
                         tool_tip_text += "<span style='color:" + current_point.color + "'>" + current_point.icon + "</span> " + current_point.name + " : " + current_point.display_value + "<br>"
                         tool_tip_text += "Percentage : " + current_point.percentage.toFixed(2) + "%"
                     } catch { }
-                    return tool_tip_text
+                    try {
+                        let current_point = this_graph.point;
+                        return `
+                        <div class="chart-tooltip category-chart-tooltip">
+                            <div>
+                                <span style="color: ${current_point.color}">${current_point.icon}</span> ${current_point.name} : ${current_point.display_value}
+                            </div>
+                            <div class="percentage">
+                                Percentage : ${current_point.percentage.toFixed(2)}%
+                            </div>
+                        </div>
+                    `
+                    } catch { }
+                    return ""
                 },
+                backgroundColor: 'transparent',
+                borderColor: 'transparent',
                 useHTML: true,
             },
             plotOptions: {
@@ -264,7 +278,7 @@ export default function Transactions() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="option">
+                                        <div className="option" onClick={() => addLog("spend")}>
                                             <i className="fa-solid fa-plus"></i>
                                         </div>
                                     </div>
@@ -287,7 +301,7 @@ export default function Transactions() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="option">
+                                        <div className="option" onClick={() => addLog("estimation")}>
                                             <i className="fa-solid fa-plus"></i>
                                         </div>
                                     </div>
@@ -310,7 +324,7 @@ export default function Transactions() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="option">
+                                        <div className="option" onClick={() => addLog("income")}>
                                             <i className="fa-solid fa-plus"></i>
                                         </div>
                                     </div>
@@ -347,6 +361,51 @@ export default function Transactions() {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="transactionLog" aria-labelledby="staticBackdropLabel">
+                <div className="offcanvas-header border-bottom">
+                    <div className="title">
+                        Spend Log
+                    </div>
+                    <div className="options">
+                        <div className="option-item close">
+                            <i className="fa-solid fa-xmark" data-bs-dismiss="offcanvas"></i>
+                        </div>
+                    </div>
+                </div>
+                <div className="offcanvas-body">
+                    <div className="row">
+                        <div className="col-12 form-group">
+                            <label className="field-required" htmlFor="">Category</label>
+                            <div className="dropdown">
+                                <a className="btn btn-outline-secondary dropdown-toggle w-100" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Dropdown link
+                                </a>
+                                <div className="dropdown-menu menu-selection">
+                                    <div className="menu-search">
+
+                                    </div>
+                                    <ul className="list-group list-group-flush">
+                                        <li className="list-group-item disabled" aria-disabled="true">A disabled item</li>
+                                        <li className="list-group-item">A second item</li>
+                                        <li className="list-group-item">A third item</li>
+                                        <li className="list-group-item">A fourth item</li>
+                                        <li className="list-group-item">And a fifth one</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-12 form-group mt-3">
+                        <label className="field-required" htmlFor="value">Value</label>
+                        <input type="number" id="value" name="value" className="form-control" min={0} />
+                    </div>
+                    <div className="col-12 form-group mt-3">
+                        <label className="field-required" htmlFor="">Remarks</label>
+                        <input type="text" id="remarks" name="remarks" className="form-control" />
                     </div>
                 </div>
             </div>

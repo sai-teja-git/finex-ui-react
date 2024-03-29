@@ -33,6 +33,8 @@
 
     --logout-init: #ef6767;
     --logout-hover: #da1111;
+    --field-required-color: #ed5a5a;
+
     --theme-switch-light-svg: url(/src/assets/svg/sun-dark.svg);
     --header-profile-edit-hover-bg: #e3e3e3;
 
@@ -59,11 +61,16 @@
     --table-body-background: #efefef;
     --table-row-border: #ffffff;
 
+    --highcharts-tooltip-bg: rgba(243, 243, 243, 0.47);
+    --highcharts-tooltip-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.224);
+    --highcharts-tooltip-border: 1px solid rgba(204, 204, 204, 0.27);
+
     --no-data-icon-color: #434343;
     --no-data-title-color: #5d5d5d;
     --no-data-text-color: #7d7d7d;
 
     --card-border-color: #dee2e6;
+    --off-canvas-border-color: #bcbcbc;
 
     --transaction-head-bg: #ffffff;
     --transactions-icon-color: #d2d2d275;

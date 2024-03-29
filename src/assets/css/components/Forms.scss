@@ -1,0 +1,11 @@
+label {
+    margin-bottom: 5px;
+
+    &.field-required {
+        &:after {
+            content: "*";
+            color: var(--field-required-color);
+            margin-left: 3px;
+        }
+    }
+}

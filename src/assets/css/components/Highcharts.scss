@@ -28,3 +28,16 @@
         color: var(--text-active-color) !important;
     }
 }
+
+.chart-tooltip {
+    background: var(--highcharts-tooltip-bg);
+    box-shadow: var(--highcharts-tooltip-box-shadow);
+    border: var(--highcharts-tooltip-border);
+    border-radius: 7px;
+    backdrop-filter: blur(13.2px);
+    -webkit-backdrop-filter: blur(13.2px);
+
+    color: var(--text-active-color);
+    min-width: 30px;
+    padding: 10px;
+}

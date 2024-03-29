@@ -1,5 +1,11 @@
 .offcanvas {
+    border-radius: 10px 0px 0px 10px;
+
     .offcanvas-header {
+        &.border-bottom {
+            border-bottom: 1px solid var(--off-canvas-border-color);
+        }
+
         .title {
             font-size: 20px;
             font-weight: 600;
@@ -32,5 +38,11 @@
                 }
             }
         }
+    }
+}
+
+.dropdown {
+    .menu-selection {
+        width: 100%;
     }
 }
