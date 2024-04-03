@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 
-import "../../assets/css/pages/Dashboard.scss";
-import Currency from "../../components/Currency";
+import "./Dashboard.scss";
+import Currency from "../../../components/Currency";
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import SolidGauge from "highcharts/modules/solid-gauge"
 import Accessibility from "highcharts/modules/accessibility"
 import moment from "moment-timezone";
-import helperService from "../../services/helper-functions.service";
+import helperService from "../../../services/helper-functions.service";
 
 import highchartsMore from "highcharts/highcharts-more";
 

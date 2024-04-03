@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react"
-import "../../assets/css/pages/Transactions.scss"
-import Currency from "../../components/Currency";
+import "./Transactions.scss"
+import Currency from "../../../components/Currency";
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import Accessibility from "highcharts/modules/accessibility";
-import helperService from "../../services/helper-functions.service";
+import helperService from "../../../services/helper-functions.service";
 
 Accessibility(Highcharts);
 
 export default function Transactions() {
 
     const [transactions_view, setTransactionsView] = useState("all");
-    const [category_pie, updateCategoryPieChart] = useState({})
+    const [category_pie, updateCategoryPieChart] = useState({});
+    const [log_data, updateLogData] = useState({
+        category: {},
+        value: "",
+        remarks: ""
+    })
 
     useEffect(() => {
         setCategoryWisePieChart();
@@ -26,6 +31,11 @@ export default function Transactions() {
     }
 
     function addLog(type: string) {
+        updateLogData({
+            category: {},
+            value: "",
+            remarks: ""
+        })
         $("#transactionLog").offcanvas("show")
     }
 
@@ -138,6 +148,10 @@ export default function Transactions() {
             }]
         }
         updateCategoryPieChart(options)
+    }
+
+    function updateLog() {
+        console.log('log_data', log_data)
     }
 
     return (
@@ -381,31 +395,59 @@ export default function Transactions() {
                         <div className="col-12 form-group">
                             <label className="field-required" htmlFor="">Category</label>
                             <div className="dropdown">
-                                <a className="btn btn-outline-secondary dropdown-toggle w-100" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Dropdown link
-                                </a>
-                                <div className="dropdown-menu menu-selection">
-                                    <div className="menu-search">
-
+                                {/* dropdown-toggle */}
+                                <a className="btn btn-outline-secondary w-100" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {/* Select Category */}
+                                    <div className="selected-category">
+                                        <div className="category-icon">
+                                            <i className="fa-solid fa-home"></i>
+                                        </div>
+                                        <div className="name">
+                                            Home
+                                        </div>
                                     </div>
-                                    <ul className="list-group list-group-flush">
-                                        <li className="list-group-item disabled" aria-disabled="true">A disabled item</li>
-                                        <li className="list-group-item">A second item</li>
-                                        <li className="list-group-item">A third item</li>
-                                        <li className="list-group-item">A fourth item</li>
-                                        <li className="list-group-item">And a fifth one</li>
-                                    </ul>
+                                </a>
+                                <div className="dropdown-menu field-selection">
+                                    <div className="field-search">
+                                        <input type="text" className="form-control" name="search-text" id="search-text" placeholder="Search Here" />
+                                    </div>
+                                    <div className="field-data">
+                                        {
+                                            Array(10).fill(0).map((_e, i) => (
+                                                <div className="category-select-block" key={i} role="button">
+                                                    <div className={`category-select ${i == 1 ? "active" : ""}`}>
+                                                        <div className="category-icon">
+                                                            <i className="fa-solid fa-home"></i>
+                                                        </div>
+                                                        <div className="name">
+                                                            Home
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="col-12 form-group mt-3">
                         <label className="field-required" htmlFor="value">Value</label>
-                        <input type="number" id="value" name="value" className="form-control" min={0} />
+                        <input type="number" id="value" name="value" className="form-control" placeholder="Enter Value"
+                            value={log_data.value} onChange={event => updateLogData({ ...log_data, value: event.target.value })} />
                     </div>
                     <div className="col-12 form-group mt-3">
                         <label className="field-required" htmlFor="">Remarks</label>
-                        <input type="text" id="remarks" name="remarks" className="form-control" />
+                        <input type="text" id="remarks" name="remarks" className="form-control" placeholder="Enter Remarks"
+                            value={log_data.remarks} onChange={event => updateLogData({ ...log_data, remarks: event.target.value })} />
+                    </div>
+                </div>
+                <div className="offcanvas-footer end">
+                    <div className="option">
+                        <button className="btn btn-outline-secondary"><i className="fa-regular fa-circle-xmark"></i> Cancel</button>
+                    </div>
+                    <div className="option">
+                        <button className="btn btn-success" onClick={updateLog}><i className="fa-regular fa-circle-check"></i> Submit</button>
                     </div>
                 </div>
             </div>

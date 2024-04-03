@@ -39,10 +39,34 @@
             }
         }
     }
+
+    .offcanvas-footer {
+        display: flex;
+        padding: 10px;
+
+        &.end {
+            justify-content: end;
+        }
+
+        .option {
+            &:not(:last-child) {
+                margin-right: 10px;
+            }
+        }
+    }
 }
 
 .dropdown {
-    .menu-selection {
+    .field-selection {
         width: 100%;
+
+        .field-search {
+            padding: 10px;
+        }
+
+        .field-data {
+            max-height: calc(100vh - 500px);
+            overflow: auto;
+        }
     }
 }

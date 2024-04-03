@@ -1,5 +1,5 @@
-@import "../theme/ThemeMain.scss";
-@import "../util/mixins.scss";
+@import "../../../assets/css/theme/ThemeMain.scss";
+@import "../../../assets/css/util/mixins.scss";
 
 .transactions-page {
     display: flex;
@@ -377,5 +377,62 @@
 
     .percentage {
         margin-top: 5px;
+    }
+}
+
+.selected-category {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .category-icon {
+        margin-right: 6px;
+    }
+}
+
+.category-select-block {
+    padding: 8px;
+
+    &:not(:last-child) {
+        border-bottom: 1px solid var(--field-border-color);
+    }
+
+    .category-select {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        border-radius: 10px;
+
+        &:hover {
+            background-color: var(--primary-color-hover);
+        }
+
+        &.active {
+            background-color: var(--primary-color);
+            color: #fff;
+
+            .category-icon {
+                border: none;
+                background: none;
+                font-size: 15px
+            }
+        }
+
+        .category-icon {
+            height: 30px;
+            width: 30px;
+            font-size: 13px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+            border: 1px solid var(--transactions-icon-color);
+            background: var(--transactions-icon-color);
+            border-radius: 6px;
+        }
+
+        .name {
+            font-size: 18px;
+        }
     }
 }

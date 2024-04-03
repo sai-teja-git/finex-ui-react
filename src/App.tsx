@@ -5,8 +5,8 @@ import loadable from "@loadable/component";
 import PageNotFound from './components/PageNotFound';
 
 const EmailVerification = loadable(() => import("./pages/EmailVerification"))
-const Dashboard = loadable(() => import("./pages/user-pages/Dashboard"))
-const Transactions = loadable(() => import("./pages/user-pages/Transactions"))
+const Dashboard = loadable(() => import("./pages/user-pages/Dashboard/Dashboard"))
+const Transactions = loadable(() => import("./pages/user-pages/Transactions/Transactions"))
 const Analysis = loadable(() => import("./pages/user-pages/Analysis"))
 const SplitBill = loadable(() => import("./pages/user-pages/SplitBill"))
 const CategoryList = loadable(() => import("./pages/user-pages/CategoryList"))
