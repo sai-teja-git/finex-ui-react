@@ -1,5 +1,11 @@
 .offcanvas {
-    border-radius: 10px 0px 0px 10px;
+    &.offcanvas-end {
+        border-radius: 10px 0px 0px 10px;
+    }
+
+    &.offcanvas-start {
+        border-radius: 0px 10px 10px 0px;
+    }
 
     .offcanvas-header {
         &.border-bottom {
@@ -65,7 +71,7 @@
         }
 
         .field-data {
-            max-height: calc(100vh - 500px);
+            max-height: calc(100vh - 400px);
             overflow: auto;
         }
     }

@@ -12,6 +12,7 @@ export default function Transactions() {
 
     const [transactions_view, setTransactionsView] = useState("all");
     const [category_pie, updateCategoryPieChart] = useState({});
+    const [dummy_loader, updateDummyLoader] = useState(true)
     const [log_data, updateLogData] = useState({
         category: {},
         value: "",
@@ -20,6 +21,9 @@ export default function Transactions() {
 
     useEffect(() => {
         setCategoryWisePieChart();
+        setTimeout(() => {
+            updateDummyLoader(false)
+        }, 2000)
     }, [])
 
     function updateTransactionsView() {
@@ -154,6 +158,168 @@ export default function Transactions() {
         console.log('log_data', log_data)
     }
 
+    function allTransactionsTemplate() {
+        return <>
+            {
+                dummy_loader ?
+                    <>
+                        {
+                            Array(10).fill(0).map((_e, i) => (
+                                <div className={`transactions-block placeholder-glow`} key={i}>
+                                    <div className="transaction-data">
+                                        <div className="details">
+                                            <div className={`icon`}>
+                                                <div className="placeholder"></div>
+                                            </div>
+                                            <div className="names">
+                                                <div className="remarks">
+                                                    <div className="placeholder col-6" ></div>
+                                                </div>
+                                                <div className="category">
+                                                    <div className="placeholder col-3" ></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="value">
+                                            <div className="amount">
+                                                <div className="placeholder col-8" ></div>
+                                            </div>
+                                            <div className="created-at">
+                                                <div className="placeholder col-12" ></div>
+                                            </div>
+                                            <div className="transaction-options disabled-block">
+                                                <div className="option delete">
+                                                    <i className="fa-regular fa-trash-can "></i><span className="name">Delete</span>
+                                                </div>
+                                                <div className="option edit">
+                                                    <i className="fa-regular fa-pen-to-square"></i>Edit
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </>
+                    :
+                    <>
+                        {
+                            Array(10).fill(0).map((_e, i) => (
+                                <div className={`transactions-block`} key={i}>
+                                    <div className="transaction-data">
+                                        <div className="details">
+                                            <div className={`icon ${i % 4 === 0 ? "credit" : "debit"}`}>
+                                                <i className="fa-solid fa-home"></i>
+                                            </div>
+                                            <div className="names">
+                                                <div className="remarks">
+                                                    Given to Home
+                                                </div>
+                                                <div className="category">
+                                                    Home
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="value">
+                                            <div className="amount">
+                                                <Currency value={1000} />
+                                            </div>
+                                            <div className="created-at">
+                                                <i className="fa-regular fa-clock"></i> 12-04-2024 10:00:56
+                                            </div>
+                                            <div className="transaction-options">
+                                                <div className="option delete">
+                                                    <i className="fa-regular fa-trash-can "></i><span className="name">Delete</span>
+                                                </div>
+                                                <div className="option edit">
+                                                    <i className="fa-regular fa-pen-to-square"></i>Edit
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </>
+            }
+        </>
+    }
+
+    function categoryWiseTemplate() {
+        return <>
+            {
+                dummy_loader ?
+                    <>
+                        {
+                            Array(10).fill(0).map((_e, i) => (
+                                <div className={`transactions-block placeholder-glow`} key={i}>
+                                    <div className="transaction-data">
+                                        <div className="details">
+                                            <div className={`icon`}>
+                                                <div className="placeholder"></div>
+                                            </div>
+                                            <div className="names">
+                                                <div className="category">
+                                                    <div className="placeholder col-3" ></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="value">
+                                            <div className="amount">
+                                                <div className="placeholder col-8" ></div>
+                                            </div>
+                                            <div className="created-at">
+                                                <div className="placeholder col-12" ></div>
+                                            </div>
+                                            <div className="transaction-options disabled-block">
+                                                <div className="option">
+                                                    view <i className="fa-solid fa-angle-right"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </>
+                    :
+                    <>
+                        {
+                            Array(10).fill(0).map((_e, i) => (
+                                <div className={`transactions-block`} key={i}>
+                                    <div className="transaction-data">
+                                        <div className="details">
+                                            <div className={`icon`}>
+                                                <i className="fa-solid fa-home"></i>
+                                            </div>
+                                            <div className="names">
+                                                <div className="category">
+                                                    Home
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="value">
+                                            <div className="amount">
+                                                <Currency value={1000} />
+                                            </div>
+                                            <div className="created-at">
+                                                <i className="fa-solid fa-sliders"></i> Count : {i + 1}
+                                            </div>
+                                            <div className="transaction-options">
+                                                <div className="option">
+                                                    view <i className="fa-solid fa-angle-right"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </>
+            }
+        </>
+    }
+
     return (
         <>
             {/* <NoData title="No Data" text={"Data not available for the page"} /> */}
@@ -189,80 +355,7 @@ export default function Transactions() {
                                 </div>
                                 <div className="body">
                                     {
-                                        transactions_view === "all" ?
-                                            <>
-                                                {
-                                                    Array(10).fill(0).map((_e, i) => (
-                                                        <div className={`transactions-block`} key={i}>
-                                                            <div className="transaction-data">
-                                                                <div className="details">
-                                                                    <div className={`icon ${i % 4 === 0 ? "credit" : "debit"}`}>
-                                                                        <i className="fa-solid fa-home"></i>
-                                                                    </div>
-                                                                    <div className="names">
-                                                                        <div className="remarks">
-                                                                            Given to Home
-                                                                        </div>
-                                                                        <div className="category">
-                                                                            Home
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="value">
-                                                                    <div className="amount">
-                                                                        <Currency value={1000} />
-                                                                    </div>
-                                                                    <div className="created-at">
-                                                                        <i className="fa-regular fa-clock"></i> 12-04-2024 10:00:56
-                                                                    </div>
-                                                                    <div className="transaction-options">
-                                                                        <div className="option delete">
-                                                                            <i className="fa-regular fa-trash-can "></i><span className="name">Delete</span>
-                                                                        </div>
-                                                                        <div className="option edit">
-                                                                            <i className="fa-regular fa-pen-to-square"></i>Edit
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    ))
-                                                }
-                                            </>
-                                            :
-                                            <>
-                                                {
-                                                    Array(10).fill(0).map((_e, i) => (
-                                                        <div className={`transactions-block`} key={i}>
-                                                            <div className="transaction-data">
-                                                                <div className="details">
-                                                                    <div className={`icon`}>
-                                                                        <i className="fa-solid fa-home"></i>
-                                                                    </div>
-                                                                    <div className="names">
-                                                                        <div className="category">
-                                                                            Home
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="value">
-                                                                    <div className="amount">
-                                                                        <Currency value={1000} />
-                                                                    </div>
-                                                                    <div className="created-at">
-                                                                        <i className="fa-solid fa-sliders"></i> Count : {i + 1}
-                                                                    </div>
-                                                                    <div className="transaction-options">
-                                                                        <div className="option">
-                                                                            view <i className="fa-solid fa-angle-right"></i>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    ))
-                                                }
-                                            </>
+                                        transactions_view === "all" ? allTransactionsTemplate() : categoryWiseTemplate()
                                     }
 
                                 </div>
@@ -280,7 +373,12 @@ export default function Transactions() {
                                         <div className="data">
                                             <div className="details">
                                                 <div className="value">
-                                                    <Currency value={25000} />
+                                                    {
+                                                        dummy_loader ?
+                                                            <div className="placeholder col-8"></div>
+                                                            :
+                                                            <Currency value={25000} />
+                                                    }
                                                 </div>
                                                 <div className="name">
                                                     Spends
@@ -288,11 +386,16 @@ export default function Transactions() {
                                             </div>
                                             <div className="log-progress">
                                                 <div className="progress">
-                                                    <div className="progress-bar" style={{ width: `${25}%` }}></div>
+                                                    {
+                                                        dummy_loader ?
+                                                            <div className="placeholder col-12"></div>
+                                                            :
+                                                            <div className="progress-bar" style={{ width: `${25}%` }}></div>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="option" onClick={() => addLog("spend")}>
+                                        <div className={`option ${dummy_loader ? "disabled-block" : ""}`} onClick={() => addLog("spend")}>
                                             <i className="fa-solid fa-plus"></i>
                                         </div>
                                     </div>
@@ -303,7 +406,12 @@ export default function Transactions() {
                                         <div className="data">
                                             <div className="details">
                                                 <div className="value">
-                                                    <Currency value={75000} />
+                                                    {
+                                                        dummy_loader ?
+                                                            <div className="placeholder col-8"></div>
+                                                            :
+                                                            <Currency value={75000} />
+                                                    }
                                                 </div>
                                                 <div className="name">
                                                     Estimation
@@ -311,11 +419,16 @@ export default function Transactions() {
                                             </div>
                                             <div className="log-progress">
                                                 <div className="progress">
-                                                    <div className="progress-bar" style={{ width: `${75}%` }}></div>
+                                                    {
+                                                        dummy_loader ?
+                                                            <div className="placeholder col-12"></div>
+                                                            :
+                                                            <div className="progress-bar" style={{ width: `${75}%` }}></div>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="option" onClick={() => addLog("estimation")}>
+                                        <div className={`option ${dummy_loader ? "disabled-block" : ""}`} onClick={() => addLog("estimation")}>
                                             <i className="fa-solid fa-plus"></i>
                                         </div>
                                     </div>
@@ -326,7 +439,12 @@ export default function Transactions() {
                                         <div className="data">
                                             <div className="details">
                                                 <div className="value">
-                                                    <Currency value={100000} />
+                                                    {
+                                                        dummy_loader ?
+                                                            <div className="placeholder col-8"></div>
+                                                            :
+                                                            <Currency value={100000} />
+                                                    }
                                                 </div>
                                                 <div className="name">
                                                     Income
@@ -334,44 +452,35 @@ export default function Transactions() {
                                             </div>
                                             <div className="log-progress">
                                                 <div className="progress">
-                                                    <div className="progress-bar" style={{ width: `${90}%` }}></div>
+                                                    {
+                                                        dummy_loader ?
+                                                            <div className="placeholder col-12"></div>
+                                                            :
+                                                            <div className="progress-bar" style={{ width: `${90}%` }}></div>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="option" onClick={() => addLog("income")}>
+                                        <div className={`option ${dummy_loader ? "disabled-block" : ""}`} onClick={() => addLog("income")}>
                                             <i className="fa-solid fa-plus"></i>
                                         </div>
                                     </div>
-                                    {/* <div className="log-block">
-                                        <div className="icon">
-                                            <div className="placeholder col-12"></div>
-                                        </div>
-                                        <div className="data">
-                                            <div className="details">
-                                                <div className="value">
-                                                    <div className="placeholder col-10"></div>
-                                                </div>
-                                                <div className="name">
-                                                    <div className="placeholder col-6"></div>
-                                                </div>
-                                            </div>
-                                            <div className="log-progress">
-                                                <div className="progress">
-                                                    <div className="placeholder col-12"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="option disabled-block">
-                                            <i className="fa-solid fa-plus"></i>
-                                        </div>
-                                    </div> */}
                                 </div>
                             </div>
                         </div>
                         <div className="category-chart">
                             <div className="card">
                                 <div className="card-body">
-                                    <HighchartsReact containerProps={{ className: "category-pie-chart" }} highcharts={Highcharts} options={category_pie} />
+                                    {
+                                        dummy_loader ?
+                                            <div className="category-pie-chart placeholder-glow">
+                                                <div className="placeholder col-12"></div>
+                                            </div>
+                                            :
+                                            <div>
+                                                <HighchartsReact containerProps={{ className: "category-pie-chart" }} highcharts={Highcharts} options={category_pie} />
+                                            </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -444,7 +553,7 @@ export default function Transactions() {
                 </div>
                 <div className="offcanvas-footer end">
                     <div className="option">
-                        <button className="btn btn-outline-secondary"><i className="fa-regular fa-circle-xmark"></i> Cancel</button>
+                        <button className="btn btn-outline-secondary" data-bs-dismiss="offcanvas"><i className="fa-regular fa-circle-xmark"></i> Cancel</button>
                     </div>
                     <div className="option">
                         <button className="btn btn-success" onClick={updateLog}><i className="fa-regular fa-circle-check"></i> Submit</button>

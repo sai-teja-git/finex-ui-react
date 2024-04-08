@@ -7,6 +7,7 @@
     .placeholder-glow {
         .placeholder {
             border-radius: 6px;
+            color: var(--app-place-holder-color);
         }
     }
 
@@ -33,6 +34,7 @@
                 position: sticky;
                 top: 0;
                 background: var(--transaction-head-bg);
+                z-index: 1;
             }
 
             .header {
@@ -118,6 +120,25 @@
                                 &.credit {
                                     border-color: transparent;
                                     background: #74dd9880;
+                                }
+
+                                .placeholder {
+                                    height: 50px;
+                                    width: 50px;
+                                }
+                            }
+
+                            .names {
+                                .remarks {
+                                    .placeholder {
+                                        width: 100px;
+                                    }
+                                }
+
+                                .category {
+                                    .placeholder {
+                                        width: 65px;
+                                    }
                                 }
                             }
                         }
@@ -365,6 +386,19 @@
 
                 .category-pie-chart {
                     height: calc(100vh - 438px);
+
+                    &.placeholder-glow {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+
+                        .placeholder {
+                            $chart-hw: calc(100vh - 438px);
+                            height: $chart-hw;
+                            width: $chart-hw;
+                            border-radius: 50%;
+                        }
+                    }
                 }
             }
         }

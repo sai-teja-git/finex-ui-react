@@ -38,7 +38,7 @@ export default function Dashboard() {
         let spends_till_now = 0;
         let categ_arr: any[] = [];
         let spends_arr: any[] = [];
-        const month_end = new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate();
+        const month_end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
         for (let i = 1; i <= month_end; i++) {
             const this_day = new Date(new Date().getFullYear(), new Date().getMonth(), i);
             const spend = i === 1 ? 0 : helperService.generateRandom(100, 500);
@@ -218,7 +218,7 @@ export default function Dashboard() {
         setOverallGaugeChart(options)
     }
 
-    function overallDataNewCard() {
+    function overallDataCard() {
         return <>
             <div className={`overview ${dummy_loader && "placeholder-glow"}`} >
                 <div className="overview-block spend">
@@ -303,7 +303,7 @@ export default function Dashboard() {
                 <div className="row m-0">
                     <div className="col-12 p-0">
                         <div className="card-body">
-                            {overallDataNewCard()}
+                            {overallDataCard()}
                         </div>
                     </div>
                 </div>
@@ -365,7 +365,9 @@ export default function Dashboard() {
                                                     {
                                                         Array(10).fill(0).map((_e, i) => (
                                                             <tr key={i}>
-                                                                <td>Category-{i + 1}</td>
+                                                                <td>
+                                                                    <i className="fa-solid fa-home"></i> Category-{i + 1}
+                                                                </td>
                                                                 <td><Currency value={(i + 1) * 10} /></td>
                                                                 <td>{i + 1}</td>
                                                                 <td>Remarks----{i + 1}</td>
