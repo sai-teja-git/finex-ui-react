@@ -5,7 +5,8 @@ import helperService from "../../../services/helper-functions.service";
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import Accessibility from "highcharts/modules/accessibility";
-import moment from "moment-timezone";
+import moment, { Moment } from "moment-timezone";
+import MonthPicker from "../../../components/MonthPicker/MonthPicker";
 Accessibility(Highcharts);
 
 export default function Analysis() {
@@ -288,17 +289,7 @@ export default function Analysis() {
                 </div>
                 <div className="page-options">
                     <div className="option">
-                        <div className="dropdown">
-                            <a className="btn btn-secondary btn-sm dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Dropdown link
-                            </a>
-
-                            <ul className="dropdown-menu">
-                                <li><a className="dropdown-item" >Action</a></li>
-                                <li><a className="dropdown-item" >Another action</a></li>
-                                <li><a className="dropdown-item" >Something else here</a></li>
-                            </ul>
-                        </div>
+                        <MonthPicker id="analysis-month-picker" maxDate={moment()} />
                     </div>
                 </div>
             </div>

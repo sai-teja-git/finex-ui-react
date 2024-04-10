@@ -1,0 +1,78 @@
+@import "../../assets/css/theme/ThemeMain.scss";
+
+.picker-block {
+    width: 300px;
+
+    .picker-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 6px 10px 6px;
+        border-bottom: 1px solid var(--card-border-color);
+
+        .nav-arrow {
+            padding: 5px 8px;
+            border-radius: 6px;
+            transition: .3s;
+            cursor: pointer;
+
+            &:hover {
+                transition: .3s;
+                background: var(--month-picker-hover-bg);
+            }
+        }
+
+        .parent-period {
+            padding: 5px 8px;
+            border-radius: 4px;
+
+            &.nested {
+                cursor: pointer;
+                transition: .3s;
+
+                &:hover {
+                    transition: .3s;
+                    background: var(--month-picker-hover-bg);
+                }
+            }
+        }
+    }
+
+    .picker-body {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 10px;
+
+        .picker-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &.month {
+                width: 33%;
+            }
+
+            .picker-value {
+                padding: 6px 10px;
+                margin: 5px;
+                border-radius: 6px;
+                transition: 0.3s;
+                cursor: pointer;
+                width: 80%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                &.selected,
+                &:hover {
+                    transition: .3s;
+                    background: var(--month-picker-hover-bg);
+                }
+
+                &.current-period {
+                    border: 1px solid var(--card-border-color);
+                }
+            }
+        }
+    }
+}
