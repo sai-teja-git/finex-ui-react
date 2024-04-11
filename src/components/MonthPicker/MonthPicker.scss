@@ -1,7 +1,12 @@
 @import "../../assets/css/theme/ThemeMain.scss";
+@import "../../assets/css/util/mixins.scss";
 
 .picker-block {
     width: 300px;
+
+    @include mediaBreakPointUp("sm") {
+        width: 280px;
+    }
 
     .picker-header {
         display: flex;
@@ -52,6 +57,10 @@
                 width: 33%;
             }
 
+            &.year {
+                width: 50%;
+            }
+
             .picker-value {
                 padding: 6px 10px;
                 margin: 5px;
@@ -62,6 +71,7 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                border: 1px solid transparent;
 
                 &.selected,
                 &:hover {
@@ -70,7 +80,7 @@
                 }
 
                 &.current-period {
-                    border: 1px solid var(--card-border-color);
+                    border-color: var(--dropdown-border-color);
                 }
             }
         }

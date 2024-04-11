@@ -15,6 +15,7 @@ export default function Analysis() {
     const [dummy_loader, setDummyLoader] = useState(true);
     const [month_spend_chart, setChartOptions] = useState({});
     const [category_pie, updateCategoryPieChart] = useState({});
+    const [selectedMonth, updateAnalysisMonth] = useState(moment())
 
     useEffect(() => {
         setCategoryWisePieChart();
@@ -281,6 +282,11 @@ export default function Analysis() {
         </>
     }
 
+    function monthUpdated(event: any): any {
+        console.warn("called mo", event);
+        updateAnalysisMonth(event.value)
+    }
+
     return (
         <>
             <div className="page-header">
@@ -289,7 +295,7 @@ export default function Analysis() {
                 </div>
                 <div className="page-options">
                     <div className="option">
-                        <MonthPicker id="analysis-month-picker" maxDate={moment()} />
+                        <MonthPicker id="analysis-month-picker" maxDate={moment()} value={selectedMonth} monthSelected={monthUpdated} />
                     </div>
                 </div>
             </div>

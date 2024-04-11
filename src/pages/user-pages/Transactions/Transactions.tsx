@@ -502,7 +502,7 @@ export default function Transactions() {
                 <div className="offcanvas-body">
                     <div className="row">
                         <div className="col-12 form-group">
-                            <label className="field-required" htmlFor="">Category</label>
+                            <label className="field-required">Category</label>
                             <div className="dropdown">
                                 {/* dropdown-toggle */}
                                 <a className="btn btn-outline-secondary w-100" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -546,7 +546,7 @@ export default function Transactions() {
                             value={log_data.value} onChange={event => updateLogData({ ...log_data, value: event.target.value })} />
                     </div>
                     <div className="col-12 form-group mt-3">
-                        <label className="field-required" htmlFor="">Remarks</label>
+                        <label className="field-required" htmlFor="remarks">Remarks</label>
                         <input type="text" id="remarks" name="remarks" className="form-control" placeholder="Enter Remarks"
                             value={log_data.remarks} onChange={event => updateLogData({ ...log_data, remarks: event.target.value })} />
                     </div>
