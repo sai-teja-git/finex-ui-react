@@ -287,6 +287,10 @@ export default function Analysis() {
         updateAnalysisMonth(event.value)
     }
 
+    function openSingleCategoryTransaction(category: any) {
+        $("#categoryWiseLog").offcanvas("show")
+    }
+
     return (
         <>
             <div className="page-header">
@@ -453,7 +457,21 @@ export default function Analysis() {
                 <div className="top-margin">
                     <div className="card">
                         <div className="card-header">
-                            Category Wise Spends Data
+                            <div className="d-flex align-items-center">
+                                Category Wise <div className="ms-2">
+                                    <div className="dropdown fnx-dropdown">
+                                        <a className="btn btn-secondary btn-sm dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Spends
+                                        </a>
+
+                                        <ul className="dropdown-menu">
+                                            <li><a className="dropdown-item active">Spends</a></li>
+                                            <li><a className="dropdown-item">Income</a></li>
+                                            <li><a className="dropdown-item">Estimations</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div className="card-body p-0">
                             <div className="custom-table">
@@ -487,7 +505,7 @@ export default function Analysis() {
                                             <tbody>
                                                 {
                                                     Array(10).fill(0).map((_e, i) => (
-                                                        <tr key={i}>
+                                                        <tr key={i} className="can-hover" onClick={() => openSingleCategoryTransaction(_e)}>
                                                             <td>
                                                                 <i className="fa-solid fa-home"></i> Category-{i + 1}
                                                             </td>
@@ -500,6 +518,61 @@ export default function Analysis() {
                                             </tbody>
                                     }
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="categoryWiseLog" aria-labelledby="staticBackdropLabel">
+                <div className="offcanvas-header border-bottom">
+                    <div className="title">
+                        Spends on category
+                    </div>
+                    <div className="options">
+                        <div className="option-item close">
+                            <i className="fa-solid fa-xmark" data-bs-dismiss="offcanvas"></i>
+                        </div>
+                    </div>
+                </div>
+                <div className="offcanvas-body">
+                    <div className="single-category-data">
+                        <div className="overall-block">
+                            <div className="icon">
+                                <i className="fa-solid fa-home"></i>
+                            </div>
+                            <div className="category-details">
+                                <div className="data">
+                                    <div className="name">
+                                        Entertainment
+                                    </div>
+                                    <div className="count">
+                                        ({1000})
+                                    </div>
+                                </div>
+                                <div className="value">
+                                    <Currency value={1000000} />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="transactions-data">
+                            <div className="transaction-block">
+                                <div className="data-block">
+                                    <div className="value-block">
+                                        <div className="transaction-icon">
+                                            <i className="fa-solid fa-circle"></i>
+                                        </div>
+                                        <div className="value">
+                                            <Currency value={100000} />
+                                        </div>
+                                    </div>
+                                    <div className="time">
+                                        <i className="fa-regular fa-clock"></i> 12-04-2024 10:00:56
+                                    </div>
+                                </div>
+                                <div className="remarks">
+                                    Given to Home
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -75,4 +75,30 @@
             overflow: auto;
         }
     }
+
+    &.fnx-dropdown {
+        .dropdown-menu {
+            padding: 6px;
+
+            li {
+                &:not(:last-child) {
+                    margin-bottom: 5px;
+                }
+            }
+
+            .dropdown-item {
+                cursor: pointer;
+                border-radius: 6px;
+
+                &:hover {
+                    background-color: var(--primary-color-hover);
+                }
+
+                &.active {
+                    background-color: var(--primary-color);
+                    color: #fff;
+                }
+            }
+        }
+    }
 }

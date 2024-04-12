@@ -36,9 +36,18 @@
         tbody tr {
             height: 40px;
             border-bottom: 1px solid var(--table-row-border);
+            transition: .3s;
 
             &:last-child {
                 border: 0;
+            }
+
+            &.can-hover {
+                &:hover {
+                    transition: .3s;
+                    background: var(--table-row-hover);
+                    cursor: pointer;
+                }
             }
         }
 
