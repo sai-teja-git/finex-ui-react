@@ -158,6 +158,10 @@ export default function Transactions() {
         console.log('log_data', log_data)
     }
 
+    function openSingleCategoryTransaction(category: any) {
+        $("#categoryWiseTransactionsLog").offcanvas("show")
+    }
+
     function allTransactionsTemplate() {
         return <>
             {
@@ -306,7 +310,7 @@ export default function Transactions() {
                                                 <i className="fa-solid fa-sliders"></i> Count : {i + 1}
                                             </div>
                                             <div className="transaction-options">
-                                                <div className="option">
+                                                <div className="option" onClick={() => openSingleCategoryTransaction("")}>
                                                     view <i className="fa-solid fa-angle-right"></i>
                                                 </div>
                                             </div>
@@ -557,6 +561,66 @@ export default function Transactions() {
                     </div>
                     <div className="option">
                         <button className="btn btn-success" onClick={updateLog}><i className="fa-regular fa-circle-check"></i> Submit</button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="categoryWiseTransactionsLog" aria-labelledby="staticBackdropLabel">
+                <div className="offcanvas-header border-bottom">
+                    <div className="title">
+                        Spends on category
+                    </div>
+                    <div className="options">
+                        <div className="option-item close">
+                            <i className="fa-solid fa-xmark" data-bs-dismiss="offcanvas"></i>
+                        </div>
+                    </div>
+                </div>
+                <div className="offcanvas-body">
+                    <div className="single-category-data">
+                        <div className="overall-block">
+                            <div className="icon">
+                                <i className="fa-solid fa-home"></i>
+                            </div>
+                            <div className="category-details">
+                                <div className="data">
+                                    <div className="name">
+                                        Entertainment
+                                    </div>
+                                    <div className="count">
+                                        ({1000})
+                                    </div>
+                                </div>
+                                <div className="value">
+                                    <Currency value={1000000} />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="transactions-offcanvas-view">
+                            {
+                                Array(10).fill(0).map((_e, i) => (
+                                    <div className="transaction-block" key={i}>
+                                        <div className="data-block">
+                                            <div className="value-block">
+                                                <div className={`transaction-icon me-2 ${i % 2 == 0 ? "spend" : (i % 3 == 0 ? "estimation" : "income")
+                                                    }`}>
+                                                    <i className="fa-solid fa-circle"></i>
+                                                </div>
+                                                <div className="value">
+                                                    <Currency value={100000} />
+                                                </div>
+                                            </div>
+                                            <div className="time">
+                                                <i className="fa-regular fa-clock"></i> 12-04-2024 10:00:56
+                                            </div>
+                                        </div>
+                                        <div className="remarks">
+                                            Given to Home
+                                        </div>
+                                    </div>
+                                ))
+                            }
+                        </div>
                     </div>
                 </div>
             </div>

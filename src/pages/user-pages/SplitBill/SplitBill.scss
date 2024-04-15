@@ -1,0 +1,192 @@
+@import "../../../assets/css/theme/ThemeMain.scss";
+@import "../../../assets/css/util/mixins.scss";
+
+.overall-bill-data {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    &.placeholder-glow {
+        .placeholder {
+            border-radius: 6px;
+        }
+    }
+
+    .bill-block {
+        --block-margin: 18px;
+        margin-bottom: var(--block-margin);
+        margin-right: var(--block-margin);
+        width: calc((100% - var(--block-margin))/2);
+
+        &:nth-child(2n) {
+            margin-right: 0;
+        }
+
+        @include mediaBreakPointUp("md", "sm") {
+            width: 100%;
+            margin-right: 0;
+        }
+
+        .card {
+            .card-header {
+                font-size: 18px;
+
+                .card-title {
+                    .placeholder {
+                        width: 150px;
+                    }
+                }
+
+                .card-options {
+                    .more-option {
+                        padding: 2px 10px;
+                        border-radius: 5px;
+                        transition: .3s;
+                        cursor: pointer;
+
+                        &:hover {
+                            transition: .3s;
+                            background: var(--transaction-add-option-hover-bg);
+                        }
+                    }
+                }
+            }
+        }
+
+        .log-block {
+            display: flex;
+            align-items: center;
+            padding: 16px 0px;
+
+            &:first-child {
+                padding-top: 10px;
+            }
+
+            &:last-child {
+                padding-bottom: 10px;
+            }
+
+            &:not(:first-child) {
+                border-top: 1px solid var(--card-border-color);
+            }
+
+            &:not(:last-child) {
+                border-bottom: 1px solid var(--card-border-color);
+            }
+
+            .icon {
+                height: 50px;
+                width: 50px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: 1px solid var(--transactions-icon-color);
+                background: var(--transactions-icon-color);
+                border-radius: 13px;
+                color: #fff;
+
+                &.debit {
+                    border-color: transparent;
+                    background: #ff7a7a80;
+                }
+
+                &.credit {
+                    border-color: transparent;
+                    background: #74dd9880;
+                }
+
+                .placeholder {
+                    border-radius: 12px;
+                    height: 100%;
+                }
+            }
+
+            .data {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin: 0px 10px;
+
+                .details {
+                    width: 35%;
+
+                    @include mediaBreakPointUp("sm") {
+                        width: 50%;
+                    }
+
+                    .value {
+                        font-size: 17px;
+                        font-weight: 600;
+                    }
+                }
+
+                .log-progress {
+                    width: 65%;
+
+                    @include mediaBreakPointUp("sm") {
+                        width: 50%;
+                    }
+                }
+            }
+
+            &.actual {
+                .icon {
+                    background: var(--transaction-add-spend-icon-bg);
+                    border: var(--transaction-add-spend-icon-bg);
+                }
+
+                .data {
+                    .log-progress {
+                        .progress {
+                            background-color: var(--transaction-add-spend-progress-bar-bg);
+
+                            .progress-bar {
+                                background-color: var(--transaction-add-spend-progress-bar-fill-bg);
+                            }
+                        }
+                    }
+                }
+            }
+
+            &.estimation {
+                .icon {
+                    background: var(--transaction-add-estimation-icon-bg);
+                    border: var(--transaction-add-estimation-icon-bg);
+                }
+
+                .data {
+                    .log-progress {
+                        .progress {
+                            background-color: var(--transaction-add-estimation-progress-bar-bg);
+
+                            .progress-bar {
+                                background-color: var(--transaction-add-estimation-progress-bar-fill-bg);
+                            }
+                        }
+                    }
+                }
+            }
+
+            &.paid {
+                .icon {
+                    background: var(--transaction-add-income-icon-bg);
+                    border: var(--transaction-add-income-icon-bg);
+                }
+
+                .data {
+                    .log-progress {
+                        .progress {
+                            background-color: var(--transaction-add-income-progress-bar-bg);
+
+                            .progress-bar {
+                                background-color: var(--transaction-add-income-progress-bar-fill-bg);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+}

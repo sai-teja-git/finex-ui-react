@@ -5,7 +5,7 @@ import helperService from "../../../services/helper-functions.service";
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import Accessibility from "highcharts/modules/accessibility";
-import moment, { Moment } from "moment-timezone";
+import moment from "moment-timezone";
 import MonthPicker from "../../../components/MonthPicker/MonthPicker";
 Accessibility(Highcharts);
 
@@ -481,7 +481,6 @@ export default function Analysis() {
                                             <th>Category</th>
                                             <th>Amount</th>
                                             <th>Count</th>
-                                            <th>Remarks</th>
                                         </tr>
                                     </thead>
                                     {
@@ -491,7 +490,7 @@ export default function Analysis() {
                                                     Array(10).fill(0).map((_e, i) => (
                                                         <tr key={i}>
                                                             {
-                                                                Array(4).fill(0).map((_t, j) => (
+                                                                Array(3).fill(0).map((_t, j) => (
                                                                     <td key={j}>
                                                                         <div className="placeholder col-12"></div>
                                                                     </td>
@@ -511,7 +510,6 @@ export default function Analysis() {
                                                             </td>
                                                             <td><Currency value={(i + 1) * 10} /></td>
                                                             <td>{i + 1}</td>
-                                                            <td>Remarks----{i + 1}</td>
                                                         </tr>
                                                     ))
                                                 }
@@ -555,25 +553,30 @@ export default function Analysis() {
                                 </div>
                             </div>
                         </div>
-                        <div className="transactions-data">
-                            <div className="transaction-block">
-                                <div className="data-block">
-                                    <div className="value-block">
-                                        <div className="transaction-icon">
-                                            <i className="fa-solid fa-circle"></i>
+                        <div className="transactions-offcanvas-view">
+                            {
+                                Array(10).fill(0).map((_e, i) => (
+                                    <div className="transaction-block" key={i}>
+                                        <div className="data-block">
+                                            <div className="value-block">
+                                                <div className={`transaction-icon me-2 ${i % 2 == 0 ? "spend" : (i % 3 == 0 ? "estimation" : "income")
+                                                    }`}>
+                                                    <i className="fa-solid fa-circle"></i>
+                                                </div>
+                                                <div className="value">
+                                                    <Currency value={100000} />
+                                                </div>
+                                            </div>
+                                            <div className="time">
+                                                <i className="fa-regular fa-clock"></i> 12-04-2024 10:00:56
+                                            </div>
                                         </div>
-                                        <div className="value">
-                                            <Currency value={100000} />
+                                        <div className="remarks">
+                                            Given to Home
                                         </div>
                                     </div>
-                                    <div className="time">
-                                        <i className="fa-regular fa-clock"></i> 12-04-2024 10:00:56
-                                    </div>
-                                </div>
-                                <div className="remarks">
-                                    Given to Home
-                                </div>
-                            </div>
+                                ))
+                            }
                         </div>
                     </div>
                 </div>

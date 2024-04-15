@@ -470,3 +470,52 @@
         }
     }
 }
+
+.transactions-offcanvas-view {
+    margin: 16px 0px;
+    height: calc(100vh - 225px);
+    overflow-y: auto;
+
+    .transaction-block {
+        &:not(:last-child) {
+            margin-bottom: 10px;
+        }
+
+        border: 1px solid var(--dashboard-overview-block-br-color);
+        border-radius: 10px;
+        padding: 8px;
+
+        .data-block {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .value-block {
+                display: flex;
+                align-items: center;
+
+                .transaction-icon {
+                    &.spend {
+                        color: var(--transaction-add-spend-icon-bg);
+                    }
+
+                    &.estimation {
+                        color: var(--transaction-add-estimation-icon-bg);
+                    }
+
+                    &.income {
+                        color: var(--transaction-add-income-icon-bg);
+                    }
+                }
+
+                .value {
+                    font-size: 20px;
+                }
+            }
+        }
+
+        .remarks {
+            margin-top: 8px;
+        }
+    }
+}
