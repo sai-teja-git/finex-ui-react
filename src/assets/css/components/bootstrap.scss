@@ -114,6 +114,9 @@
         }
 
         .card-options {
+            display: flex;
+            align-items: center;
+
             .option {
                 &:not(:last-child) {
                     margin-right: 8px;

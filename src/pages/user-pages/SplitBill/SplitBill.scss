@@ -22,7 +22,7 @@
             margin-right: 0;
         }
 
-        @include mediaBreakPointUp("md", "sm") {
+        @include mediaBreakPointUp("sm", "md") {
             width: 100%;
             margin-right: 0;
         }
@@ -187,6 +187,56 @@
                 }
             }
         }
+    }
+}
 
+.single-group-details {
+    display: flex;
+
+    @include mediaBreakPointUp("sm", "md") {
+        flex-direction: column;
+    }
+
+    .single-group-block {
+        width: 50%;
+
+        &.left {
+            margin-right: 8px;
+
+            .group-bill-log {
+                margin-top: 16px;
+
+                .card {
+                    .card-body {
+                        height: 400px;
+                    }
+                }
+            }
+        }
+
+        &.right {
+            margin-left: 8px;
+
+            .person-wise-details {
+                &.card {
+                    .card-body {
+                        height: 688px;
+                    }
+                }
+            }
+        }
+
+        @include mediaBreakPointUp("sm", "md") {
+            width: 100%;
+
+            &.left {
+                margin-right: 0;
+            }
+
+            &.right {
+                margin-top: 16px;
+                margin-left: 0;
+            }
+        }
     }
 }
