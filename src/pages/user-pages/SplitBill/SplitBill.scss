@@ -1,5 +1,4 @@
-@import "../../../assets/css/theme/ThemeMain.scss";
-@import "../../../assets/css/util/mixins.scss";
+@import "../Dashboard/Dashboard.scss";
 
 .overall-bill-data {
     display: flex;
@@ -197,18 +196,155 @@
         flex-direction: column;
     }
 
-    .single-group-block {
+    .group-transactions-block {
+        margin-top: 16px;
         width: 50%;
 
         &.left {
             margin-right: 8px;
 
-            .group-bill-log {
-                margin-top: 16px;
+            .transactions-block {
+                border-top: 1px solid var(--card-border-color);
+                border-bottom: 1px solid var(--card-border-color);
+                padding: 16px 10px 16px 0px;
 
-                .card {
-                    .card-body {
-                        height: 400px;
+                @include mediaBreakPointUp("sm", "md") {
+                    padding: 16px 0px;
+                }
+
+                &:first-child {
+                    border-top: none;
+                    padding-top: 6px;
+                }
+
+                &:last-child {
+                    border-bottom: none;
+                    padding-bottom: 6px;
+                }
+
+                .transaction-data {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    .details {
+                        display: flex;
+                        align-items: center;
+
+                        .icon {
+                            height: 50px;
+                            width: 50px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            margin-right: 10px;
+                            border: 1px solid var(--transactions-icon-color);
+                            background: var(--transactions-icon-color);
+                            border-radius: 10px;
+
+                            &.debit {
+                                border-color: transparent;
+                                background: #ff7a7a80;
+                            }
+
+                            &.credit {
+                                border-color: transparent;
+                                background: #74dd9880;
+                            }
+
+                            .placeholder {
+                                height: 50px;
+                                width: 50px;
+                            }
+                        }
+
+                        .names {
+                            .remarks {
+                                .placeholder {
+                                    width: 100px;
+                                }
+                            }
+
+                            .category {
+                                .placeholder {
+                                    width: 65px;
+                                }
+                            }
+                        }
+                    }
+
+                    .value {
+                        .amount {
+                            font-size: 20px;
+                            font-weight: 600;
+
+                            &.debit {
+                                color: var(--dashboard-max-block-percentage-red);
+                            }
+                        }
+
+                        .created-at {
+                            font-size: 14px;
+                        }
+
+                        .transaction-options {
+                            display: flex;
+                            align-items: center;
+                            margin-top: 6px;
+
+                            .option {
+                                padding: 4px;
+                                font-size: 10px;
+                                border-radius: 6px;
+                                background: var(--transactions-option-color);
+                                border: 1px solid var(--transactions-option-color);
+                                cursor: pointer;
+                                min-width: 60px;
+                                text-align: center;
+                                transition: .3s;
+                                color: #fff;
+
+                                &:hover {
+                                    background: var(--transactions-option-hover-color);
+                                    border-color: var(--transactions-option-hover-color);
+                                }
+
+                                &:not(:last-child) {
+                                    margin-right: 10px;
+                                }
+
+                                &.delete {
+                                    background: var(--transactions-delete-color);
+                                    border: 1px solid var(--transactions-delete-color);
+
+                                    i {
+                                        margin-right: 6px;
+                                    }
+
+                                    &:hover {
+                                        transition: .3s;
+                                        background: var(--transactions-delete-hover-color);
+                                        border: 1px solid var(--transactions-delete-hover-color);
+                                    }
+                                }
+
+                                &.edit {
+                                    transition: .3s;
+                                    background: var(--transactions-edit-color);
+                                    border: 1px solid var(--transactions-edit-color);
+
+                                    i {
+                                        margin-right: 6px;
+                                    }
+
+                                    &:hover {
+                                        transition: .3s;
+                                        background: var(--transactions-edit-hover-color);
+                                        border: 1px solid var(--transactions-edit-hover-color);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -216,12 +352,15 @@
 
         &.right {
             margin-left: 8px;
+        }
 
-            .person-wise-details {
-                &.card {
-                    .card-body {
-                        height: 688px;
-                    }
+        .card {
+            .card-body {
+                height: calc(100vh - 305px);
+                overflow-y: auto;
+
+                @include mediaBreakPointUp("sm", "md") {
+                    height: auto;
                 }
             }
         }
@@ -236,6 +375,105 @@
             &.right {
                 margin-top: 16px;
                 margin-left: 0;
+            }
+        }
+    }
+}
+
+.person-data-block {
+    .person-data-item {
+        display: flex;
+        align-items: center;
+        border-top: 1px solid var(--card-border-color);
+        border-bottom: 1px solid var(--card-border-color);
+        padding: 16px 10px 16px 0px;
+
+        &:first-child {
+            border-top: none;
+            padding-top: 6px;
+        }
+
+        &:last-child {
+            border-bottom: none;
+            padding-bottom: 6px;
+        }
+
+        .user-block {
+            display: flex;
+            align-items: center;
+            width: 45%;
+
+            .icon {
+                height: 50px;
+                width: 50px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: 1px solid var(--transactions-icon-color);
+                background: var(--transactions-icon-color);
+                border-radius: 50%;
+                color: #fff;
+
+                &.debit {
+                    border-color: transparent;
+                    background: #ff7a7a80;
+                }
+
+                &.credit {
+                    border-color: transparent;
+                    background: #74dd9880;
+                }
+
+                .placeholder {
+                    border-radius: 12px;
+                    height: 100%;
+                }
+            }
+
+            .person-name {
+                margin-left: 10px;
+                font-size: 18px;
+            }
+        }
+
+        .value-block {
+            display: flex;
+            width: 55%;
+            margin-right: 10px;
+
+
+            .value-item {
+                display: flex;
+                align-items: center;
+
+                &:first-child {
+                    margin-right: 10px;
+                }
+
+                .name {
+                    margin-right: 6px;
+                }
+
+                .currency-value {
+                    border: 1px solid var(--field-border-color);
+                    border-radius: 6px;
+                    padding: 8px;
+                    font-size: 16px;
+                }
+            }
+        }
+
+        .view-more {
+            .more-option {
+                padding: 2px 10px;
+                border-radius: 5px;
+                transition: .3s;
+                cursor: pointer;
+
+                &:hover {
+                    transition: .3s;
+                    background: var(--transaction-add-option-hover-bg);
+                }
             }
         }
     }

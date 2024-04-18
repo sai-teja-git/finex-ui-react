@@ -11,6 +11,7 @@ export default function SplitBill() {
     const [dummyLoader, updateDummyLoader] = useState(true);
     const [groupFormData, updateGroupFormData] = useState<any>(createNewPersonObj());
     const [selectedGroupToView, updateSelectedViewGroup] = useState<any>({});
+    const [overall_card_details, setOverallCardDetails] = useState<Record<string, any>>({});
 
     useEffect(() => {
         setTimeout(() => {
@@ -288,135 +289,249 @@ export default function SplitBill() {
         </>
     }
 
-    function singleBillTemplate() {
+    function singleGroupOverallTemplate() {
         return <>
-            <div className="single-group-details">
-                <div className="single-group-block left">
-                    <div className="bill-block">
-                        <div className="card">
-                            <div className="card-body">
-                                <div className="log-block estimation">
-                                    <div className="icon">
-                                        <i className="fa-solid fa-file-invoice"></i>
-                                    </div>
-                                    <div className="data">
-                                        <div className="details">
-                                            <div className="value">
-                                                {
-                                                    dummyLoader ?
-                                                        <div className="placeholder col-8"></div>
-                                                        :
-                                                        <Currency value={75000} />
-                                                }
-                                            </div>
-                                            <div className="name">
-                                                Estimation
-                                            </div>
-                                        </div>
-                                        <div className="log-progress">
-                                            <div className="progress">
-                                                {
-                                                    dummyLoader ?
-                                                        <div className="placeholder col-12"></div>
-                                                        :
-                                                        <div className="progress-bar" style={{ width: `${75}%` }}></div>
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="log-block actual">
-                                    <div className="icon">
-                                        <i className="fa-solid fa-receipt"></i>
-                                    </div>
-                                    <div className="data">
-                                        <div className="details">
-                                            <div className="value">
-                                                {
-                                                    dummyLoader ?
-                                                        <div className="placeholder col-8"></div>
-                                                        :
-                                                        <Currency value={25000} />
-                                                }
-                                            </div>
-                                            <div className="name">
-                                                Actual
-                                            </div>
-                                        </div>
-                                        <div className="log-progress">
-                                            <div className="progress">
-                                                {
-                                                    dummyLoader ?
-                                                        <div className="placeholder col-12"></div>
-                                                        :
-                                                        <div className="progress-bar" style={{ width: `${25}%` }}></div>
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="log-block paid">
-                                    <div className="icon">
-                                        <i className="fa-solid fa-hand-holding-dollar"></i>
-                                    </div>
-                                    <div className="data">
-                                        <div className="details">
-                                            <div className="value">
-                                                {
-                                                    dummyLoader ?
-                                                        <div className="placeholder col-8"></div>
-                                                        :
-                                                        <Currency value={100000} />
-                                                }
-                                            </div>
-                                            <div className="name">
-                                                Paid
-                                            </div>
-                                        </div>
-                                        <div className="log-progress">
-                                            <div className="progress">
-                                                {
-                                                    dummyLoader ?
-                                                        <div className="placeholder col-12"></div>
-                                                        :
-                                                        <div className="progress-bar" style={{ width: `${90}%` }}></div>
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+            <div className={`overview ${dummyLoader && "placeholder-glow"}`} >
+                <div className="overview-block estimation">
+                    <div className="block-left">
+                        <div className="amount">
+                            {
+                                dummyLoader ? <span className="placeholder col-10"></span> :
+                                    <Currency value={overall_card_details["total_estimations"] ? overall_card_details["total_estimations"] : 0} />
+                            }
+                        </div>
+                        <div className="name">
+                            Estimation
                         </div>
                     </div>
-                    <div className="group-bill-log">
-                        <div className="card">
-                            <div className="card-header">
-                                <div className="card-title">
-                                    Bills
-                                </div>
-                                <div className="card-options">
-                                    <div className="option">
-                                        <button className="btn btn-outline-secondary btn-sm"><i className="fa-solid fa-plus"></i> Add Bill</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="card-body">
-
-                            </div>
+                    <div className="block-right">
+                        <div className="icon">
+                            <i className="fa-solid fa-file-invoice"></i>
                         </div>
                     </div>
                 </div>
-                <div className="single-group-block right">
-                    <div className="person-wise-details card">
+                <div className="overview-block spend">
+                    <div className="block-left">
+                        <div className="amount">
+                            {
+                                dummyLoader ? <span className="placeholder col-10"></span> :
+                                    <Currency value={overall_card_details["total_spends"] ? overall_card_details["total_spends"] : 0} />
+                            }
+                        </div>
+                        <div className="name">
+                            Actual
+                        </div>
+                    </div>
+                    <div className="block-right">
+                        <div className="icon">
+                            <i className="fa-solid fa-receipt"></i>
+                        </div>
+                    </div>
+                </div>
+                <div className="overview-block income">
+                    <div className="block-left">
+                        <div className="amount">
+                            {
+                                dummyLoader ? <span className="placeholder col-10"></span> :
+                                    <Currency value={overall_card_details["total_income"] ? overall_card_details["total_income"] : 0} />
+                            }
+                        </div>
+                        <div className="name">
+                            Paid
+                        </div>
+                    </div>
+                    <div className="block-right">
+                        <div className="icon">
+                            <i className="fa-solid fa-hand-holding-dollar"></i>
+                        </div>
+                    </div>
+                </div>
+                <div className="overview-block avg">
+                    <div className="block-left">
+                        <div className="amount">
+                            {
+                                dummyLoader ? <span className="placeholder col-10"></span> : 0
+                            }
+                        </div>
+                        <div className="name">
+                            Persons
+                        </div>
+                    </div>
+                    <div className="block-right">
+                        <div className="icon">
+                            <i className="fa-solid fa-solid fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    }
+
+    function singleBillTemplate() {
+        return <>
+            <div className="row m-0">
+                <div className="col-12 p-0">
+                    <div className="card-body">
+                        {singleGroupOverallTemplate()}
+                    </div>
+                </div>
+            </div>
+            <div className="single-group-details">
+                <div className="group-transactions-block left">
+                    <div className="card">
                         <div className="card-header">
                             <div className="card-title">
-                                Person Wise Details
+                                Bills
+                            </div>
+                            <div className="card-options">
+                                <button className="btn btn-outline-secondary btn-sm"><i className="fa-solid fa-plus"></i> Add Bill</button>
+                            </div>
+                        </div>
+                        <div className="card-body">
+                            {
+                                dummyLoader ?
+                                    <>
+                                        {
+                                            Array(10).fill(0).map((_e, i) => (
+                                                <div className={`transactions-block placeholder-glow`} key={i}>
+                                                    <div className="transaction-data">
+                                                        <div className="details">
+                                                            <div className={`icon`}>
+                                                                <div className="placeholder"></div>
+                                                            </div>
+                                                            <div className="names">
+                                                                <div className="remarks">
+                                                                    <div className="placeholder col-6" ></div>
+                                                                </div>
+                                                                <div className="category">
+                                                                    <div className="placeholder col-3" ></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="value">
+                                                            <div className="amount">
+                                                                <div className="placeholder col-8" ></div>
+                                                            </div>
+                                                            <div className="created-at">
+                                                                <div className="placeholder col-12" ></div>
+                                                            </div>
+                                                            <div className="transaction-options disabled-block">
+                                                                <div className="option delete">
+                                                                    <i className="fa-regular fa-trash-can "></i><span className="name">Delete</span>
+                                                                </div>
+                                                                <div className="option edit">
+                                                                    <i className="fa-regular fa-pen-to-square"></i>Edit
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        }
+                                    </>
+                                    :
+                                    <>
+                                        {
+                                            Array(10).fill(0).map((_e, i) => (
+                                                <div className={`transactions-block`} key={i}>
+                                                    <div className="transaction-data">
+                                                        <div className="details">
+                                                            <div className={`icon`}>
+                                                                <i className="fa-regular fa-money-bill-1"></i>
+                                                            </div>
+                                                            <div className="names">
+                                                                <div className="remarks">
+                                                                    Transport
+                                                                </div>
+                                                                <div className="category">
+                                                                    Shared By : {i + 1}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="value">
+                                                            <div className="amount">
+                                                                <Currency value={1000} />
+                                                            </div>
+                                                            <div className="created-at">
+                                                                <i className="fa-regular fa-clock"></i> 12-04-2024 10:00:56
+                                                            </div>
+                                                            <div className="transaction-options">
+                                                                <div className="option delete">
+                                                                    <i className="fa-regular fa-trash-can "></i><span className="name">Delete</span>
+                                                                </div>
+                                                                <div className="option edit">
+                                                                    <i className="fa-regular fa-pen-to-square"></i>Edit
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        }
+                                    </>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div className="group-transactions-block right">
+                    <div className="card">
+                        <div className="card-header">
+                            <div className="card-title">
+                                Person Wise
                             </div>
                             <div className="card-options">
                                 <button className="btn btn-outline-secondary btn-sm"><i className="fa-solid fa-plus"></i> Add Persons</button>
                             </div>
                         </div>
-                        <div className="card-body"></div>
+                        <div className="card-body">
+                            <div className="person-data-block">
+                                {
+                                    Array(10).fill(0).map((_e, i) => (
+                                        <div className="person-data-item" key={i}>
+                                            <div className="user-block">
+                                                <div className="icon">
+                                                    <i className="fa-solid fa-user"></i>
+                                                </div>
+                                                <div className="person-name">
+                                                    User-1
+                                                </div>
+                                            </div>
+                                            <div className="value-block">
+                                                <div className="value-item actual">
+                                                    <div className="name">
+                                                        Total
+                                                    </div>
+                                                    <div className="currency-value">
+                                                        <Currency value={10000} />
+                                                    </div>
+                                                </div>
+                                                <div className="value-item paid">
+                                                    <div className="name">
+                                                        Paid
+                                                    </div>
+                                                    <div className="currency-value">
+                                                        <Currency value={10000} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="view-more">
+                                                <div className="dropdown dropstart fnx-dropdown">
+                                                    <div className="more-option" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i className="fa-solid fa-ellipsis-vertical"></i>
+                                                        <ul className="dropdown-menu">
+                                                            <li><a className="dropdown-item">Add Bill</a></li>
+                                                            <li><a className="dropdown-item">View</a></li>
+                                                            <li><a className="dropdown-item">Edit</a></li>
+                                                            <li><a className="dropdown-item">Delete</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
