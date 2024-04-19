@@ -94,7 +94,7 @@
     color: var(--logout-init);
 
     &:hover {
-        font-size: 17px;
+        transform: scale(1.2);
         transition: 0.3s ease all;
         color: var(--logout-hover);
     }

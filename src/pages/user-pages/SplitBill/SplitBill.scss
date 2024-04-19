@@ -1,15 +1,16 @@
 @import "../Dashboard/Dashboard.scss";
 
+.placeholder-glow {
+    .placeholder {
+        height: 100%;
+        border-radius: 3px;
+    }
+}
+
 .overall-bill-data {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-
-    &.placeholder-glow {
-        .placeholder {
-            border-radius: 6px;
-        }
-    }
 
     .bill-block {
         --block-margin: 18px;
@@ -196,6 +197,13 @@
         flex-direction: column;
     }
 
+    .placeholder-glow {
+        .placeholder {
+            height: 100%;
+            border-radius: 3px;
+        }
+    }
+
     .group-transactions-block {
         margin-top: 16px;
         width: 50%;
@@ -255,6 +263,7 @@
                             .placeholder {
                                 height: 50px;
                                 width: 50px;
+                                border-radius: 10px;
                             }
                         }
 
@@ -381,6 +390,7 @@
 }
 
 .person-data-block {
+
     .person-data-item {
         display: flex;
         align-items: center;
@@ -403,16 +413,19 @@
             align-items: center;
             width: 45%;
 
+            @include mediaBreakPointUp("sm") {
+                width: 55%;
+            }
+
             .icon {
-                height: 50px;
-                width: 50px;
+                height: 40px;
+                width: 40px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 border: 1px solid var(--transactions-icon-color);
                 background: var(--transactions-icon-color);
                 border-radius: 50%;
-                color: #fff;
 
                 &.debit {
                     border-color: transparent;
@@ -433,6 +446,14 @@
             .person-name {
                 margin-left: 10px;
                 font-size: 18px;
+
+                .placeholder {
+                    border-radius: 3px;
+                }
+
+                &.loading {
+                    width: 70%;
+                }
             }
         }
 
@@ -440,6 +461,11 @@
             display: flex;
             width: 55%;
             margin-right: 10px;
+
+            @include mediaBreakPointUp("sm") {
+                flex-direction: column;
+                width: 40%;
+            }
 
 
             .value-item {
@@ -450,6 +476,15 @@
                     margin-right: 10px;
                 }
 
+                @include mediaBreakPointUp("sm") {
+                    justify-content: space-between;
+
+                    &:first-child {
+                        margin-right: 0;
+                        margin-bottom: 10px;
+                    }
+                }
+
                 .name {
                     margin-right: 6px;
                 }
@@ -458,7 +493,16 @@
                     border: 1px solid var(--field-border-color);
                     border-radius: 6px;
                     padding: 8px;
-                    font-size: 16px;
+                    font-size: 18px;
+                    font-weight: 600;
+
+                    &.loading {
+                        width: 80px;
+
+                        .placeholder {
+                            border-radius: 3px;
+                        }
+                    }
                 }
             }
         }
@@ -474,6 +518,158 @@
                     transition: .3s;
                     background: var(--transaction-add-option-hover-bg);
                 }
+            }
+        }
+    }
+}
+
+.bill-log-form {
+    .bill-value {
+        display: flex;
+        align-items: end;
+
+        .value-field {
+            margin-right: 10px;
+            width: 66%;
+        }
+    }
+
+    .warning-box {
+        border: 1px solid var(--warning-block-bg);
+        background: var(--warning-block-bg);
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        text-align: center;
+        color: #fff;
+
+        i {
+            margin-right: 6px;
+        }
+    }
+
+    .person-selection-block {
+        border: 1px solid var(--field-border-color);
+        border-radius: 10px;
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--field-border-color);
+            padding: 10px;
+
+            .select-all {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+
+                .name {
+                    font-size: 16px;
+                    margin-left: 3px;
+                }
+            }
+        }
+
+        .body {
+            padding: 10px;
+
+            .user-block {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin: 10px 0px;
+
+                &:first-child {
+                    margin-top: 0;
+                }
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                .user-details {
+                    display: flex;
+                    cursor: pointer;
+
+                    .form-check {
+                        input {
+                            cursor: pointer;
+                        }
+                    }
+                }
+
+                .options {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    .value {
+                        width: 80px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.person-overall-data-block {
+    display: flex;
+
+    .person-value-item {
+        border: 1px solid var(--card-border-color);
+        border-radius: 10px;
+        width: 50%;
+        padding: 10px;
+
+        &:first-child {
+            margin-right: 16px;
+        }
+
+        .value {
+            font-size: 24px;
+            font-weight: 600;
+        }
+    }
+}
+
+.person-share-bills {
+    margin-top: 20px;
+    height: calc(100vh - 345px);
+    overflow: auto;
+
+    .share-bill-block {
+        border: 1px solid var(--card-border-color);
+        border-radius: 10px;
+        padding: 10px;
+        margin: 10px 0px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .name {
+            margin-bottom: 5px;
+            font-size: 19px;
+
+            i {
+                margin-right: 5px;
+            }
+        }
+
+        .value-block {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .data-value {
+                font-size: 18px;
+                font-weight: 600;
             }
         }
     }
