@@ -418,14 +418,18 @@
             }
 
             .icon {
+                --fill-percentage: 30%;
                 height: 40px;
                 width: 40px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                border: 1px solid var(--transactions-icon-color);
-                background: var(--transactions-icon-color);
+                // border: 3px solid var(--transaction-add-spend-progress-bar-bg);
                 border-radius: 50%;
+                position: relative;
+                background:
+                    radial-gradient(closest-side, var(--transactions-icon-color) 79%, transparent 80% 100%),
+                    conic-gradient(var(--fill-percentage), var(--transaction-add-spend-progress-bar-bg));
 
                 &.debit {
                     border-color: transparent;

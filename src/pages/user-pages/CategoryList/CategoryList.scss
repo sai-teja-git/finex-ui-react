@@ -1,0 +1,9 @@
+.fnx-bar {
+    --fill-percentage: 30%;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background:
+        radial-gradient(closest-side, rgb(34, 34, 34) 79%, transparent 80% 100%),
+        conic-gradient(rgb(54, 208, 54) var(--fill-percentage), rgb(184, 14, 43) 0);
+}

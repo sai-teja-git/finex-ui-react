@@ -260,7 +260,9 @@ export default function SingleBillGroup() {
                                         <div className="person-data-item" key={i}>
                                             <div className="user-block">
                                                 <div className="icon">
-                                                    <i className="fa-solid fa-user"></i>
+                                                    <div className={`${i == 0 ? "paid" : ""}`}>
+                                                        <i className="fa-solid fa-user"></i>
+                                                    </div>
                                                 </div>
                                                 <div className="person-name">
                                                     User-1

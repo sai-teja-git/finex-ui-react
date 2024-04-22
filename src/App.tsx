@@ -9,7 +9,7 @@ const Dashboard = loadable(() => import("./pages/user-pages/Dashboard/Dashboard"
 const Transactions = loadable(() => import("./pages/user-pages/Transactions/Transactions"))
 const Analysis = loadable(() => import("./pages/user-pages/Analysis/Analysis"))
 const SplitBill = loadable(() => import("./pages/user-pages/SplitBill/SplitBill"))
-const CategoryList = loadable(() => import("./pages/user-pages/CategoryList"))
+const CategoryList = loadable(() => import("./pages/user-pages/CategoryList/CategoryList"))
 
 function App() {
 
