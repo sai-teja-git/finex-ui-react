@@ -259,10 +259,8 @@ export default function SingleBillGroup() {
                                     Array(10).fill(0).map((_e, i) => (
                                         <div className="person-data-item" key={i}>
                                             <div className="user-block">
-                                                <div className="icon">
-                                                    <div className={`${i == 0 ? "paid" : ""}`}>
-                                                        <i className="fa-solid fa-user"></i>
-                                                    </div>
+                                                <div className="icon" style={{ "--fill-percentage": `${i == 0 ? 50 : (i == 3 ? 75 : 0)}%` } as React.CSSProperties}>
+                                                    <i className="fa-solid fa-user"></i>
                                                 </div>
                                                 <div className="person-name">
                                                     User-1

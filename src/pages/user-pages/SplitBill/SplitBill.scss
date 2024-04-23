@@ -85,16 +85,6 @@
                 border-radius: 13px;
                 color: #fff;
 
-                &.debit {
-                    border-color: transparent;
-                    background: #ff7a7a80;
-                }
-
-                &.credit {
-                    border-color: transparent;
-                    background: #74dd9880;
-                }
-
                 .placeholder {
                     border-radius: 12px;
                     height: 100%;
@@ -249,16 +239,6 @@
                             border: 1px solid var(--transactions-icon-color);
                             background: var(--transactions-icon-color);
                             border-radius: 10px;
-
-                            &.debit {
-                                border-color: transparent;
-                                background: #ff7a7a80;
-                            }
-
-                            &.credit {
-                                border-color: transparent;
-                                background: #74dd9880;
-                            }
 
                             .placeholder {
                                 height: 50px;
@@ -418,28 +398,16 @@
             }
 
             .icon {
-                --fill-percentage: 30%;
-                height: 40px;
-                width: 40px;
+                --fill-percentage: 0;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                // border: 3px solid var(--transaction-add-spend-progress-bar-bg);
-                border-radius: 50%;
-                position: relative;
                 background:
-                    radial-gradient(closest-side, var(--transactions-icon-color) 79%, transparent 80% 100%),
-                    conic-gradient(var(--fill-percentage), var(--transaction-add-spend-progress-bar-bg));
-
-                &.debit {
-                    border-color: transparent;
-                    background: #ff7a7a80;
-                }
-
-                &.credit {
-                    border-color: transparent;
-                    background: #74dd9880;
-                }
+                    radial-gradient(closest-side, var(--app-page-background) 79%, transparent 80% 100%),
+                    conic-gradient(var(--transaction-add-income-progress-bar-fill-bg) var(--fill-percentage), var(--transaction-add-income-progress-bar-bg) 0);
 
                 .placeholder {
                     border-radius: 12px;
@@ -670,6 +638,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+
+            .value-title {
+                color: var(--app-sub-text-color);
+            }
 
             .data-value {
                 font-size: 18px;

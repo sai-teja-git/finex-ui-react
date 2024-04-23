@@ -101,10 +101,6 @@
         .menu-list {
             width: $menu-width;
 
-            @include mediaBreakPointUp("sm", "md") {
-                width: $menu-width;
-            }
-
             li {
                 a {
                     .menu-name {
