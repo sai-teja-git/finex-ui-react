@@ -1,0 +1,33 @@
+.auth-page {
+    background: #ffffff;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        .logo-container {
+            height: 62px;
+            width: 200px;
+            margin-bottom: 24px;
+
+            img {
+                height: 100%;
+                width: 100%;
+            }
+        }
+
+        .form-container {
+            width: 450px;
+            height: 400px;
+            background-color: #efefef;
+            border-radius: 10px;
+        }
+    }
+}

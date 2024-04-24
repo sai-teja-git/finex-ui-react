@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
-import Login from './pages/Login'
+import Login from './pages/auth/Login'
 import UserPages from './pages/user-pages/UserPages'
 import loadable from "@loadable/component";
 import PageNotFound from './components/PageNotFound';

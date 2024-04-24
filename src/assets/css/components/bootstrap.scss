@@ -79,6 +79,7 @@
     &.fnx-dropdown {
         .dropdown-menu {
             padding: 6px;
+            width: 100%;
 
             li {
                 &:not(:last-child) {

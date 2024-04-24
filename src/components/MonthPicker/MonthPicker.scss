@@ -54,7 +54,7 @@
             align-items: center;
 
             &.month {
-                width: 33%;
+                width: calc((100%)/3);
             }
 
             &.year {

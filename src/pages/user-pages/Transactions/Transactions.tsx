@@ -539,16 +539,16 @@ export default function Transactions() {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="col-12 form-group mt-3">
-                        <label className="field-required" htmlFor="value">Value</label>
-                        <input type="number" id="value" name="value" className="form-control" placeholder="Enter Value"
-                            value={log_data.value} onChange={event => updateLogData({ ...log_data, value: event.target.value })} />
-                    </div>
-                    <div className="col-12 form-group mt-3">
-                        <label className="field-required" htmlFor="remarks">Remarks</label>
-                        <input type="text" id="remarks" name="remarks" className="form-control" placeholder="Enter Remarks"
-                            value={log_data.remarks} onChange={event => updateLogData({ ...log_data, remarks: event.target.value })} />
+                        <div className="col-12 form-group mt-3">
+                            <label className="field-required" htmlFor="value">Value</label>
+                            <input type="number" id="value" name="value" className="form-control" placeholder="Enter Value"
+                                value={log_data.value} onChange={event => updateLogData({ ...log_data, value: event.target.value })} />
+                        </div>
+                        <div className="col-12 form-group mt-3">
+                            <label className="field-required" htmlFor="remarks">Remarks</label>
+                            <input type="text" id="remarks" name="remarks" className="form-control" placeholder="Enter Remarks"
+                                value={log_data.remarks} onChange={event => updateLogData({ ...log_data, remarks: event.target.value })} />
+                        </div>
                     </div>
                 </div>
                 <div className="offcanvas-footer end">

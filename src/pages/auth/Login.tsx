@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom"
-import { ROUTER_KEYS } from "../router/router-keys"
+import { ROUTER_KEYS } from "../../router/router-keys"
 import { useEffect } from "react";
+import "./AuthPage.scss"
 
 export default function Login() {
 
@@ -34,8 +35,13 @@ export default function Login() {
 
     return (
         <>
-            <div className="login-center">
-                <button className="btn btn-outline-secondary ms-3" onClick={verifyUser}>Login</button>
+            <div className="auth-page">
+                <div className="auth-container">
+                    <div className="logo-container">
+                        <img src="src/assets/images/logos/finex-logo-dark.png" alt="" />
+                    </div>
+                    <div className="form-container"></div>
+                </div>
             </div>
         </>
     )

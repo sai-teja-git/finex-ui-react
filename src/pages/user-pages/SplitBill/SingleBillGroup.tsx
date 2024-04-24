@@ -219,7 +219,7 @@ export default function SingleBillGroup() {
                             {
                                 dummyLoader ?
                                     Array(10).fill(0).map((_e, i) => (
-                                        <div className="person-data-item" key={i}>
+                                        <div className="person-data-item placeholder-glow" key={i}>
                                             <div className="user-block">
                                                 <div className="icon">
                                                     <i className="fa-solid fa-user"></i>
