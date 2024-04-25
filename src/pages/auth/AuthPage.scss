@@ -1,7 +1,11 @@
+@import "../../assets/css/util/mixins.scss";
+@import "../../assets/css/theme/ThemeMain.scss";
+
 .auth-page {
-    background: #ffffff;
+    background: #efefef;
     overflow: hidden;
     height: 100vh;
+    width: 100vw;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -11,11 +15,18 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
+        transform: translateY(-12%);
+        padding: 10px 0px;
 
         .logo-container {
             height: 62px;
             width: 200px;
             margin-bottom: 24px;
+
+            @include mediaBreakPointUp("sm") {
+                height: 50px;
+                width: 150px;
+            }
 
             img {
                 height: 100%;
@@ -25,9 +36,60 @@
 
         .form-container {
             width: 450px;
-            height: 400px;
-            background-color: #efefef;
+            background-color: #fff;
             border-radius: 10px;
+            padding: 26px 24px;
+
+            @include mediaBreakPointUp("sm") {
+                width: 300px;
+            }
+
+            .form-title {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 22px;
+                font-weight: 400;
+                margin-bottom: 10px;
+            }
+
+            .form-data {
+
+                .form-btn {
+                    margin-top: 28px;
+                }
+
+                .password-view {
+                    cursor: pointer;
+                    position: absolute;
+                    transform: translateY(-31px);
+                    right: 30px;
+                }
+
+            }
+
+            .form-options {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 24px;
+
+                .option {
+                    cursor: pointer;
+                    transition: .3s;
+
+                    &:hover {
+                        transition: .3s;
+                        color: var(--primary-color);
+                        scale: 1.1;
+                    }
+                }
+            }
+
+            input:-webkit-autofill,
+            input:-webkit-autofill:focus {
+                transition: background-color 600000s 0s, color 600000s 0s;
+            }
         }
     }
 }

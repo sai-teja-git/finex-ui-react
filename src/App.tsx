@@ -10,12 +10,16 @@ const Transactions = loadable(() => import("./pages/user-pages/Transactions/Tran
 const Analysis = loadable(() => import("./pages/user-pages/Analysis/Analysis"))
 const SplitBill = loadable(() => import("./pages/user-pages/SplitBill/SplitBill"))
 const CategoryList = loadable(() => import("./pages/user-pages/CategoryList/CategoryList"))
+const SignUp = loadable(() => import("./pages/auth/SignUp"))
+const UserDataUpdate = loadable(() => import("./pages/auth/UserDataUpdate"))
 
 function App() {
 
   return (
     <Routes>
       <Route path="login" element={<Login />}></Route>
+      <Route path="sign-up" element={<SignUp />}></Route>
+      <Route path="user-data-update" element={<UserDataUpdate />}></Route>
       <Route path="email-verification" element={<EmailVerification />}></Route>
       <Route path='pages' element={<UserPages />}>
         <Route path="dashboard" element={<Dashboard />}></Route>

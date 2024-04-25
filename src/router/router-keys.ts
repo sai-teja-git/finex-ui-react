@@ -1,4 +1,16 @@
 export const ROUTER_KEYS: Record<string, any> = {
+    login: {
+        path: "login",
+        url: "/login",
+    },
+    sign_up: {
+        path: "sign-up",
+        url: "/sign-up",
+    },
+    user_data_update: {
+        path: "user-data-update",
+        url: "/user-data-update",
+    },
     dashboard: {
         path: "dashboard",
         url: "/pages/dashboard",
