@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function UserDataUpdate() {
+export default function UserVerification() {
     const [passwordFieldType, updatePasswordFieldType] = useState<"text" | "password">("password")
 
     useEffect(() => {
@@ -53,47 +53,6 @@ export default function UserDataUpdate() {
                                             passwordFieldType === "text" && <i className="fa fa-eye-slash" onClick={setPasswordFieldView}></i>
                                         }
                                     </span>
-                                </div>
-                                <div className="form-group mb-3">
-                                    <label className="field-required" htmlFor="user-time-zone">Timezone</label>
-                                    <div className="dropdown fnx-dropdown">
-                                        <a className="btn btn-outline-secondary w-100 dropdown-toggle" id="user-time-zone" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Select Timezone
-                                        </a>
-                                        <ul className="dropdown-menu">
-                                            <div className="field-search">
-                                                <input type="text" className="form-control" name="search-text" id="search-text" placeholder="Search Here" />
-                                            </div>
-                                            <div className="field-data">
-
-                                                {
-                                                    Array(10).fill(0).map((_e, i) => (
-                                                        <li key={i}><a className={`dropdown-item ${i === 2 ? "active" : ""}`} >zone-{i + 1}</a></li>
-                                                    ))
-                                                }
-                                            </div>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div className="form-group mb-3">
-                                    <label className="field-required" htmlFor="user-currency">Currency</label>
-                                    <div className="dropdown fnx-dropdown">
-                                        <a className="btn btn-outline-secondary w-100 dropdown-toggle" id="user-currency" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Select Currency
-                                        </a>
-                                        <ul className="dropdown-menu">
-                                            <div className="field-search">
-                                                <input type="text" className="form-control" name="search-text" id="search-text" placeholder="Search Here" />
-                                            </div>
-                                            <div className="field-data">
-                                                {
-                                                    Array(10).fill(0).map((_e, i) => (
-                                                        <li key={i}><a className={`dropdown-item ${i === 2 ? "active" : ""}`} >Currency-{i + 1}</a></li>
-                                                    ))
-                                                }
-                                            </div>
-                                        </ul>
-                                    </div>
                                 </div>
                                 <div className="form-btn">
                                     <button className="btn btn-ft-primary w-100" type="submit">Update</button>

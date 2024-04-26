@@ -4,14 +4,17 @@ import UserPages from './pages/user-pages/UserPages'
 import loadable from "@loadable/component";
 import PageNotFound from './components/PageNotFound';
 
-const EmailVerification = loadable(() => import("./pages/EmailVerification"))
+import { setupInterceptorsTo } from "./interceptors/axios.interceptor";
+import axios from "axios";
+setupInterceptorsTo(axios);
+
 const Dashboard = loadable(() => import("./pages/user-pages/Dashboard/Dashboard"))
 const Transactions = loadable(() => import("./pages/user-pages/Transactions/Transactions"))
 const Analysis = loadable(() => import("./pages/user-pages/Analysis/Analysis"))
 const SplitBill = loadable(() => import("./pages/user-pages/SplitBill/SplitBill"))
 const CategoryList = loadable(() => import("./pages/user-pages/CategoryList/CategoryList"))
 const SignUp = loadable(() => import("./pages/auth/SignUp"))
-const UserDataUpdate = loadable(() => import("./pages/auth/UserDataUpdate"))
+const UserVerification = loadable(() => import("./pages/auth/UserVerification"))
 
 function App() {
 
@@ -19,8 +22,8 @@ function App() {
     <Routes>
       <Route path="login" element={<Login />}></Route>
       <Route path="sign-up" element={<SignUp />}></Route>
-      <Route path="user-data-update" element={<UserDataUpdate />}></Route>
-      <Route path="email-verification" element={<EmailVerification />}></Route>
+      <Route path="password-update" element={<UserVerification />}></Route>
+      <Route path="email-verification" element={<UserVerification />}></Route>
       <Route path='pages' element={<UserPages />}>
         <Route path="dashboard" element={<Dashboard />}></Route>
         <Route path="transactions" element={<Transactions />}></Route>

@@ -139,8 +139,6 @@
 }
 
 .btn {
-    $primary-color: var(--primary-color);
-
     &.btn-ft-primary {
         --bs-btn-font-weight: 600;
         --bs-btn-color: var(--bs-white);
@@ -152,5 +150,9 @@
         --bs-btn-active-color: var(--bs-btn-hover-color);
         --bs-btn-active-bg: var(--fnx-button-hover-bg);
         --bs-btn-active-border-color: var(--fnx-button-hover-bg);
+
+        --bs-btn-disabled-bg: var(--primary-color);
+        --bs-btn-disabled-color: var(--bs-white);
+        --bs-btn-disabled-border-color: var(--primary-color);
     }
 }

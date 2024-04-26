@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { ROUTER_KEYS } from "../../router/router-keys"
 import { useEffect, useState } from "react";
 import "./AuthPage.scss"
+import UserApiService from "../../api/user.api.service";
 
 type PageView = "login" | "forgotPassword"
 
@@ -66,7 +67,7 @@ export default function Login() {
                             <div className="form-data">
                                 <form onSubmit={verifyUser}>
                                     <div className="form-group mb-3">
-                                        <label htmlFor="user-name" className="field-required">User Name</label>
+                                        <label htmlFor="user-name" className="field-required">Username</label>
                                         <input type="text" className="form-control" name="user-name" id="user-name" />
                                     </div>
                                     <div className="form-group">
@@ -83,18 +84,16 @@ export default function Login() {
                                     </div>
                                     <div className="form-btn place-holder-glow">
                                         <button className="btn btn-ft-primary w-100" type="submit">Sign In</button>
-                                        {/* <div className="placeholder-glow cursor_wait mb-1" >
-                                            <a className="btn btn-secondary disabled placeholder w-100 fw-500">Authenticating...</a>
-                                        </div> */}
+                                        {/* <button className="btn btn-ft-primary w-100" type="button" disabled><span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Authenticating...</button> */}
                                     </div>
                                 </form>
                             </div>
                             <div className="form-options">
-                                <div className="option" onClick={openSignUp}>
-                                    Sign Up
+                                <div className="option" >
+                                    <div className="link-text" onClick={() => setPageViewType("forgotPassword")}>Forgot Password?</div>
                                 </div>
-                                <div className="option" onClick={() => setPageViewType("forgotPassword")}>
-                                    Forgot Password?
+                                <div className="option">
+                                    New to Finex? <div className="link-text" onClick={openSignUp}>Sign up</div>
                                 </div>
                             </div>
                         </div>
@@ -105,11 +104,11 @@ export default function Login() {
                             <div className="form-data">
                                 <form >
                                     <div className="form-group mb-3">
-                                        <label htmlFor="user-name" className="field-required">User Name</label>
+                                        <label htmlFor="user-name" className="field-required">Username</label>
                                         <input type="text" className="form-control" name="user-name" id="user-name" />
                                     </div>
                                     <div className="form-group mb-3">
-                                        <label htmlFor="user-mail" className="field-required">Mail</label>
+                                        <label htmlFor="user-mail" className="field-required">Email</label>
                                         <input type="email" className="form-control" name="user-mail" id="user-mail" />
                                     </div>
                                     <div className="form-btn">
@@ -118,11 +117,11 @@ export default function Login() {
                                 </form>
                             </div>
                             <div className="form-options">
-                                <div className="option" onClick={openSignUp}>
-                                    Sign Up
+                                <div className="option">
+                                    <div className="link-text" onClick={() => setPageViewType("login")}>Back to login</div>
                                 </div>
-                                <div className="option" onClick={() => setPageViewType("login")}>
-                                    Back to login
+                                <div className="option">
+                                    New to Finex? <div className="link-text" onClick={openSignUp}>Sign up</div>
                                 </div>
                             </div>
                         </div>
