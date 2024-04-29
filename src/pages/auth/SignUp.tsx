@@ -2,10 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"
 import { ROUTER_KEYS } from "../../router/router-keys";
 import toast from "react-hot-toast";
-import UserApiService from "../../api/user.api.service";
+import userApiService from "../../api/user.api.service";
 
 
 export default function SignUp() {
+
+    /* `const navigate = useNavigate();` is a line of code in a React functional component that uses
+    the `useNavigate` hook from `react-router-dom` library. This hook provides a function that
+    allows you to navigate programmatically to different routes within your application. In this
+    case, it is used to navigate to a specific route defined in the `ROUTER_KEYS` object when a
+    certain action is triggered, such as clicking a button to go to the login page. */
     const navigate = useNavigate();
 
     const [signUpData, updateSignUpData] = useState<Record<string, string>>({
@@ -21,13 +27,24 @@ export default function SignUp() {
         document.body.setAttribute("data-bs-theme", "light");
     }, [])
 
+    /**
+     * The function `openLogin` navigates to the login page using the `navigate` function with the URL
+     * from `ROUTER_KEYS.login.url`.
+     */
     function openLogin() {
         navigate(ROUTER_KEYS.login.url)
     }
 
+    /**
+     * The function `createUser` checks for required fields in `signUpData`, sends a sign-up request to
+     * the User API service, and displays appropriate toast messages based on the response.
+     * @returns The function `createUser()` returns either nothing (undefined) if all required fields
+     * are filled in the `signUpData` object, or it returns early with an error message if any required
+     * field is missing.
+     */
     function createUser() {
-        const required_fields = ["user_name", "name", "email"];
-        for (let key of required_fields) {
+        const requiredFields = ["user_name", "name", "email"];
+        for (let key of requiredFields) {
             if (!signUpData[key]) {
                 toast.error("Please Fill all required fields to Sign up", { duration: 3000, id: "sign-up-error" })
                 return;
@@ -38,14 +55,12 @@ export default function SignUp() {
             ...signUpData
         }
         updateLoadUserSignUp(true)
-        UserApiService.signUp(body).then(() => {
+        userApiService.signUp(body).then(() => {
             toast.success("User Created\n Verification email sent to your registered mail, verify & create password to login", { duration: 6000 })
-            // openLogin()
-            updateLoadUserSignUp(false)
+            openLogin()
         }).catch(e => {
-            updateLoadUserSignUp(false)
             const msg = e?.response?.data?.message ?? "User Creation Failed";
-            toast.error(msg, { duration: 2000 })
+            toast.error(msg, { duration: 3000 })
             updateLoadUserSignUp(false)
         })
     }
@@ -62,17 +77,17 @@ export default function SignUp() {
                             <form autoComplete="off">
                                 <div className="form-group mb-3">
                                     <label htmlFor="user-name" className="field-required">Username</label>
-                                    <input type="text" className="form-control" name="user-name" id="user-name" placeholder="Enter User Name"
+                                    <input type="text" className="form-control" name="user-name" id="user-name"
                                         onChange={(e) => updateSignUpData({ ...signUpData, user_name: e.target.value })} disabled={loadUserSignUp} />
                                 </div>
                                 <div className="form-group mb-3">
                                     <label htmlFor="user-display-name" className="field-required">Name</label>
-                                    <input type="text" className="form-control" name="user-display-name" id="user-display-name" placeholder="Enter Full Name"
+                                    <input type="text" className="form-control" name="user-display-name" id="user-display-name"
                                         onChange={(e) => updateSignUpData({ ...signUpData, name: e.target.value })} disabled={loadUserSignUp} />
                                 </div>
                                 <div className="form-group mb-3">
                                     <label htmlFor="user-mail" className="field-required">Email</label>
-                                    <input type="email" className="form-control" name="user-mail" id="user-mail" placeholder="Enter Mail id"
+                                    <input type="email" className="form-control" name="user-mail" id="user-mail"
                                         onChange={(e) => updateSignUpData({ ...signUpData, email: e.target.value })} disabled={loadUserSignUp} />
                                 </div>
                                 <div className="form-btn">
@@ -88,7 +103,6 @@ export default function SignUp() {
                             </form>
                         </div>
                         <div className="form-options">
-                            <div className="option"></div>
                             <div className="option" onClick={openLogin}>
                                 Already have account?<div className={`link-text ${loadUserSignUp ? " disabled-block" : ""}`}>Sign In</div>
                             </div>

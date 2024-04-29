@@ -2,15 +2,35 @@ import { useNavigate } from "react-router-dom"
 import { ROUTER_KEYS } from "../../router/router-keys"
 import { useEffect, useState } from "react";
 import "./AuthPage.scss"
-import UserApiService from "../../api/user.api.service";
+import userApiService from "../../api/user.api.service";
+import toast from "react-hot-toast";
 
-type PageView = "login" | "forgotPassword"
+type PageView = "login" | "forgotPassword";
+interface LoginBody {
+    user_name: string;
+    password: string;
+}
+interface ForgotPassword {
+    user_name: string;
+    email: string;
+}
 
 export default function Login() {
 
     const navigate = useNavigate()
     const [pageViewType, updatePageView] = useState<PageView>("login");
-    const [passwordFieldType, updatePasswordFieldType] = useState<"text" | "password">("password")
+    const [passwordFieldType, updatePasswordFieldType] = useState<"text" | "password">("password");
+    const [errorMessage, updateErrorMessage] = useState("");
+    const [signInData, updateSignInData] = useState<LoginBody>({
+        user_name: "",
+        password: "",
+    });
+    const [passwordReset, updatePasswordResetData] = useState<ForgotPassword>({
+        user_name: "",
+        email: "",
+    });
+    const [loadUserLogin, updateLoadUserLogin] = useState(false);
+
 
     useEffect(() => {
         sessionStorage.clear()
@@ -18,6 +38,10 @@ export default function Login() {
         document.body.setAttribute("data-bs-theme", "light");
     }, [])
 
+    /**
+     * The function `setPasswordFieldView` toggles the visibility of a password field between plain
+     * text and password input.
+     */
     function setPasswordFieldView() {
         if (passwordFieldType === "password") {
             updatePasswordFieldType("text")
@@ -26,32 +50,108 @@ export default function Login() {
         }
     }
 
+    /**
+     * The function `setPageViewType` updates page view based on the selected type and handles specific
+     * data updates for "login" and "forgotPassword" views.
+     * @param {PageView} selected - The `selected` parameter in the `setPageViewType` function is of
+     * type `PageView`. It is used to determine which page view is currently selected, such as "login"
+     * or "forgotPassword".
+     */
     function setPageViewType(selected: PageView) {
-        updatePageView(selected)
+        updatePageView(selected);
+        updateLoadUserLogin(false)
+        if (selected === "login") {
+            updateSignInData({ password: "", user_name: passwordReset.user_name ? passwordReset.user_name : "" });
+        } else if (selected === "forgotPassword") {
+            updatePasswordResetData({ user_name: signInData.user_name ? signInData.user_name : "", email: "" });
+        }
     }
 
+    /**
+     * The function `openSignUp` navigates to the sign-up page using the `navigate` function with the
+     * URL from `ROUTER_KEYS.sign_up.url`.
+     */
     function openSignUp() {
         navigate(ROUTER_KEYS.sign_up.url)
     }
 
-    function verifyUser() {
-        const data: Record<string, string> = {
-            "currency_name": "Indian Rupee",
-            "time_zone": "Asia/Kolkata",
-            "currency_icon": "fa-solid fa-indian-rupee-sign",
-            "username": "sai_teja",
-            "currency_decimal_digits": "2",
-            "currency_code": "INR",
-            "currency_html_code": "&#8377;",
-            "user_alias": "Sai Teja",
-            "user_email": "saitejaspl1223@gmail.com",
-            "currency_id": "64b27971e7183199c4ebfb32",
-            "currency_name_plural": "Indian rupees",
+    /**
+     * The function `verifyUser` handles user authentication by logging in with provided credentials
+     * and storing user data in session storage.
+     * @param {any} e - The parameter `e` in the `verifyUser` function is typically an event object,
+     * commonly used in event handlers in JavaScript. It is used to access information about the event
+     * that triggered the function, such as a form submission or a button click. In this case, it is
+     * being used to prevent
+     * @returns The function `verifyUser` returns either nothing (undefined) if the condition for
+     * filling the Username and Password is not met, or it navigates to the dashboard URL after
+     * successfully logging in the user.
+     */
+    function verifyUser(e: any) {
+        clearErrorMessage()
+        e.preventDefault();
+        if (!signInData.user_name || !signInData.password) {
+            toast.error("Fill the Username and Password", { id: "fields-empty", duration: 2000 });
+            return;
         }
-        for (let key in data) {
-            sessionStorage.setItem(key, data[key])
+        updateLoadUserLogin(true)
+        userApiService.login(signInData).then(res => {
+            const data = res.data.data
+            sessionStorage.setItem("user_alias", data.name);
+            sessionStorage.setItem("user_email", data.email);
+            sessionStorage.setItem("currency_id", data.currency_id);
+            sessionStorage.setItem("currency_code", data.currency_code);
+            sessionStorage.setItem("currency_name", data.currency_name);
+            sessionStorage.setItem("currency_name_plural", data.currency_name_plural);
+            sessionStorage.setItem("currency_decimal_digits", data.currency_decimal_digits ?? 2);
+            sessionStorage.setItem("last_login", data.last_login ? data.last_login : "");
+            sessionStorage.setItem("time_zone_id", data.time_zone_id);
+            sessionStorage.setItem("time_zone", data.time_zone ? data.time_zone : "");
+            sessionStorage.setItem("access_token", data.token ? data.token : "");
+            sessionStorage.setItem("app_theme", data.theme ? data.theme : "system")
+            navigate(ROUTER_KEYS.dashboard.url)
+        }).catch(e => {
+            const msg = e?.response?.data?.message ?? "Login Failed";
+            updateErrorMessage(msg);
+            updateLoadUserLogin(false)
+        })
+    }
+
+    /**
+     * The function `sendForgetPasswordLink` is used to send a password reset link to a user's
+     * registered email after validating the username and email fields.
+     * @param {any} e - The parameter `e` in the `sendForgetPasswordLink` function is typically an
+     * event object, which is commonly used in event handling functions in JavaScript. In this case, it
+     * is likely representing an event that triggers the function, such as a form submission or a
+     * button click. The `e.preventDefault
+     * @returns The function `sendForgetPasswordLink` returns either nothing (undefined) or it returns
+     * early with a toast error message if the `user_name` or `email` fields are empty. If the password
+     * reset is successful, it displays a success toast message and sets the page view type to "login".
+     * If there is an error during the password reset process, it updates the error message and sets
+     * `update
+     */
+    function sendForgetPasswordLink(e: any) {
+        e.preventDefault();
+        clearErrorMessage()
+        if (!passwordReset.user_name || !passwordReset.email) {
+            toast.error("Fill the Username and Email", { id: "fields-empty-password-link", duration: 2000 });
+            return;
         }
-        navigate(ROUTER_KEYS.dashboard.url)
+        updateLoadUserLogin(true)
+        userApiService.resetPassword(passwordReset).then(() => {
+            toast.success("Reset password link sent to your registered mail", { duration: 5000 });
+            setPageViewType("login")
+        }).catch(e => {
+            const msg = e?.response?.data?.message ?? "Failed to generate link";
+            updateErrorMessage(msg);
+            updateLoadUserLogin(false)
+        })
+    }
+
+    /**
+     * The function `clearErrorMessage` clears the error message by updating it to an empty string.
+     */
+    function clearErrorMessage() {
+        updateErrorMessage("")
     }
 
     return (
@@ -67,12 +167,24 @@ export default function Login() {
                             <div className="form-data">
                                 <form onSubmit={verifyUser}>
                                     <div className="form-group mb-3">
-                                        <label htmlFor="user-name" className="field-required">Username</label>
-                                        <input type="text" className="form-control" name="user-name" id="user-name" />
+                                        <label htmlFor="username" className="field-required">Username</label>
+                                        <input type="text" className="form-control" name="username" id="username" value={signInData.user_name} disabled={loadUserLogin} onChange={(e) => {
+                                            clearErrorMessage()
+                                            updateSignInData({
+                                                ...signInData,
+                                                user_name: e.target.value
+                                            })
+                                        }} />
                                     </div>
-                                    <div className="form-group">
-                                        <label htmlFor="user-password" className="field-required">Password</label>
-                                        <input type={passwordFieldType} className="form-control" name="user-password" id="user-password" />
+                                    <div className="form-group mb-3">
+                                        <label htmlFor="password" className="field-required">Password</label>
+                                        <input type={passwordFieldType} className="form-control" name="password" id="password" disabled={loadUserLogin} onChange={(e) => {
+                                            clearErrorMessage()
+                                            updateSignInData({
+                                                ...signInData,
+                                                password: e.target.value
+                                            })
+                                        }} />
                                         <span className="password-view" id="password-view" >
                                             {
                                                 passwordFieldType === "password" && <i className="fa fa-eye" onClick={setPasswordFieldView}></i>
@@ -82,18 +194,31 @@ export default function Login() {
                                             }
                                         </span>
                                     </div>
-                                    <div className="form-btn place-holder-glow">
-                                        <button className="btn btn-ft-primary w-100" type="submit">Sign In</button>
-                                        {/* <button className="btn btn-ft-primary w-100" type="button" disabled><span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Authenticating...</button> */}
+                                    {
+                                        errorMessage &&
+                                        <div className="form-error">
+                                            {errorMessage}
+                                        </div>
+                                    }
+                                    <div className="form-btn">
+                                        {
+                                            loadUserLogin ?
+                                                <button className="btn btn-ft-primary w-100" type="button" disabled>
+                                                    <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Authenticating...
+                                                </button>
+                                                :
+                                                <button className="btn btn-ft-primary w-100" type="submit">Sign In</button>
+                                        }
+
                                     </div>
                                 </form>
                             </div>
                             <div className="form-options">
                                 <div className="option" >
-                                    <div className="link-text" onClick={() => setPageViewType("forgotPassword")}>Forgot Password?</div>
+                                    <div className={`link-text ${loadUserLogin ? " disabled-block" : ""}`} onClick={() => setPageViewType("forgotPassword")}>Forgot Password?</div>
                                 </div>
                                 <div className="option">
-                                    New to Finex? <div className="link-text" onClick={openSignUp}>Sign up</div>
+                                    New to Finex? <div className={`link-text ${loadUserLogin ? " disabled-block" : ""}`} onClick={openSignUp}>Sign up</div>
                                 </div>
                             </div>
                         </div>
@@ -102,26 +227,51 @@ export default function Login() {
                         pageViewType === "forgotPassword" &&
                         <div className="form-container">
                             <div className="form-data">
-                                <form >
+                                <form onSubmit={sendForgetPasswordLink}>
                                     <div className="form-group mb-3">
                                         <label htmlFor="user-name" className="field-required">Username</label>
-                                        <input type="text" className="form-control" name="user-name" id="user-name" />
+                                        <input type="text" className="form-control" name="user-name" id="user-name" value={passwordReset.user_name} disabled={loadUserLogin} onChange={(e) => {
+                                            clearErrorMessage()
+                                            updatePasswordResetData({
+                                                ...passwordReset,
+                                                user_name: e.target.value
+                                            })
+                                        }} />
                                     </div>
                                     <div className="form-group mb-3">
                                         <label htmlFor="user-mail" className="field-required">Email</label>
-                                        <input type="email" className="form-control" name="user-mail" id="user-mail" />
+                                        <input type="email" className="form-control" name="user-mail" id="user-mail" disabled={loadUserLogin} onChange={(e) => {
+                                            clearErrorMessage()
+                                            updatePasswordResetData({
+                                                ...passwordReset,
+                                                email: e.target.value
+                                            })
+                                        }} />
                                     </div>
+                                    {
+                                        errorMessage &&
+                                        <div className="form-error">
+                                            {errorMessage}
+                                        </div>
+                                    }
                                     <div className="form-btn">
-                                        <button className="btn btn-ft-primary w-100" type="submit">Send Link</button>
+                                        {
+                                            loadUserLogin ?
+                                                <button className="btn btn-ft-primary w-100" type="button" disabled>
+                                                    <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Generating...
+                                                </button>
+                                                :
+                                                <button className="btn btn-ft-primary w-100" type="submit">Send Link</button>
+                                        }
                                     </div>
                                 </form>
                             </div>
                             <div className="form-options">
                                 <div className="option">
-                                    <div className="link-text" onClick={() => setPageViewType("login")}>Back to login</div>
+                                    <div className={`link-text ${loadUserLogin ? " disabled-block" : ""}`} onClick={() => setPageViewType("login")}>Back to login</div>
                                 </div>
                                 <div className="option">
-                                    New to Finex? <div className="link-text" onClick={openSignUp}>Sign up</div>
+                                    New to Finex? <div className={`link-text ${loadUserLogin ? " disabled-block" : ""}`} onClick={openSignUp}>Sign up</div>
                                 </div>
                             </div>
                         </div>

@@ -3,6 +3,9 @@ import { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } 
 const onRequest = (config: InternalAxiosRequestConfig) => {
     // console.info(`[request]`, config);
     // config.headers.fnxUserName = "test";
+    if (!config.url?.endsWith("login")) {
+        config.headers.Authorization = `Bearer ${sessionStorage.getItem("access_token")}`
+    }
     return config;
 }
 

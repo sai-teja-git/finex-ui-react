@@ -22,7 +22,7 @@ function App() {
     <Routes>
       <Route path="login" element={<Login />}></Route>
       <Route path="sign-up" element={<SignUp />}></Route>
-      <Route path="password-update" element={<UserVerification />}></Route>
+      <Route path="reset-password" element={<UserVerification />}></Route>
       <Route path="email-verification" element={<UserVerification />}></Route>
       <Route path='pages' element={<UserPages />}>
         <Route path="dashboard" element={<Dashboard />}></Route>

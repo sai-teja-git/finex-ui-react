@@ -66,6 +66,17 @@
                     right: 30px;
                 }
 
+                .form-error {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    color: var(--field-required-color);
+                }
+
+                .info-msg {
+                    color: #fe7531;
+                }
+
             }
 
             .form-options {

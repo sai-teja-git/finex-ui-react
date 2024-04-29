@@ -303,3 +303,12 @@
         }
     }
 }
+
+.update-password {
+    .password-view {
+        cursor: pointer;
+        position: absolute;
+        transform: translateY(-31px);
+        right: 30px;
+    }
+}
