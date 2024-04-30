@@ -20,3 +20,13 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
 }
+
+.form-error-message {
+    color: var(--field-required-color);
+
+    &.centered {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

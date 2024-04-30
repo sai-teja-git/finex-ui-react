@@ -1,4 +1,4 @@
-import helperService from "../services/helper-functions.service"
+import helperService from "../services/helperFunctionsService"
 
 interface CurrencyProps {
     value: string | number

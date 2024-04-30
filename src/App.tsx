@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import Login from './pages/auth/Login'
 import UserPages from './pages/user-pages/UserPages'
 import loadable from "@loadable/component";
@@ -6,6 +6,7 @@ import PageNotFound from './components/PageNotFound';
 
 import { setupInterceptorsTo } from "./interceptors/axios.interceptor";
 import axios from "axios";
+import globalRouter from './services/globalRouter';
 setupInterceptorsTo(axios);
 
 const Dashboard = loadable(() => import("./pages/user-pages/Dashboard/Dashboard"))
@@ -17,6 +18,9 @@ const SignUp = loadable(() => import("./pages/auth/SignUp"))
 const UserVerification = loadable(() => import("./pages/auth/UserVerification"))
 
 function App() {
+
+  const navigate = useNavigate();
+  globalRouter.navigate = navigate;
 
   return (
     <Routes>

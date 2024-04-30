@@ -1,7 +1,7 @@
 import "./Analysis.scss";
 import Currency from "../../../components/Currency";
 import { useEffect, useState } from "react";
-import helperService from "../../../services/helper-functions.service";
+import helperService from "../../../services/helperFunctionsService";
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import Accessibility from "highcharts/modules/accessibility";

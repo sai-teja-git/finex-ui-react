@@ -25,13 +25,18 @@ const updateUserDetails = (body: any) => {
     return axios.patch(`${environment.API_URL}/user`, body)
 }
 
+const updateUserPassword = (body: any) => {
+    return axios.patch(`${environment.API_URL}/user/password`, body)
+}
+
 const userApiService = {
     signUp,
     verifyUser,
     login,
     resetPassword,
     overridePassword,
-    updateUserDetails
+    updateUserDetails,
+    updateUserPassword
 }
 
 export default userApiService

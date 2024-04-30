@@ -7,7 +7,7 @@ import HighchartsReact from 'highcharts-react-official';
 import SolidGauge from "highcharts/modules/solid-gauge"
 import Accessibility from "highcharts/modules/accessibility"
 import moment from "moment-timezone";
-import helperService from "../../../services/helper-functions.service";
+import helperService from "../../../services/helperFunctionsService";
 
 import highchartsMore from "highcharts/highcharts-more";
 
