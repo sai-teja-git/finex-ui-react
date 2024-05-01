@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import userApiService from "../api/user.api.service";
 import commonApiService from "../api/common.api.service";
 import { ROUTER_KEYS } from "../router/router-keys";
-import timeConversionsService from "../services/timeConversionsService";
+import timeConversionsService from "../services/time-conversions.service";
 import toast from "react-hot-toast";
 import { USER_CONST } from "../const-files/user.const";
 import globalRouter from "../services/globalRouter";
+import helperService from "../services/helper-functions.service";
+import CurrencyCode from "./CurrencyCode";
+import NoData from "./NoData";
 
 interface PasswordUpdate {
     current_password: string;
@@ -25,8 +28,10 @@ export default function Header() {
     const navigate = useNavigate();
     const [pageTheme, setPageTheme] = useState("");
     const [userDisplayData, updateUserDisplayData] = useState<any>({});
-    const [allTimeZones, updateAllTimeZonesData] = useState<any[]>([])
-    const [allCurrency, updateAllCurrencyData] = useState<any[]>([])
+    const [allTimeZones, updateAllTimeZonesData] = useState<any[]>([]);
+    const [filterTimeZones, updateFilterTimeZonesData] = useState<any[]>([]);
+    const [allCurrency, updateAllCurrencyData] = useState<any[]>([]);
+    const [filterCurrency, updateFilterCurrencyData] = useState<any[]>([]);
 
     const [passwordData, updatePasswordData] = useState<PasswordUpdate>({
         current_password: "",
@@ -43,6 +48,8 @@ export default function Header() {
         currency: {},
         timezone: {}
     });
+    const [currencySearch, updateCurrencySearchText] = useState("");
+    const [zoneSearch, updateZoneSearchText] = useState("");
     const [loadUserUpdate, updateUserDataLoaderFlag] = useState(false);
     const [errorMessage, updateErrorMessage] = useState("")
 
@@ -68,6 +75,7 @@ export default function Header() {
     function getAllTimeZones() {
         commonApiService.getAllTimeZones().then(res => {
             updateAllTimeZonesData(res?.data?.data ?? [])
+            updateFilterTimeZonesData(res?.data?.data ?? [])
         }).catch(() => {
             updateAllTimeZonesData([])
         })
@@ -76,6 +84,7 @@ export default function Header() {
     function getAllCurrency() {
         commonApiService.getAllCurrency().then(res => {
             updateAllCurrencyData(res?.data?.data ?? [])
+            updateFilterCurrencyData(res?.data?.data ?? [])
         }).catch(() => {
             updateAllCurrencyData([])
         })
@@ -134,23 +143,6 @@ export default function Header() {
         }
     }
 
-    function openUserDetailsEdit() {
-        updateUserEditedData({
-            name: userDisplayData.name,
-            email: userDisplayData.email,
-            currency: {
-                _id: sessionStorage.getItem("currency_id"),
-                name: sessionStorage.getItem("currency_name")
-            },
-            timezone: {
-                _id: sessionStorage.getItem("time_zone_id"),
-                zone: sessionStorage.getItem("time_zone")
-            }
-        })
-        $("#userDataUpdatePage").offcanvas("show");
-        $("#profileDetails").offcanvas("hide");
-    }
-
     function openUserPasswordEdit() {
         updateErrorMessage("")
         updatePasswordData({
@@ -204,7 +196,112 @@ export default function Header() {
         })
     }
 
-    function updateUserData() { }
+    function openUserDetailsEdit() {
+        updateUserEditedData({
+            name: userDisplayData.name,
+            email: userDisplayData.email,
+            currency: {
+                _id: sessionStorage.getItem("currency_id"),
+                name: sessionStorage.getItem("currency_name")
+            },
+            timezone: {
+                _id: sessionStorage.getItem("time_zone_id"),
+                zone: sessionStorage.getItem("time_zone")
+            }
+        })
+        updateCurrencySearchText("");
+        updateZoneSearchText("");
+        $("#userDataUpdatePage").offcanvas("show");
+        $("#profileDetails").offcanvas("hide");
+    }
+
+    useEffect(() => {
+        const data = helperService.filterArrayOnSearch(allCurrency, ["name"], currencySearch);
+        updateFilterCurrencyData([...data])
+    }, [currencySearch])
+
+    useEffect(() => {
+        const data = helperService.filterArrayOnSearch(allTimeZones, ["zone"], zoneSearch);
+        updateFilterTimeZonesData([...data])
+    }, [zoneSearch])
+
+    function updateUserData() {
+        const prvValues: any = {
+            name: userDisplayData.name,
+            email: userDisplayData.email,
+            currency: sessionStorage.getItem("currency_id"),
+            timezone: sessionStorage.getItem("time_zone_id")
+        }
+        const currValues: any = {
+            name: userDataToEdit.name,
+            email: userDataToEdit.email,
+            currency: userDataToEdit.currency?._id,
+            timezone: userDataToEdit.timezone?._id
+        }
+        let changedKeys = [];
+        try {
+            for (let key in currValues) {
+                if (!currValues[key]) {
+                    throw new Error("Please fill required fields")
+                }
+                if (prvValues[key] !== currValues[key]) {
+                    changedKeys.push(key)
+                }
+            }
+            if (!changedKeys.length) {
+                throw new Error("No change detected")
+            }
+        } catch (e: any) {
+            toast.error(e.message ?? "Update Failed", { duration: 2000, id: "invalid-user-update" })
+            return
+        }
+        const body = {
+            ...(changedKeys.indexOf("name") !== -1 ? { name: userDataToEdit.name } : {}),
+            ...(changedKeys.indexOf("email") !== -1 ? { email: userDataToEdit.email } : {}),
+            ...(changedKeys.indexOf("currency") !== -1 ? {
+                currency_id: userDataToEdit.currency._id,
+                currency_name: userDataToEdit.currency.name,
+                currency_name_plural: userDataToEdit.currency.name_plural,
+                currency_decimal_digits: userDataToEdit.currency.decimal_digits,
+                currency_code: userDataToEdit.currency.code,
+                currency_icon_class: userDataToEdit.currency.icon_class,
+                currency_html_code: userDataToEdit.currency.html_code,
+            } : {}),
+            ...(changedKeys.indexOf("timezone") !== -1 ? {
+                time_zone_id: userDataToEdit.timezone._id,
+                time_zone: userDataToEdit.timezone.zone,
+                time_zone_gmt_time: userDataToEdit.timezone.gmt_time,
+                time_zone_gmt_minutes: userDataToEdit.timezone.gmt_minutes,
+            } : {}),
+        }
+        updateUserDataLoaderFlag(true)
+        userApiService.updateUserDetails(body).then(() => {
+            if (changedKeys.indexOf("timezone") !== -1) {
+                sessionStorage.setItem("time_zone_id", userDataToEdit.timezone._id);
+                sessionStorage.setItem("time_zone", userDataToEdit.timezone.zone)
+            }
+            if (changedKeys.indexOf("currency") !== -1) {
+                sessionStorage.setItem("currency_id", userDataToEdit.currency._id);
+                sessionStorage.setItem("currency_name", userDataToEdit.currency.name);
+                sessionStorage.setItem("currency_name_plural", userDataToEdit.currency.name_plural)
+                sessionStorage.setItem("currency_decimal_digits", userDataToEdit.currency.decimal_digits);
+                sessionStorage.setItem("currency_code", userDataToEdit.currency.code);
+            }
+            if (changedKeys.indexOf("name") !== -1) {
+                sessionStorage.setItem("user_alias", userDataToEdit.name)
+            }
+            if (changedKeys.indexOf("email") !== -1) {
+                sessionStorage.setItem("user_email", userDataToEdit.email)
+            }
+            toast.success("User Details Updated", { duration: 1500 })
+            setTimeout(() => {
+                window.location.reload()
+            }, 1500)
+        }).catch(e => {
+            updateUserDataLoaderFlag(false)
+            toast.error(e?.response?.data?.message ?? "Login Failed", { duration: 1500 })
+        })
+    }
 
     function logout() {
         navigate(ROUTER_KEYS.login.url)
@@ -395,20 +492,33 @@ export default function Header() {
                             </div>
                             <div className="col-12 form-group mb-3">
                                 <label className="field-required" >Currency</label>
-                                <div className="dropdown fnx-dropdown">
-                                    <a className="btn btn-outline-secondary w-100 dropdown-toggle" id="user-currency" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div className={`dropdown fnx-dropdown ${loadUserUpdate ? "disabled-block" : ""}`}>
+                                    <a className="btn btn-outline-secondary w-100 dropdown-toggle" id="user-currency" role="button" data-bs-toggle="dropdown" aria-expanded="false" onClick={() => { updateCurrencySearchText("") }}>
                                         {userDataToEdit.currency?.name ? userDataToEdit.currency.name : "Select Currency"}
                                     </a>
                                     <ul className="dropdown-menu">
                                         <div className="field-search">
-                                            <input type="text" className="form-control" name="currency-search-text" id="currency-search-text" placeholder="Search Here" />
+                                            <input type="text" className="form-control" name="currency-search-text" id="currency-search-text" placeholder="Search Here" value={currencySearch}
+                                                onChange={(e) => {
+                                                    updateCurrencySearchText(e.target.value)
+                                                }} />
                                         </div>
                                         <div className="field-data">
-
                                             {
-                                                allCurrency.map((e) => (
-                                                    <li key={e._id}><a className={`dropdown-item ${userDataToEdit.currency?._id === e._id ? "active" : ""}`} >{e.name}</a></li>
+                                                filterCurrency.map((currency) => (
+                                                    <li key={currency._id}><a className={`dropdown-item ${userDataToEdit.currency?._id === currency._id ? "active" : ""}`} onClick={() => {
+                                                        updateUserEditedData({
+                                                            ...userDataToEdit,
+                                                            currency
+                                                        })
+                                                    }} >
+                                                        {currency.name} ( <CurrencyCode icon={currency.icon_class} htmlCode={currency.html_code} /> )
+                                                    </a></li>
                                                 ))
+                                            }
+                                            {
+                                                !filterCurrency.length &&
+                                                <NoData showIcon={false} text={currencySearch.length ? "No matching results for search text" : "No Data"} />
                                             }
                                         </div>
                                     </ul>
@@ -416,20 +526,32 @@ export default function Header() {
                             </div>
                             <div className="col-12 form-group mb-3">
                                 <label className="field-required" >Time Zone</label>
-                                <div className="dropdown fnx-dropdown">
-                                    <a className="btn btn-outline-secondary w-100 dropdown-toggle" id="user-time-zone" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div className={`dropdown fnx-dropdown ${loadUserUpdate ? "disabled-block" : ""}`}>
+                                    <a className="btn btn-outline-secondary w-100 dropdown-toggle" id="user-time-zone" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                        onClick={() => updateZoneSearchText("")}>
                                         {userDataToEdit.timezone?.zone ? userDataToEdit.timezone.zone : "Select Time Zone"}
                                     </a>
                                     <ul className="dropdown-menu">
                                         <div className="field-search">
-                                            <input type="text" className="form-control" name="zone-search-text" id="zone-search-text" placeholder="Search Here" />
+                                            <input type="text" className="form-control" name="zone-search-text" id="zone-search-text" placeholder="Search Here" value={zoneSearch}
+                                                onChange={(e) => {
+                                                    updateZoneSearchText(e.target.value)
+                                                }} />
                                         </div>
                                         <div className="field-data">
-
                                             {
-                                                allTimeZones.map((e) => (
-                                                    <li key={e._id}><a className={`dropdown-item ${userDataToEdit.timezone?._id === e._id ? "active" : ""}`} >{e.zone}</a></li>
+                                                filterTimeZones.map((timezone) => (
+                                                    <li key={timezone._id}><a className={`dropdown-item ${userDataToEdit.timezone?._id === timezone._id ? "active" : ""}`} onClick={(e) => {
+                                                        updateUserEditedData({
+                                                            ...userDataToEdit,
+                                                            timezone
+                                                        })
+                                                    }}>{timezone.zone}</a></li>
                                                 ))
+                                            }
+                                            {
+                                                !filterTimeZones.length &&
+                                                <NoData showIcon={false} text={zoneSearch.length ? "No matching results for search text" : "No Data"} />
                                             }
                                         </div>
                                     </ul>
@@ -440,7 +562,7 @@ export default function Header() {
                 </div>
                 <div className="offcanvas-footer end">
                     <div className="option">
-                        <button className="btn btn-outline-secondary" data-bs-toggle="offcanvas" data-bs-target="#profileDetails" disabled={loadPasswordUpdate}><i className="fa-regular fa-circle-xmark"></i> Close</button>
+                        <button className="btn btn-outline-secondary" data-bs-toggle="offcanvas" data-bs-target="#profileDetails" disabled={loadUserUpdate}><i className="fa-regular fa-circle-xmark"></i> Close</button>
                     </div>
                     <div className="option">
                         <button className="btn btn-success" disabled={loadUserUpdate} onClick={updateUserData}>

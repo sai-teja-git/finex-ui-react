@@ -63,11 +63,12 @@
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            height: calc(100vh - 135px);
+            max-height: calc(100vh - 135px);
             overflow-y: auto;
 
             @include mediaBreakPointUp("sm", "md") {
                 height: auto;
+                max-height: none
             }
 
             .category-item {

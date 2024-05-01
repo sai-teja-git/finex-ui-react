@@ -4,7 +4,7 @@ import Currency from "../../../components/Currency";
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import Accessibility from "highcharts/modules/accessibility";
-import helperService from "../../../services/helperFunctionsService";
+import helperService from "../../../services/helper-functions.service";
 
 Accessibility(Highcharts);
 

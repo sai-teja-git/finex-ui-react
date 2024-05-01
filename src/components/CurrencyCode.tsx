@@ -1,21 +1,23 @@
-import * as DOMPurify from "dompurify";
+import DOMPurify from "dompurify";
 
-// const currency_icon_class = sessionStorage.getItem("currency_icon") as string;
-// const currency_html_code = sessionStorage.getItem("currency_html_code") as string;
+interface ICurrencyData {
+    icon?: string;
+    htmlCode?: string
+}
 
-function getCurrencyCode(currency_icon_class: string, currency_html_code: string) {
-    if (currency_icon_class) {
-        return <i className={currency_icon_class}></i>
+function getCurrencyCode(icon: string, htmlCode: string) {
+    if (icon) {
+        return <i className={icon}></i>
     } else {
-        return <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(currency_html_code) }}></span>
+        return <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(htmlCode) }}></span>
     }
 }
 
-export default function CurrencyCode(
-    currency_icon_class: string = sessionStorage.getItem("currency_icon") as string,
-    currency_html_code: string = sessionStorage.getItem("currency_html_code") as string
-) {
+export default function CurrencyCode({
+    icon = sessionStorage.getItem("currency_icon") as string,
+    htmlCode = sessionStorage.getItem("currency_html_code") as string
+}: ICurrencyData) {
     return (
-        getCurrencyCode(currency_icon_class, currency_html_code)
+        getCurrencyCode(icon, htmlCode)
     )
 }
