@@ -43,7 +43,26 @@
                 align-items: center;
 
                 .title {
-                    font-size: 22px;
+                    .title-data {
+                        display: flex;
+                        align-items: center;
+                        font-size: 22px;
+
+                        .more-option {
+                            padding: 2px 10px;
+                            border-radius: 5px;
+                            transition: .3s;
+                            cursor: pointer;
+                            margin-left: 3px;
+                            font-size: 20px;
+
+                            &:hover {
+                                transition: .3s;
+                                background: var(--transaction-add-option-hover-bg);
+                            }
+                        }
+                    }
+
 
                     .sub-title {
                         font-size: 14px;

@@ -104,10 +104,22 @@ const filterArrayOnSearch = (items: any[], item_keys: string[], search_text: str
     return [];
 }
 
+const calculatePercentage = (value: number, base: number, roundOff?: number) => {
+    try {
+        if (base === 0) {
+            throw new Error("invalid")
+        }
+        const calculated = (value / base) * 100
+        return roundOff ? Number(calculated.toFixed(roundOff)) : calculated;
+    } catch { }
+    return 0
+}
+
 const helperService = {
     generateRandom,
     formatCurrencyValue,
     inputValid,
-    filterArrayOnSearch
+    filterArrayOnSearch,
+    calculatePercentage
 }
 export default helperService

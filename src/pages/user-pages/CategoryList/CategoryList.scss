@@ -139,6 +139,17 @@
 .icon-select {
     margin-top: 16px;
 
+    .label-text {
+        display: flex;
+        align-items: center;
+
+        .selected-icon {
+            margin-left: 5px;
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+    }
+
     .data {
         display: flex;
         flex-wrap: wrap;

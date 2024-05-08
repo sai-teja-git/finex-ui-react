@@ -85,3 +85,14 @@
         margin-right: 5px;
     }
 }
+
+.centred-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &-full-height {
+        @extend .centred-block;
+        height: 100%
+    }
+}
