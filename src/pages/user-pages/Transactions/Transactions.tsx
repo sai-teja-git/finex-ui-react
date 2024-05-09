@@ -96,6 +96,7 @@ export default function Transactions() {
         transactionLogApiService.getOverallLogs(body).then(res => {
             console.log('res.data', res.data)
             const data = res.data
+            updateAllTransactionsData(res.data)
             try {
                 const base = Math.max(data.spend.total, data.income.total, data.estimation.total);
                 const overallData = {
@@ -113,7 +114,6 @@ export default function Transactions() {
                     }
                 }
                 updateTransactionsOverallData(overallData)
-                console.log('overallData', overallData)
             } catch { }
             updateTransactionsLoader(false)
         }).catch(() => {
@@ -122,6 +122,26 @@ export default function Transactions() {
             updateTransactionsOverallData({})
             updateTransactionsLoader(false);
         })
+    }
+
+    useEffect(() => {
+        updateCurrentTypeTransactions()
+    }, [allTransactionsData, transactionsSearch, transactionType])
+
+    function updateCurrentTypeTransactions() {
+        try {
+            console.log('transactionType', transactionType)
+            let allDayData: any[] = [];
+            const typeData = allTransactionsData[transactionType.key].day_wise
+            for (let dayWiseData of typeData) {
+                allDayData = [...allDayData, ...dayWiseData.data]
+            }
+            allDayData = allDayData.reverse()
+            const data = helperService.filterArrayOnSearch(allDayData, ["remarks"], transactionsSearch)
+            updateTransactionTypeData([...data])
+        } catch {
+            updateTransactionTypeData([])
+        }
     }
 
     function updateTransactionsView() {
@@ -357,28 +377,28 @@ export default function Transactions() {
                             transactionTypeData.length ?
                                 <>
                                     {
-                                        Array(10).fill(0).map((_e, i) => (
-                                            <div className={`transactions-block`} key={i}>
+                                        transactionTypeData.map(transaction => (
+                                            <div className={`transactions-block`} key={transaction._id}>
                                                 <div className="transaction-data">
                                                     <div className="details">
-                                                        <div className={`icon ${i % 4 === 0 ? "credit" : "debit"}`}>
-                                                            <i className="fa-solid fa-home"></i>
+                                                        <div className={`icon ${transactionType.key === "income" ? "credit" : (transactionType.key === "estimation" ? "estimation" : "debit")}`}>
+                                                            <i className={categoriesObject[transaction.category_id]?.icon}></i>
                                                         </div>
                                                         <div className="names">
                                                             <div className="remarks">
-                                                                Given to Home
+                                                                {transaction.remarks}
                                                             </div>
                                                             <div className="category">
-                                                                Home
+                                                                {categoriesObject[transaction.category_id]?.name ?? "----"}
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div className="value">
                                                         <div className="amount">
-                                                            <Currency value={1000} />
+                                                            <Currency value={transaction.value} />
                                                         </div>
                                                         <div className="created-at">
-                                                            <i className="fa-regular fa-clock"></i> 12-04-2024 10:00:56
+                                                            <i className="fa-regular fa-clock"></i> {timeConversionsService.convertUtcDateTimeToLocal(transaction.updated_at, "DD-MM-YYYY HH:mm:ss") as string}
                                                         </div>
                                                         <div className="transaction-options">
                                                             <div className="option delete">
@@ -499,6 +519,7 @@ export default function Transactions() {
                                                                 transactionsType.map(type => (
                                                                     <li key={type.key}><a className={`dropdown-item ${transactionType.key === type.key ? "active" : ""}`} onClick={() => {
                                                                         updateTransactionType({ ...type })
+                                                                        updateTransactionsSearch("")
                                                                     }}>
                                                                         {type.plural}
                                                                     </a></li>
@@ -526,7 +547,10 @@ export default function Transactions() {
                                         </div>
                                     </div>
                                     <div className="search form-group">
-                                        <input type="text" id="tra-search" name="tra-search" className="form-control" placeholder="Search Transactions" />
+                                        <input type="text" id="tra-search" name="tra-search" className="form-control" placeholder="Search Transactions"
+                                            value={transactionsSearch} onChange={(e => {
+                                                updateTransactionsSearch(e.target.value)
+                                            })} />
                                     </div>
                                 </div>
                                 <div className="body">
