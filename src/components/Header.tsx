@@ -133,7 +133,7 @@ export default function Header() {
     }
 
     /**
-     * The function toggles the "menu-open" class on the ".page-wrapper" element.
+     * The function toggles the "menu-open" className on the ".page-wrapper" element.
      */
     function toggleMenu() {
         if ($(".page-wrapper").hasClass("menu-open")) {
@@ -335,7 +335,7 @@ export default function Header() {
             <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="profileDetails" aria-labelledby="staticBackdropLabel">
                 <div className="offcanvas-header">
                     <div className="title">
-                        <div className="logout-option" onClick={logout}>
+                        <div className="logout-option" data-bs-target="#logOutConfirmModal" data-bs-toggle="modal">
                             <i className="fa-solid fa-power-off"></i> Logout
                         </div>
                     </div>
@@ -672,6 +672,29 @@ export default function Header() {
                                     </>
                             }
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="modal fade" id="logOutConfirmModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                        <div className="confirmation-modal">
+                            <div className="icon">
+                                <i className="fa-solid fa-circle-exclamation"></i>
+                            </div>
+                            <div className="text">
+                                Are you sure, You want to logout?
+                            </div>
+                            <div className="confirmation-footer">
+                                <div className="option">
+                                    <button className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                                <div className="option">
+                                    <button className="btn btn-ft-outline-primary" data-bs-dismiss="modal" onClick={logout}>Logout</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

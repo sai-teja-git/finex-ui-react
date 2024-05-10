@@ -90,6 +90,10 @@
                 height: calc(100vh - 240px);
                 overflow: auto;
 
+                &.no-search {
+                    height: calc(100vh - 177px);
+                }
+
                 @include mediaBreakPointUp("sm", "md") {
                     height: auto;
                 }

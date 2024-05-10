@@ -19,9 +19,9 @@ export default function Transactions() {
     const monthStartTime = new Date(timeConversionsService.dateTimeFormat(new Date(), "YYYY-MM-01 00:00:00"));
     const monthEndTime = new Date(monthStartTime.getFullYear(), monthStartTime.getMonth() + 1, 1);
     const transactionsType: any[] = [
-        { key: "spend", name: "Spend", plural: "Spends" },
-        { key: "estimation", name: "Estimation", plural: "Estimations" },
-        { key: "income", name: "Income", plural: "Income" },
+        { key: "spend", name: "Spend", plural: "Spends", dbKey: "debit" },
+        { key: "estimation", name: "Estimation", plural: "Estimations", dbKey: "estimation" },
+        { key: "income", name: "Income", plural: "Income", dbKey: "credit" },
     ];
     const typeOtherNames: any = {
         spend: { key: "debit" },
@@ -29,7 +29,8 @@ export default function Transactions() {
         income: { key: "credit" },
     }
     const [transactionType, updateTransactionType] = useState<any>(transactionsType[0]);
-    const [transactions_view, setTransactionsView] = useState("all");
+    const [transactionsView, setTransactionsView] = useState("all");
+    const [categoryView, updateCategoryView] = useState("all");
     const [spendCategories, updateSpendCategories] = useState<any[]>([]);
     const [incomeCategories, updateIncomeCategories] = useState<any[]>([]);
     const [categoriesObject, updateCategoriesObject] = useState<any>({});
@@ -46,11 +47,17 @@ export default function Transactions() {
         value: "",
         remarks: ""
     })
-    const [loadTransactionLog, updateTransactionLogFlag] = useState(false)
+    const [loadTransactionLog, updateTransactionLogFlag] = useState(false);
+    const [confirmDeleteRecord, updateDeleteRecord] = useState<any>({});
+    const [loadDeleteRecord, updateDeleteLoader] = useState(false);
+    const [loadCategoryWiseData, updateCategoryWiseLoader] = useState(true);
 
+    const [filteredCategoryWise, updateFilteredCategoryWise] = useState<any[]>([]);
+    const [categoryWiseSearch, updateCategoryWiseSearch] = useState("");
+    const [categoryWisePie, updateCategoryWisePie] = useState({});
+    const [validCategoryPie, updateCategoryPieStatus] = useState(false);
 
     const [category_pie, updateCategoryPieChart] = useState({});
-    const [dummy_loader, updateDummyLoader] = useState(true)
 
     useEffect(() => {
         setCategoryWisePieChart();
@@ -63,7 +70,8 @@ export default function Transactions() {
     }
 
     function getPageData() {
-        getUserTransactions()
+        getUserTransactions();
+        getCategoryWiseData();
     }
 
     async function getUserCatagories() {
@@ -94,7 +102,6 @@ export default function Transactions() {
             end_time: timeConversionsService.convertLocalDateTimeToUtc(monthEndTime, "yyyy-MM-DD HH:mm:ss"),
         }
         transactionLogApiService.getOverallLogs(body).then(res => {
-            console.log('res.data', res.data)
             const data = res.data
             updateAllTransactionsData(res.data)
             try {
@@ -124,13 +131,17 @@ export default function Transactions() {
         })
     }
 
+
     useEffect(() => {
-        updateCurrentTypeTransactions()
+        if (transactionsView === "all") {
+            updateCurrentTypeTransactions()
+        } else {
+
+        }
     }, [allTransactionsData, transactionsSearch, transactionType])
 
     function updateCurrentTypeTransactions() {
         try {
-            console.log('transactionType', transactionType)
             let allDayData: any[] = [];
             const typeData = allTransactionsData[transactionType.key].day_wise
             for (let dayWiseData of typeData) {
@@ -144,12 +155,31 @@ export default function Transactions() {
         }
     }
 
+    function getCategoryWiseData() {
+        updateCategoryWiseLoader(true)
+        const body = {
+            start_time: timeConversionsService.convertLocalDateTimeToUtc(monthStartTime, "yyyy-MM-DD HH:mm:ss"),
+            end_time: timeConversionsService.convertLocalDateTimeToUtc(monthEndTime, "yyyy-MM-DD HH:mm:ss"),
+        }
+        transactionLogApiService.getMonthCategoryWise(body).then(res => {
+            updateCategoryWiseLoader(false);
+            updateCategoryPieStatus(false);
+            updateFilteredCategoryWise([]);
+        }).catch(() => {
+            updateCategoryWiseLoader(false);
+            updateCategoryPieStatus(false);
+            updateFilteredCategoryWise([]);
+        })
+    }
+
     function updateTransactionsView() {
-        if (transactions_view === "all") {
+        if (transactionsView === "all") {
             setTransactionsView("category_wise")
+            updateCategoryView("all")
         } else {
             setTransactionsView("all")
         }
+        updateTransactionsSearch("")
     }
 
     useEffect(() => {
@@ -180,8 +210,24 @@ export default function Transactions() {
         $("#transactionLog").offcanvas("show")
     }
 
+    function editLog(data: any) {
+        updateLogType(transactionType.key)
+        try {
+            updateLogForm({
+                category: categoriesObject[data.category_id],
+                value: data.value,
+                remarks: data.remarks,
+                oldData: data
+            })
+            filterLogCategories(transactionType.key)
+            updateLogCategorySearch("")
+            $("#transactionLog").offcanvas("show")
+        } catch {
+            toast.error("Unable to set data", { duration: 1500, id: "invalid-log-edit" })
+        }
+    }
+
     function submitLog() {
-        console.log('logFormData', logFormData)
         try {
             if (!logFormData.value || !logFormData.remarks || !logFormData.category) {
                 throw new Error("Please fill the required fields")
@@ -196,12 +242,16 @@ export default function Transactions() {
             toast.error(e.message ?? "Creation Failed", { duration: 2500, id: "invalid-category-create" })
             return
         }
+        updateTransactionLogFlag(true)
+        if (logFormData.oldData) {
+            updateLogData()
+            return
+        }
         const body = {
             category_id: logFormData.category?._id,
             value: Number(logFormData.value),
             remarks: logFormData.remarks
         }
-        updateTransactionLogFlag(true)
         transactionLogApiService.logTransaction(typeOtherNames[logType].key, body).then(() => {
             toast.success("Log Created", { duration: 1500 })
             updateTransactionLogFlag(false)
@@ -210,6 +260,45 @@ export default function Transactions() {
         }).catch(e => {
             updateTransactionLogFlag(false)
             toast.error(e?.response?.data?.message ?? `Creation Failed`, { duration: 1500 })
+        })
+    }
+
+    function updateLogData() {
+        let body: any = {
+            ...((logFormData.category?._id !== logFormData.oldData.category_id) ? { category_id: logFormData.category?._id } : {}),
+            ...((Number(logFormData.value) !== logFormData.oldData.value) ? { value: Number(logFormData.value) } : {}),
+            ...((logFormData.remarks !== logFormData.oldData.remarks) ? { remarks: logFormData.remarks } : {}),
+        }
+        if (!Object.keys(body).length) {
+            toast.error("No Change", { duration: 1500, id: "no-change-in-update" });
+            updateTransactionLogFlag(false)
+            return
+        }
+        transactionLogApiService.updateTransaction({ type: typeOtherNames[logType].key, id: logFormData.oldData._id }, body).then(() => {
+            toast.success("Log Updated", { duration: 1500 })
+            updateTransactionLogFlag(false)
+            getPageData();
+            $("#transactionLog").offcanvas("hide")
+        }).catch(e => {
+            updateTransactionLogFlag(false)
+            toast.error(e?.response?.data?.message ?? `Update Failed`, { duration: 1500 })
+        })
+    }
+
+    function deleteLog() {
+        const body = {
+            id: confirmDeleteRecord._id,
+            type: transactionType.dbKey
+        }
+        updateDeleteLoader(true)
+        transactionLogApiService.deleteTransaction(body).then(() => {
+            toast.success("Record Deleted", { duration: 1500 })
+            updateDeleteLoader(false)
+            getPageData();
+            $("#transactionDeleteConfirm").modal("hide")
+        }).catch(e => {
+            updateDeleteLoader(false)
+            toast.error(e?.response?.data?.message ?? `Deletion Failed`, { duration: 1500 })
         })
     }
 
@@ -401,10 +490,12 @@ export default function Transactions() {
                                                             <i className="fa-regular fa-clock"></i> {timeConversionsService.convertUtcDateTimeToLocal(transaction.updated_at, "DD-MM-YYYY HH:mm:ss") as string}
                                                         </div>
                                                         <div className="transaction-options">
-                                                            <div className="option delete">
+                                                            <div className="option delete" data-bs-toggle="modal" data-bs-target="#transactionDeleteConfirm" onClick={() => {
+                                                                updateDeleteRecord(transaction)
+                                                            }}>
                                                                 <i className="fa-regular fa-trash-can "></i><span className="name">Delete</span>
                                                             </div>
-                                                            <div className="option edit">
+                                                            <div className="option edit" onClick={() => editLog(transaction)}>
                                                                 <i className="fa-regular fa-pen-to-square"></i>Edit
                                                             </div>
                                                         </div>
@@ -424,76 +515,90 @@ export default function Transactions() {
         </>
     }
 
+    function categoryWiseLoaderTemplate() {
+        return <>
+            {
+                Array(10).fill(0).map((_e, i) => (
+                    <div className={`transactions-block placeholder-glow`} key={i}>
+                        <div className="transaction-data">
+                            <div className="details">
+                                <div className={`icon`}>
+                                    <div className="placeholder"></div>
+                                </div>
+                                <div className="names">
+                                    <div className="category">
+                                        <div className="placeholder col-3" ></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="value">
+                                <div className="amount">
+                                    <div className="placeholder col-8" ></div>
+                                </div>
+                                <div className="created-at">
+                                    <div className="placeholder col-12" ></div>
+                                </div>
+                                <div className="transaction-options disabled-block">
+                                    <div className="option">
+                                        view <i className="fa-solid fa-angle-right"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ))
+            }
+        </>
+    }
+
     function categoryWiseTemplate() {
         return <>
             {
-                dummy_loader ?
-                    <>
-                        {
-                            Array(10).fill(0).map((_e, i) => (
-                                <div className={`transactions-block placeholder-glow`} key={i}>
-                                    <div className="transaction-data">
-                                        <div className="details">
-                                            <div className={`icon`}>
-                                                <div className="placeholder"></div>
-                                            </div>
-                                            <div className="names">
-                                                <div className="category">
-                                                    <div className="placeholder col-3" ></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="value">
-                                            <div className="amount">
-                                                <div className="placeholder col-8" ></div>
-                                            </div>
-                                            <div className="created-at">
-                                                <div className="placeholder col-12" ></div>
-                                            </div>
-                                            <div className="transaction-options disabled-block">
-                                                <div className="option">
-                                                    view <i className="fa-solid fa-angle-right"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        }
-                    </>
+                loadCategoryWiseData ?
+                    categoryWiseLoaderTemplate()
                     :
                     <>
                         {
-                            Array(10).fill(0).map((_e, i) => (
-                                <div className={`transactions-block`} key={i}>
-                                    <div className="transaction-data">
-                                        <div className="details">
-                                            <div className={`icon`}>
-                                                <i className="fa-solid fa-home"></i>
-                                            </div>
-                                            <div className="names">
-                                                <div className="category">
-                                                    Home
+                            filteredCategoryWise.length ?
+                                <>
+                                    {
+                                        Array(10).fill(0).map((_e, i) => (
+                                            <div className={`transactions-block`} key={i}>
+                                                <div className="transaction-data">
+                                                    <div className="details">
+                                                        <div className={`icon`}>
+                                                            <i className="fa-solid fa-home"></i>
+                                                        </div>
+                                                        <div className="names">
+                                                            <div className="category">
+                                                                Home
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="value">
+                                                        <div className="amount">
+                                                            <Currency value={1000} />
+                                                        </div>
+                                                        <div className="created-at">
+                                                            <i className="fa-solid fa-sliders"></i> Count : {i + 1}
+                                                        </div>
+                                                        <div className="transaction-options">
+                                                            <div className="option" >
+                                                                view <i className="fa-solid fa-angle-right"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="value">
-                                            <div className="amount">
-                                                <Currency value={1000} />
-                                            </div>
-                                            <div className="created-at">
-                                                <i className="fa-solid fa-sliders"></i> Count : {i + 1}
-                                            </div>
-                                            <div className="transaction-options">
-                                                <div className="option" >
-                                                    view <i className="fa-solid fa-angle-right"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        ))
+                                    }
+                                </>
+                                :
+                                <div className="centred-block-full-height">
+                                    <NoData title="No Data" text="No Category Data" />
                                 </div>
-                            ))
                         }
+
                     </>
             }
         </>
@@ -530,12 +635,12 @@ export default function Transactions() {
                                                 </div>
                                             </div>
                                             <div className="sub-title">
-                                                {transactions_view === "all" ? "This Month" : "Category Wise"} {transactionType.plural}
+                                                {transactionsView === "all" ? "This Month" : "Category Wise"} {transactionType.plural}
                                             </div>
                                         </div>
                                         <div className="options" onClick={updateTransactionsView}>
                                             {
-                                                transactions_view === "all" ?
+                                                transactionsView === "all" ?
                                                     <>
                                                         Category Wise<i className="fa-solid fa-angle-right ms-1"></i>
                                                     </>
@@ -546,16 +651,18 @@ export default function Transactions() {
                                             }
                                         </div>
                                     </div>
-                                    <div className="search form-group">
-                                        <input type="text" id="tra-search" name="tra-search" className="form-control" placeholder="Search Transactions"
-                                            value={transactionsSearch} onChange={(e => {
-                                                updateTransactionsSearch(e.target.value)
-                                            })} />
-                                    </div>
+                                    {transactionsView === "all" &&
+                                        <div className="search form-group">
+                                            <input type="text" id="tra-search" name="tra-search" className="form-control" placeholder="Search Transactions"
+                                                value={transactionsSearch} onChange={(e => {
+                                                    updateTransactionsSearch(e.target.value)
+                                                })} />
+                                        </div>
+                                    }
                                 </div>
-                                <div className="body">
+                                <div className={`body ${(transactionsView === "category_wise" && categoryView === "all") ? "no-search" : ""}`}>
                                     {
-                                        transactions_view === "all" ? allTransactionsTemplate() : categoryWiseTemplate()
+                                        transactionsView === "all" ? allTransactionsTemplate() : categoryWiseTemplate()
                                     }
 
                                 </div>
@@ -672,14 +779,23 @@ export default function Transactions() {
                             <div className="card">
                                 <div className="card-body">
                                     {
-                                        dummy_loader ?
+                                        loadCategoryWiseData ?
                                             <div className="category-pie-chart placeholder-glow">
                                                 <div className="placeholder col-12"></div>
                                             </div>
                                             :
-                                            <div>
-                                                <HighchartsReact containerProps={{ className: "category-pie-chart" }} highcharts={Highcharts} options={category_pie} />
-                                            </div>
+                                            <>
+                                                {
+                                                    validCategoryPie ?
+                                                        <HighchartsReact containerProps={{ className: "category-pie-chart" }} highcharts={Highcharts} options={category_pie} />
+                                                        :
+                                                        <div className="category-pie-chart">
+                                                            <div className="centred-block-full-height">
+                                                                <NoData title="No Data" text="No Category Data" />
+                                                            </div>
+                                                        </div>
+                                                }
+                                            </>
                                     }
                                 </div>
                             </div>
@@ -770,6 +886,34 @@ export default function Transactions() {
                     </div>
                     <div className="option">
                         <button className="btn btn-success" disabled={loadTransactionLog} onClick={submitLog}><i className="fa-regular fa-circle-check"></i> Submit</button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="modal fade" id="transactionDeleteConfirm" data-bs-backdrop="static" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                        <div className="confirmation-modal">
+                            <div className="icon">
+                                <i className="fa-solid fa-circle-exclamation"></i>
+                            </div>
+                            <div className="text">
+                                Are you sure, You want Delete this record?
+                            </div>
+                            <div className="confirmation-footer">
+                                <div className="option">
+                                    <button className="btn btn-secondary" data-bs-dismiss="modal" disabled={loadDeleteRecord}>Cancel</button>
+                                </div>
+                                <div className="option">
+                                    {
+                                        loadDeleteRecord ?
+                                            <button className="btn btn-ft-outline-primary" disabled><span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Deleting...</button>
+                                            :
+                                            <button className="btn btn-ft-outline-primary" onClick={deleteLog}>Delete</button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

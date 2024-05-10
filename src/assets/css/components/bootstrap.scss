@@ -155,4 +155,61 @@
         --bs-btn-disabled-color: var(--bs-white);
         --bs-btn-disabled-border-color: var(--primary-color);
     }
+
+    &.btn-ft-outline-primary {
+        @extend .btn-ft-primary;
+        --bs-btn-color: var(--page-text-color);
+        --bs-btn-disabled-color: : var(--page-text-color);
+        --bs-btn-hover-bg: var(--primary-color);
+        --bs-btn-hover-border-color: var(--primary-color);
+        --bs-btn-bg: transparent;
+    }
+
+    &.btn-ft-nb-outline-primary {
+        @extend .btn-ft-primary;
+        --bs-btn-color: var(--page-text-color);
+        --bs-btn-disabled-color: : var(--page-text-color);
+        --bs-btn-hover-bg: var(--primary-color);
+        --bs-btn-hover-border-color: var(--primary-color);
+        --bs-btn-bg: transparent;
+        --bs-btn-border-color: transparent;
+        transition: .3s;
+    }
+}
+
+.modal {
+    .confirmation-modal {
+        padding: 18px;
+
+        .icon {
+            font-size: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            color: var(--app-text-color);
+        }
+
+        .text {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-wrap: wrap;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .confirmation-footer {
+            margin-top: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .option {
+                &:not(:last-child) {
+                    margin-right: 10px;
+                }
+            }
+        }
+    }
 }
