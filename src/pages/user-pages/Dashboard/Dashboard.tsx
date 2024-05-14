@@ -10,6 +10,10 @@ import moment from "moment-timezone";
 import helperService from "../../../services/helper-functions.service";
 
 import highchartsMore from "highcharts/highcharts-more";
+import catagoriesApiService from "../../../api/categories.api.service";
+import timeConversionsService from "../../../services/time-conversions.service";
+import transactionLogApiService from "../../../api/transaction-log.api.service";
+import transformationService from "../../../services/transformations.service";
 
 highchartsMore(Highcharts);
 SolidGauge(Highcharts);
@@ -17,22 +21,71 @@ Accessibility(Highcharts);
 
 export default function Dashboard() {
 
-    const [load_overall_data, setOverallDataLoader] = useState(true);
+    const monthStartTime = new Date(timeConversionsService.dateTimeFormat(new Date(), "YYYY-MM-01 00:00:00"));
+    const monthEndTime = new Date(monthStartTime.getFullYear(), monthStartTime.getMonth() + 1, 1);
+    const [categoriesObject, updateCategoriesObject] = useState<any>({});
+    const [loadOverallData, updateOverallLoaderFlag] = useState(true);
+    const [overallCardData, updateOverallCardData] = useState<Record<string, any>>({})
+
     const [overall_card_details, setOverallCardDetails] = useState<Record<string, any>>({});
     const [month_spend_chart, setChartOptions] = useState({})
     const [overall_gauge, setOverallGaugeChart] = useState({})
     const [dummy_loader, setDummyLoader] = useState(true)
 
     useEffect(() => {
-        setTimeout(() => {
-            setOverallDataLoader(false)
-        }, 1000)
-        setTimeout(() => {
-            setDummyLoader(false)
-        }, 1500)
-        setLineChart();
-        setGaugeChart()
+        getDefaultData()
     }, [])
+
+    async function getDefaultData() {
+        await getUserCatagories();
+        getPageData()
+    }
+
+    function getPageData() {
+        getUserTransactions();
+        // getCategoryWiseData();
+    }
+
+    async function getUserCatagories() {
+        await catagoriesApiService.getUserCategories().then(res => {
+            const spendCategories = res.data?.spend_categories ?? [];
+            const incomeCategories = res.data?.income_categories ?? [];
+            let categoriesObject: any = {};
+            for (let category of spendCategories) {
+                categoriesObject[category._id] = category
+            }
+            for (let category of incomeCategories) {
+                categoriesObject[category._id] = category
+            }
+            updateCategoriesObject(categoriesObject)
+        }).catch(() => {
+            updateCategoriesObject({})
+        })
+    }
+
+    function getUserTransactions() {
+        const body = {
+            start_time: timeConversionsService.convertLocalDateTimeToUtc(monthStartTime, "yyyy-MM-DD HH:mm:ss"),
+            end_time: timeConversionsService.convertLocalDateTimeToUtc(monthEndTime, "yyyy-MM-DD HH:mm:ss"),
+        }
+        transactionLogApiService.getOverallLogs(body).then(res => {
+            const data = res.data
+            try {
+                const overallData = {
+                    spend: data.spend.total,
+                    income: data.income.total,
+                    estimation: data.estimation.total,
+                    avgSpends: data.spend.avg,
+                    max: data.spend.max
+                }
+                updateOverallCardData(overallData)
+            } catch { }
+            updateOverallLoaderFlag(false)
+        }).catch(() => {
+            updateOverallLoaderFlag(false);
+        })
+    }
+
 
     function setLineChart() {
         let spends_till_now = 0;
@@ -220,13 +273,13 @@ export default function Dashboard() {
 
     function overallDataCard() {
         return <>
-            <div className={`overview ${dummy_loader && "placeholder-glow"}`} >
+            <div className={`overview ${loadOverallData && "placeholder-glow"}`} >
                 <div className="overview-block spend">
                     <div className="block-left">
                         <div className="amount">
                             {
-                                dummy_loader ? <span className="placeholder col-10"></span> :
-                                    <Currency value={overall_card_details["total_spends"] ? overall_card_details["total_spends"] : 0} />
+                                loadOverallData ? <span className="placeholder col-10"></span> :
+                                    <Currency value={overallCardData.spend ? overallCardData.spend : 0} />
                             }
                         </div>
                         <div className="name">
@@ -243,8 +296,8 @@ export default function Dashboard() {
                     <div className="block-left">
                         <div className="amount">
                             {
-                                dummy_loader ? <span className="placeholder col-10"></span> :
-                                    <Currency value={overall_card_details["total_estimations"] ? overall_card_details["total_estimations"] : 0} />
+                                loadOverallData ? <span className="placeholder col-10"></span> :
+                                    <Currency value={overallCardData.estimation ? overallCardData.estimation : 0} />
                             }
                         </div>
                         <div className="name">
@@ -261,8 +314,8 @@ export default function Dashboard() {
                     <div className="block-left">
                         <div className="amount">
                             {
-                                dummy_loader ? <span className="placeholder col-10"></span> :
-                                    <Currency value={overall_card_details["total_income"] ? overall_card_details["total_income"] : 0} />
+                                loadOverallData ? <span className="placeholder col-10"></span> :
+                                    <Currency value={overallCardData.income ? overallCardData.income : 0} />
                             }
                         </div>
                         <div className="name">
@@ -279,8 +332,8 @@ export default function Dashboard() {
                     <div className="block-left">
                         <div className="amount">
                             {
-                                dummy_loader ? <span className="placeholder col-10"></span> :
-                                    <Currency value={overall_card_details["spend_avg"] ? overall_card_details["spend_avg"] : 0} />
+                                loadOverallData ? <span className="placeholder col-10"></span> :
+                                    <Currency value={overallCardData.avgSpends ? overallCardData.avgSpends : 0} />
                             }
                         </div>
                         <div className="name">
@@ -385,7 +438,7 @@ export default function Dashboard() {
                         <div className="row m-0">
                             <div className="col-xl-12 col-lg-12 col-md-6 col-sm-12 ps-0 pe-xl-0 pe-lg-0 pe-md-2 pe-0">
                                 {
-                                    dummy_loader ?
+                                    loadOverallData ?
                                         <div className="max-value placeholder-glow">
                                             <div className="value-group">
                                                 <div className="value-data">
@@ -414,23 +467,22 @@ export default function Dashboard() {
                                             <div className="value-group">
                                                 <div className="value-data">
                                                     <div className="value">
-                                                        <Currency value={1000.68656} />
+                                                        <Currency value={overallCardData.max?.value ?? 0} />
                                                     </div>
                                                     <div className="title">
                                                         Month Max On
                                                     </div>
                                                 </div>
                                                 <div className="icon">
-                                                    {/* <i className="fa-solid fa-arrow-trend-up"></i> */}
-                                                    <i className="fa-solid fa-home"></i>
+                                                    <i className={overallCardData.max?.category_id ? (categoriesObject[overallCardData.max.category_id].icon) : "fa-solid fa-arrow-trend-up"}></i>
                                                 </div>
                                             </div>
                                             <div className="category-data">
                                                 <div className="name">
-                                                    Home
+                                                    {overallCardData.max?.category_id ? (categoriesObject[overallCardData.max.category_id].name) : "----"}
                                                 </div>
-                                                <div className="percentage red">
-                                                    21%
+                                                <div className={`percentage ${overallCardData.max.percentage > 20 ? "red" : "green"}`}>
+                                                    {transformationService.roundOff(overallCardData.max.percentage ?? 0) ?? 0}%
                                                 </div>
                                             </div>
                                         </div>

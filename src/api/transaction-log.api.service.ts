@@ -13,6 +13,12 @@ const getMonthCategoryWise = (params: any) => {
     })
 }
 
+const getMonthSingleCategoryWise = (params: any) => {
+    return axios.get(`${environment.API_URL}/transactions/category-month`, {
+        params
+    })
+}
+
 const logTransaction = (type: string, body: any) => {
     return axios.post(`${environment.API_URL}/transactions/${type}`, body)
 }
@@ -30,7 +36,8 @@ const transactionLogApiService = {
     logTransaction,
     deleteTransaction,
     updateTransaction,
-    getMonthCategoryWise
+    getMonthCategoryWise,
+    getMonthSingleCategoryWise
 }
 
 export default transactionLogApiService 

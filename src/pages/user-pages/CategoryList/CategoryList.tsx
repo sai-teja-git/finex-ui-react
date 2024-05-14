@@ -28,6 +28,10 @@ export default function CategoryList() {
         getAllIcons()
     }, [])
 
+    /**
+     * The function `getUserCatagories` fetches user categories data, updates state variables
+     * accordingly, and handles loading flags.
+     */
     function getUserCatagories() {
         updateCategoryLoadFlag(true)
         catagoriesApiService.getUserCategories().then(res => {
@@ -51,6 +55,10 @@ export default function CategoryList() {
         })
     }
 
+    /**
+     * The function `getAllIcons` fetches all icons using a common API service and updates the icon
+     * category data accordingly.
+     */
     function getAllIcons() {
         commonApiService.getAllIcons().then((res: any) => {
             updateIconCategoryData([...(res.data?.data ?? [])])
@@ -59,6 +67,12 @@ export default function CategoryList() {
         })
     }
 
+    /**
+     * The function `openAddCategoryForm` updates form data and displays a category form with default
+     * values.
+     * @param {string} type - The `type` parameter in the `openAddCategoryForm` function is a string
+     * that specifies the type of category being added.
+     */
     function openAddCategoryForm(type: string) {
         updateFormCategoryType(type)
         const defaultCat = iconCategoryData[0] ?? {}
@@ -76,6 +90,16 @@ export default function CategoryList() {
         $("#categoryLog").offcanvas("show")
     }
 
+    /**
+     * The function `openUpdateCategoryForm` updates the form data for a selected category icon based
+     * on the type and selected data provided.
+     * @param {string} type - The `type` parameter in the `openUpdateCategoryForm` function is a string
+     * that specifies the type of category being updated.
+     * @param {any} selectedData - The `selectedData` parameter in the `openUpdateCategoryForm`
+     * function is an object that contains information about a selected category. This information
+     * typically includes the category's name, icon type ID, icon ID, and other relevant data needed to
+     * update the category.
+     */
     function openUpdateCategoryForm(type: string, selectedData: any) {
         updateFormCategoryType(type)
         updateFormAction("update")
@@ -105,6 +129,15 @@ export default function CategoryList() {
         }
     }
 
+    /**
+     * The function `createUserCategory` handles the creation or update of user categories with
+     * validation checks and API calls.
+     * @returns The `createUserCategory` function returns either nothing (undefined) or exits early
+     * with a `return` statement if an error is caught during the execution of the function. If no
+     * errors occur, it will proceed with updating the category submit load flag, and depending on the
+     * `formActionType`, it will either call `patchUserCategory()` and return, or it will create a new
+     * category by sending
+     */
     function createUserCategory() {
         try {
             if (!categoryFormData.name || !categoryFormData.selected_icon) {
@@ -150,6 +183,15 @@ export default function CategoryList() {
         })
     }
 
+    /**
+     * The function `patchUserCategory` updates user categories based on changes in category data and
+     * handles success or failure notifications.
+     * @returns The `patchUserCategory` function returns either a toast message indicating "No Change"
+     * if there are no changes detected in the category data, or it updates the user categories by
+     * calling the `updateUserCategories` method from `catagoriesApiService`, then retrieves the
+     * updated user categories by calling `getUserCatagories`, hides the category log offcanvas
+     * element, and sets the category submit load flag
+     */
     function patchUserCategory() {
         const body: any = {
             key: categoryFormData.name.toLocaleLowerCase().split(" ").join("_").toLocaleLowerCase().split(" ").join("_"),
@@ -180,6 +222,18 @@ export default function CategoryList() {
         })
     }
 
+    /**
+     * The function `loaderTemplate` generates a template for displaying a loading animation for a
+     * specified type of content.
+     * @param {string} type - The `loaderTemplate` function takes a `type` parameter of type string.
+     * This function generates an array of 14 elements, each representing a category item with
+     * placeholder content. The `type` parameter is used in generating unique keys for each category
+     * item.
+     * @returns The `loaderTemplate` function is returning an array of 14 div elements with class names
+     * "category-item", "card", "card-body", "edit-option disabled-block", "edit", "icon", "name", and
+     * placeholders for content. Each div element has a unique key based on the `type` parameter and
+     * the index `i`.
+     */
     function loaderTemplate(type: string) {
         return Array(14).fill(0).map((_e, i) => (
             <div className="category-item" key={type + i}>

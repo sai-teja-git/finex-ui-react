@@ -30,7 +30,6 @@ export default function Transactions() {
     }
     const [transactionType, updateTransactionType] = useState<any>(transactionsType[0]);
     const [transactionsView, setTransactionsView] = useState("all");
-    const [categoryView, updateCategoryView] = useState("all");
     const [spendCategories, updateSpendCategories] = useState<any[]>([]);
     const [incomeCategories, updateIncomeCategories] = useState<any[]>([]);
     const [categoriesObject, updateCategoriesObject] = useState<any>({});
@@ -51,13 +50,16 @@ export default function Transactions() {
     const [confirmDeleteRecord, updateDeleteRecord] = useState<any>({});
     const [loadDeleteRecord, updateDeleteLoader] = useState(false);
     const [loadCategoryWiseData, updateCategoryWiseLoader] = useState(true);
-
     const [filteredCategoryWise, updateFilteredCategoryWise] = useState<any[]>([]);
-    const [categoryWiseSearch, updateCategoryWiseSearch] = useState("");
+    const [allCategoryWise, updateAllCategoryWise] = useState<any>({});
     const [categoryWisePie, updateCategoryWisePie] = useState({});
     const [validCategoryPie, updateCategoryPieStatus] = useState(false);
+    const [selectedSingleCategory, updateSingleCategory] = useState<any>(null);
+    const [singleCategoryAllLogs, updateSingleCategoryLogs] = useState<any[]>([]);
+    const [singleCategoryFilteredLogs, updateSingleCategoryFilteredLogs] = useState<any[]>([]);
+    const [singleCategorySearch, updateSingleCategorySearch] = useState("");
+    const [loadSingleCatLog, updateSingleCatLogLoader] = useState(true);
 
-    const [category_pie, updateCategoryPieChart] = useState({});
 
     useEffect(() => {
         setCategoryWisePieChart();
@@ -136,9 +138,14 @@ export default function Transactions() {
         if (transactionsView === "all") {
             updateCurrentTypeTransactions()
         } else {
-
+            setFilteredCategoryWiseData()
         }
     }, [allTransactionsData, transactionsSearch, transactionType])
+
+    useEffect(() => {
+        setFilteredCategoryWiseData();
+        setCategoryWisePieChart();
+    }, [allCategoryWise])
 
     function updateCurrentTypeTransactions() {
         try {
@@ -162,9 +169,8 @@ export default function Transactions() {
             end_time: timeConversionsService.convertLocalDateTimeToUtc(monthEndTime, "yyyy-MM-DD HH:mm:ss"),
         }
         transactionLogApiService.getMonthCategoryWise(body).then(res => {
+            updateAllCategoryWise(res.data?.data ?? {})
             updateCategoryWiseLoader(false);
-            updateCategoryPieStatus(false);
-            updateFilteredCategoryWise([]);
         }).catch(() => {
             updateCategoryWiseLoader(false);
             updateCategoryPieStatus(false);
@@ -172,12 +178,128 @@ export default function Transactions() {
         })
     }
 
+    function setFilteredCategoryWiseData() {
+        function setData(inputData: any[], categoryData: any = {}) {
+            return inputData.map(e => {
+                const singleData = categoryData[e._id]
+                return {
+                    ...e,
+                    ...(categoryData[e._id] ? {
+                        transactionData: {
+                            ...singleData
+                        }
+                    } : {})
+                }
+            })
+        }
+        let selectedTypeData = [];
+        if (transactionType.key === "spend") {
+            selectedTypeData = setData(spendCategories, allCategoryWise.debits)
+        } else if (transactionType.key === "estimation") {
+            selectedTypeData = setData(spendCategories, allCategoryWise.estimations)
+        } else if (transactionType.key === "income") {
+            selectedTypeData = setData(incomeCategories, allCategoryWise.credits)
+        }
+        try {
+            selectedTypeData = selectedTypeData.sort((a, b) => ((a.transactionData?.total ?? 0) < (b.transactionData?.total ?? 0) ? 1 : -1))
+        } catch { }
+        updateFilteredCategoryWise([...selectedTypeData])
+    }
+
+    /**
+     * The function `setCategoryWisePieChart` generates a pie chart displaying category-wise spends
+     * with tooltips and custom styling in a TypeScript React application.
+     * @returns The `setCategoryWisePieChart` function is setting up a pie chart for displaying
+     * category-wise spends. It is creating the necessary data and options for the pie chart, including
+     * series data with category names, total spend values, icons, and formatted display values. The
+     * function also handles the tooltip formatting and updates the pie chart status.
+     */
+    function setCategoryWisePieChart() {
+        let pieChartStatus = false;
+        let seriesData = [];
+        try {
+            const spendData = allCategoryWise.debits
+            for (let id in spendData) {
+                if (spendData[id].total) {
+                    pieChartStatus = true
+                }
+                seriesData.push({
+                    name: categoriesObject[id].name,
+                    y: spendData[id].total,
+                    icon: `<i class="${categoriesObject[id].icon}"></i>`,
+                    display_value: helperService.formatCurrencyValue(spendData[id].total)
+                })
+            }
+        } catch {
+            pieChartStatus = false
+        }
+        updateCategoryPieStatus(pieChartStatus)
+
+        const options = {
+            chart: {
+                type: 'pie',
+                backgroundColor: "transparent",
+            },
+            title: {
+                text: 'Category Wise Spends',
+            },
+            credits: {
+                enabled: false
+            },
+            tooltip: {
+                formatter: function () {
+                    let this_graph: any = this;
+                    let tool_tip_text = "";
+                    try {
+                        let current_point = this_graph.point;
+                        tool_tip_text += "<span style='color:" + current_point.color + "'>" + current_point.icon + "</span> " + current_point.name + " : " + current_point.display_value + "<br>"
+                        tool_tip_text += "Percentage : " + current_point.percentage.toFixed(2) + "%"
+                    } catch { }
+                    try {
+                        let current_point = this_graph.point;
+                        return `
+                        <div class="chart-tooltip category-chart-tooltip">
+                            <div>
+                                <span style="color: ${current_point.color}">${current_point.icon}</span> ${current_point.name} : ${current_point.display_value}
+                            </div>
+                            <div class="percentage">
+                                Percentage : ${current_point.percentage.toFixed(2)}%
+                            </div>
+                        </div>
+                    `
+                    } catch { }
+                    return ""
+                },
+                backgroundColor: 'transparent',
+                borderColor: 'transparent',
+                useHTML: true,
+            },
+            plotOptions: {
+                pie: {
+                    innerSize: '20%',
+                    depth: 45,
+                    dataLabels: {
+                        useHTML: true,
+                    },
+                    borderColor: "transparent"
+                },
+            },
+            series: [{
+                name: 'Spends',
+                borderRadius: 5,
+                data: seriesData,
+            }]
+        }
+        updateCategoryWisePie(options)
+    }
+
     function updateTransactionsView() {
         if (transactionsView === "all") {
             setTransactionsView("category_wise")
-            updateCategoryView("all")
+            setFilteredCategoryWiseData()
         } else {
             setTransactionsView("all")
+            updateCurrentTypeTransactions()
         }
         updateTransactionsSearch("")
     }
@@ -256,7 +378,7 @@ export default function Transactions() {
             toast.success("Log Created", { duration: 1500 })
             updateTransactionLogFlag(false)
             getPageData();
-            $("#transactionLog").offcanvas("hide")
+            closeLogCanvas()
         }).catch(e => {
             updateTransactionLogFlag(false)
             toast.error(e?.response?.data?.message ?? `Creation Failed`, { duration: 1500 })
@@ -278,11 +400,21 @@ export default function Transactions() {
             toast.success("Log Updated", { duration: 1500 })
             updateTransactionLogFlag(false)
             getPageData();
-            $("#transactionLog").offcanvas("hide")
+            closeLogCanvas();
+            if (selectedSingleCategory) {
+                closeSingleCategoryLog()
+            }
         }).catch(e => {
             updateTransactionLogFlag(false)
             toast.error(e?.response?.data?.message ?? `Update Failed`, { duration: 1500 })
         })
+    }
+
+    function closeLogCanvas() {
+        $("#transactionLog").offcanvas("hide")
+        if (selectedSingleCategory) {
+            $("#singleCategoryView").offcanvas("show");
+        }
     }
 
     function deleteLog() {
@@ -296,121 +428,57 @@ export default function Transactions() {
             updateDeleteLoader(false)
             getPageData();
             $("#transactionDeleteConfirm").modal("hide")
+            if (selectedSingleCategory) {
+                closeSingleCategoryLog()
+            }
         }).catch(e => {
             updateDeleteLoader(false)
             toast.error(e?.response?.data?.message ?? `Deletion Failed`, { duration: 1500 })
         })
     }
 
-    function setCategoryWisePieChart() {
-        const catg_data = [
-            {
-                "name": "Cloths",
-                "icon": "fa-solid fa-shirt"
-            },
-            {
-                "name": "Car",
-                "icon": "fa-solid fa-car-side"
-            },
-            {
-                "name": "Health",
-                "icon": "fa-solid fa-suitcase-medical"
-            },
-            {
-                "name": "Eating Out",
-                "icon": "fa-solid fa-utensils"
-            },
-            {
-                "name": "Bills",
-                "icon": "fa-solid fa-file-invoice-dollar"
-            },
-            {
-                "name": "Food",
-                "icon": "fa-solid fa-bowl-food"
-            },
-            {
-                "name": "Gifts",
-                "icon": "fa-solid fa-gift"
-            },
-            {
-                "name": "Pets",
-                "icon": "fa-solid fa-paw"
-            },
-            {
-                "name": "Entertainment",
-                "icon": "fa-solid fa-martini-glass-citrus"
-            },
-            {
-                "name": "House",
-                "icon": "fa-solid fa-house"
+    function openSingleCategoryLog(selected: any) {
+        updateSingleCatLogLoader(true)
+        updateSingleCategory(selected)
+        updateSingleCategoryLogs([]);
+        updateSingleCategorySearch("")
+        $("#singleCategoryView").offcanvas("show")
+        const body = {
+            category_id: selected._id,
+            type: transactionType.dbKey,
+            start_time: timeConversionsService.convertLocalDateTimeToUtc(monthStartTime, "yyyy-MM-DD HH:mm:ss"),
+            end_time: timeConversionsService.convertLocalDateTimeToUtc(monthEndTime, "yyyy-MM-DD HH:mm:ss"),
+        }
+        transactionLogApiService.getMonthSingleCategoryWise(body).then(res => {
+            const data = res.data?.data ?? [];
+            let logData: any[] = []
+            for (let dayItem of data) {
+                logData = logData.concat(dayItem.data)
             }
-        ]
-        let series_data = [];
-        for (let item of catg_data) {
-            const curr_value = helperService.generateRandom(1000, 50000)
-            series_data.push({
-                name: item.name,
-                y: curr_value,
-                icon: `<i class="${item.icon}"></i>`,
-                display_value: helperService.formatCurrencyValue(curr_value)
-            })
+            updateSingleCategoryLogs(logData)
+            updateSingleCatLogLoader(false)
+        }).catch(() => {
+            updateSingleCategoryLogs([])
+            updateSingleCatLogLoader(false)
+        })
+    }
+
+    function closeSingleCategoryLog() {
+        updateSingleCategory(null)
+        $("#singleCategoryView").offcanvas("hide")
+    }
+
+    useEffect(() => {
+        setSingleCategoryFilteredData()
+    }, [singleCategorySearch, singleCategoryAllLogs])
+
+    function setSingleCategoryFilteredData() {
+        try {
+            const singleCategoryFilteredLogs = helperService.filterArrayOnSearch(singleCategoryAllLogs, ["remarks"], singleCategorySearch)
+            updateSingleCategoryFilteredLogs([...singleCategoryFilteredLogs])
+        } catch {
+            updateSingleCategoryFilteredLogs([])
         }
-        const options = {
-            chart: {
-                type: 'pie',
-                backgroundColor: "transparent",
-            },
-            title: {
-                text: 'Category Wise Spends',
-            },
-            credits: {
-                enabled: false
-            },
-            tooltip: {
-                formatter: function () {
-                    let this_graph: any = this;
-                    let tool_tip_text = "";
-                    try {
-                        let current_point = this_graph.point;
-                        tool_tip_text += "<span style='color:" + current_point.color + "'>" + current_point.icon + "</span> " + current_point.name + " : " + current_point.display_value + "<br>"
-                        tool_tip_text += "Percentage : " + current_point.percentage.toFixed(2) + "%"
-                    } catch { }
-                    try {
-                        let current_point = this_graph.point;
-                        return `
-                        <div class="chart-tooltip category-chart-tooltip">
-                            <div>
-                                <span style="color: ${current_point.color}">${current_point.icon}</span> ${current_point.name} : ${current_point.display_value}
-                            </div>
-                            <div class="percentage">
-                                Percentage : ${current_point.percentage.toFixed(2)}%
-                            </div>
-                        </div>
-                    `
-                    } catch { }
-                    return ""
-                },
-                backgroundColor: 'transparent',
-                borderColor: 'transparent',
-                useHTML: true,
-            },
-            plotOptions: {
-                pie: {
-                    innerSize: '20%',
-                    depth: 45,
-                    dataLabels: {
-                        useHTML: true,
-                    },
-                    borderColor: "transparent"
-                },
-            },
-            series: [{
-                name: 'Spends',
-                borderRadius: 5,
-                data: series_data,
-            }]
-        }
-        updateCategoryPieChart(options)
     }
 
     function allTransactionsLoaderTemplate() {
@@ -515,6 +583,66 @@ export default function Transactions() {
         </>
     }
 
+    function singleCategoryLogTemplate() {
+        return <>
+            {
+                loadSingleCatLog ?
+                    allTransactionsLoaderTemplate()
+                    :
+                    <>
+                        {
+                            singleCategoryFilteredLogs.length ?
+                                <>
+                                    {
+                                        singleCategoryFilteredLogs.map(transaction => (
+                                            <div className={`transactions-block`} key={transaction._id}>
+                                                <div className="transaction-data">
+                                                    <div className="details">
+                                                        <div className={`icon ${transactionType.key === "income" ? "credit" : (transactionType.key === "estimation" ? "estimation" : "debit")}`}>
+                                                            <i className={categoriesObject[transaction.category_id]?.icon}></i>
+                                                        </div>
+                                                        <div className="names">
+                                                            <div className="remarks">
+                                                                {transaction.remarks}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="value">
+                                                        <div className="amount">
+                                                            <Currency value={transaction.value} />
+                                                        </div>
+                                                        <div className="created-at">
+                                                            <i className="fa-regular fa-clock"></i> {timeConversionsService.convertUtcDateTimeToLocal(transaction.updated_at, "DD-MM-YYYY HH:mm:ss") as string}
+                                                        </div>
+                                                        <div className="transaction-options">
+                                                            <div className="option delete" data-bs-toggle="modal" data-bs-target="#transactionDeleteConfirm" onClick={() => {
+                                                                updateDeleteRecord(transaction)
+                                                            }}>
+                                                                <i className="fa-regular fa-trash-can "></i><span className="name">Delete</span>
+                                                            </div>
+                                                            <div className="option edit" onClick={() => {
+                                                                $("#singleCategoryView").offcanvas("hide");
+                                                                editLog(transaction)
+                                                            }}>
+                                                                <i className="fa-regular fa-pen-to-square"></i>Edit
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    }
+                                </>
+                                :
+                                <div className="centred-block-full-height">
+                                    <NoData title="No Data" text={singleCategorySearch ? "No Search results" : "No transactions in this month"} />
+                                </div>
+                        }
+                    </>
+            }
+        </>
+    }
+
     function categoryWiseLoaderTemplate() {
         return <>
             {
@@ -562,28 +690,28 @@ export default function Transactions() {
                             filteredCategoryWise.length ?
                                 <>
                                     {
-                                        Array(10).fill(0).map((_e, i) => (
-                                            <div className={`transactions-block`} key={i}>
+                                        filteredCategoryWise.map(categoryItem => (
+                                            <div className={`transactions-block`} key={categoryItem._id}>
                                                 <div className="transaction-data">
                                                     <div className="details">
-                                                        <div className={`icon`}>
-                                                            <i className="fa-solid fa-home"></i>
+                                                        <div className={`icon ${transactionType.key === "income" ? "credit" : (transactionType.key === "estimation" ? "estimation" : "debit")}`}>
+                                                            <i className={categoryItem.icon}></i>
                                                         </div>
                                                         <div className="names">
                                                             <div className="category">
-                                                                Home
+                                                                {categoryItem.name}
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div className="value">
                                                         <div className="amount">
-                                                            <Currency value={1000} />
+                                                            <Currency value={categoryItem.transactionData?.total ?? 0} />
                                                         </div>
                                                         <div className="created-at">
-                                                            <i className="fa-solid fa-sliders"></i> Count : {i + 1}
+                                                            <i className="fa-solid fa-sliders"></i> Count : {categoryItem.transactionData?.count ?? 0}
                                                         </div>
                                                         <div className="transaction-options">
-                                                            <div className="option" >
+                                                            <div className={`option ${!categoryItem.transactionData?.total ? "disabled-block" : ""}`} onClick={() => openSingleCategoryLog(categoryItem)}>
                                                                 view <i className="fa-solid fa-angle-right"></i>
                                                             </div>
                                                         </div>
@@ -606,7 +734,6 @@ export default function Transactions() {
 
     return (
         <>
-            {/* <NoData title="No Data" text={"Data not available for the page"} /> */}
             <div className="page-body no-header">
                 <div className="transactions-page">
                     <div className="transactions-data log">
@@ -660,7 +787,7 @@ export default function Transactions() {
                                         </div>
                                     }
                                 </div>
-                                <div className={`body ${(transactionsView === "category_wise" && categoryView === "all") ? "no-search" : ""}`}>
+                                <div className={`body ${transactionsView === "category_wise" ? "no-search" : ""}`}>
                                     {
                                         transactionsView === "all" ? allTransactionsTemplate() : categoryWiseTemplate()
                                     }
@@ -787,7 +914,7 @@ export default function Transactions() {
                                             <>
                                                 {
                                                     validCategoryPie ?
-                                                        <HighchartsReact containerProps={{ className: "category-pie-chart" }} highcharts={Highcharts} options={category_pie} />
+                                                        <HighchartsReact containerProps={{ className: "category-pie-chart" }} highcharts={Highcharts} options={categoryWisePie} />
                                                         :
                                                         <div className="category-pie-chart">
                                                             <div className="centred-block-full-height">
@@ -811,7 +938,7 @@ export default function Transactions() {
                     </div>
                     <div className="options">
                         <div className={`option-item close ${loadTransactionLog ? "disabled-block" : ""}`}>
-                            <i className="fa-solid fa-xmark" data-bs-dismiss="offcanvas"></i>
+                            <i className="fa-solid fa-xmark" onClick={closeLogCanvas}></i>
                         </div>
                     </div>
                 </div>
@@ -882,12 +1009,67 @@ export default function Transactions() {
                 </div>
                 <div className="offcanvas-footer end">
                     <div className="option">
-                        <button className="btn btn-outline-secondary" data-bs-dismiss="offcanvas" disabled={loadTransactionLog}><i className="fa-regular fa-circle-xmark"></i> Cancel</button>
+                        <button className="btn btn-outline-secondary" disabled={loadTransactionLog} onClick={closeLogCanvas}><i className="fa-regular fa-circle-xmark"></i> Cancel</button>
                     </div>
                     <div className="option">
                         <button className="btn btn-success" disabled={loadTransactionLog} onClick={submitLog}><i className="fa-regular fa-circle-check"></i> Submit</button>
                     </div>
                 </div>
+            </div>
+
+            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="singleCategoryView" aria-labelledby="staticBackdropLabel">
+                <div className="offcanvas-header border-bottom">
+                    <div className="title">
+                        Category Wise Log
+                    </div>
+                    <div className="options">
+                        <div className="option-item close">
+                            <i className="fa-solid fa-xmark" onClick={closeSingleCategoryLog}></i>
+                        </div>
+                    </div>
+                </div>
+                {
+                    selectedSingleCategory &&
+                    <div className="offcanvas-body">
+                        <div className="single-category">
+                            <div className="overall-data">
+                                <div className="category">
+                                    <div className={`transactions-block`}>
+                                        <div className="transaction-data">
+                                            <div className="details">
+                                                <div className={`icon`}>
+                                                    <i className={selectedSingleCategory.icon}></i>
+                                                </div>
+                                                <div className="names">
+                                                    <div className="category">
+                                                        {selectedSingleCategory.name}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="value">
+                                                <div className="amount">
+                                                    <Currency value={selectedSingleCategory.transactionData?.total ?? 0} />
+                                                </div>
+                                                <div className="created-at">
+                                                    <i className="fa-solid fa-sliders"></i> Count : {selectedSingleCategory.transactionData?.count ?? 0}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="search form-group">
+                                    <input type="text" id="singe-cat-tra-search" name="singe-cat-tra-search" className="form-control" placeholder="Search Transactions"
+                                        value={singleCategorySearch} onChange={(e => {
+                                            updateSingleCategorySearch(e.target.value)
+                                        })} />
+                                </div>
+                            </div>
+                            <div className="single-category-log">
+                                {singleCategoryLogTemplate()}
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
 
             <div className="modal fade" id="transactionDeleteConfirm" data-bs-backdrop="static" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">

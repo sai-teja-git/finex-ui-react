@@ -104,6 +104,22 @@ const filterArrayOnSearch = (items: any[], item_keys: string[], search_text: str
     return [];
 }
 
+/**
+ * The function calculates the percentage of a value relative to a base value, with an optional
+ * rounding off feature.
+ * @param {number} value - The `value` parameter represents the numerical value for which you want to
+ * calculate the percentage.
+ * @param {number} base - The `base` parameter in the `calculatePercentage` function represents the
+ * total value or the denominator that you want to calculate the percentage against.
+ * @param {number} [roundOff] - The `roundOff` parameter in the `calculatePercentage` function is an
+ * optional parameter that specifies the number of decimal places to round the calculated percentage
+ * to. If provided, the calculated percentage will be rounded off to the specified number of decimal
+ * places. If not provided, the calculated percentage will not be rounded
+ * @returns The function `calculatePercentage` returns the calculated percentage value of `value` with
+ * respect to `base`. If `roundOff` parameter is provided, the calculated percentage is rounded off to
+ * the specified number of decimal places. If an error occurs (e.g., division by zero), the function
+ * returns 0.
+ */
 const calculatePercentage = (value: number, base: number, roundOff?: number) => {
     try {
         if (base === 0) {

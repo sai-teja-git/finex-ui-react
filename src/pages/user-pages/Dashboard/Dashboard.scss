@@ -8,6 +8,10 @@
         display: grid;
     }
 
+    @include mediaBreakPointUp("md") {
+        flex-wrap: wrap;
+    }
+
     &-block {
         width: 25%;
         border: 1px solid var(--dashboard-overview-block-br-color);
@@ -25,6 +29,22 @@
 
         &:not(:last-child) {
             margin-right: 18px;
+        }
+
+        @include mediaBreakPointUp("md") {
+            width: calc((100% - 16px)/2);
+
+            &:nth-child(odd) {
+                margin-right: 16px;
+            }
+
+            &:nth-child(even) {
+                margin-right: 0;
+            }
+
+            &:nth-child(-n + 2) {
+                margin-bottom: 16px;
+            }
         }
 
         @include mediaBreakPointUp("sm") {
