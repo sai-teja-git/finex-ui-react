@@ -249,12 +249,6 @@ export default function Transactions() {
             tooltip: {
                 formatter: function () {
                     let this_graph: any = this;
-                    let tool_tip_text = "";
-                    try {
-                        let current_point = this_graph.point;
-                        tool_tip_text += "<span style='color:" + current_point.color + "'>" + current_point.icon + "</span> " + current_point.name + " : " + current_point.display_value + "<br>"
-                        tool_tip_text += "Percentage : " + current_point.percentage.toFixed(2) + "%"
-                    } catch { }
                     try {
                         let current_point = this_graph.point;
                         return `
@@ -555,7 +549,7 @@ export default function Transactions() {
                                                             <Currency value={transaction.value} />
                                                         </div>
                                                         <div className="created-at">
-                                                            <i className="fa-regular fa-clock"></i> {timeConversionsService.convertUtcDateTimeToLocal(transaction.updated_at, "DD-MM-YYYY HH:mm:ss") as string}
+                                                            <i className="fa-regular fa-clock"></i> {timeConversionsService.convertUtcDateTimeToLocal(transaction.created_at, "DD-MM-YYYY HH:mm:ss") as string}
                                                         </div>
                                                         <div className="transaction-options">
                                                             <div className="option delete" data-bs-toggle="modal" data-bs-target="#transactionDeleteConfirm" onClick={() => {
@@ -612,7 +606,7 @@ export default function Transactions() {
                                                             <Currency value={transaction.value} />
                                                         </div>
                                                         <div className="created-at">
-                                                            <i className="fa-regular fa-clock"></i> {timeConversionsService.convertUtcDateTimeToLocal(transaction.updated_at, "DD-MM-YYYY HH:mm:ss") as string}
+                                                            <i className="fa-regular fa-clock"></i> {timeConversionsService.convertUtcDateTimeToLocal(transaction.created_at, "DD-MM-YYYY HH:mm:ss") as string}
                                                         </div>
                                                         <div className="transaction-options">
                                                             <div className="option delete" data-bs-toggle="modal" data-bs-target="#transactionDeleteConfirm" onClick={() => {
@@ -1012,7 +1006,12 @@ export default function Transactions() {
                         <button className="btn btn-outline-secondary" disabled={loadTransactionLog} onClick={closeLogCanvas}><i className="fa-regular fa-circle-xmark"></i> Cancel</button>
                     </div>
                     <div className="option">
-                        <button className="btn btn-success" disabled={loadTransactionLog} onClick={submitLog}><i className="fa-regular fa-circle-check"></i> Submit</button>
+                        {
+                            loadTransactionLog ?
+                                <button className="btn btn-success" disabled><span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Loading...</button>
+                                :
+                                <button className="btn btn-success" onClick={submitLog}><i className="fa-regular fa-circle-check"></i> Submit</button>
+                        }
                     </div>
                 </div>
             </div>

@@ -7,12 +7,12 @@ import transformationService from "../../../services/transformations.service";
 import "./CategoryList.scss";
 
 export default function CategoryList() {
+
     const [categoryFormData, updateCategoryFormData] = useState<any>({
         name: "",
         icon_category: {},
         selected_icon: {}
     })
-
     const [loadCategories, updateCategoryLoadFlag] = useState(true);
     const [loadCategorySubmit, updateCategorySubmitLoadFlag] = useState(false);
     const [userSpendCatagories, updateUserSpendCategoriesData] = useState<any>([]);
@@ -442,7 +442,12 @@ export default function CategoryList() {
                         <button className="btn btn-outline-secondary" data-bs-dismiss="offcanvas" disabled={loadCategorySubmit}><i className="fa-regular fa-circle-xmark"></i> Cancel</button>
                     </div>
                     <div className="option">
-                        <button className="btn btn-success" disabled={loadCategorySubmit} onClick={createUserCategory}><i className="fa-regular fa-circle-check"></i> Submit</button>
+                        {
+                            loadCategorySubmit ?
+                                <button className="btn btn-success" disabled><span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Loading...</button>
+                                :
+                                <button className="btn btn-success" disabled={loadCategorySubmit} onClick={createUserCategory}><i className="fa-regular fa-circle-check"></i> Submit</button>
+                        }
                     </div>
                 </div>
             </div>

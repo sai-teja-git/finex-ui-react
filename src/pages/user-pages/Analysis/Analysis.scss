@@ -152,9 +152,18 @@
     }
 
     .transactions-offcanvas-view {
+
         margin: 16px 0px;
         height: calc(100vh - 225px);
         overflow-y: auto;
+
+        &.placeholder-glow {
+            .placeholder {
+                height: 100%;
+                border-radius: 3px;
+                color: var(--app-place-holder-color);
+            }
+        }
 
         .transaction-block {
             &:not(:last-child) {
@@ -190,6 +199,20 @@
 
                     .value {
                         font-size: 20px;
+
+                        &.loading {
+                            display: flex;
+                            align-items: center;
+                            width: 80px;
+                        }
+                    }
+                }
+
+                .time {
+                    &.loading {
+                        width: 40%;
+                        display: flex;
+                        align-items: center;
                     }
                 }
             }

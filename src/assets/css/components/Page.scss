@@ -95,4 +95,9 @@
         @extend .centred-block;
         height: 100%
     }
+
+    &-min-height {
+        @extend .centred-block;
+        min-height: 250px
+    }
 }

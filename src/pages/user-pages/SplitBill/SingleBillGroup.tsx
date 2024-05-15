@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import Currency from "../../../components/Currency";
 
-export default function SingleBillGroup() {
+interface ISingleBillGroup {
+    overallDataLoad: boolean;
+    singleGroupData: any;
+    refreshOverallData: Function
+}
+
+export default function SingleBillGroup({ overallDataLoad, singleGroupData = {}, refreshOverallData }: ISingleBillGroup) {
 
     const [dummyLoader, updateDummyLoader] = useState(true);
     const [overall_card_details, setOverallCardDetails] = useState<Record<string, any>>({});
@@ -23,13 +29,13 @@ export default function SingleBillGroup() {
 
     function singleGroupOverallTemplate() {
         return <>
-            <div className={`overview ${dummyLoader && "placeholder-glow"}`} >
+            <div className={`overview ${overallDataLoad && "placeholder-glow"}`} >
                 <div className="overview-block estimation">
                     <div className="block-left">
                         <div className="amount">
                             {
-                                dummyLoader ? <span className="placeholder col-10"></span> :
-                                    <Currency value={overall_card_details["total_estimations"] ? overall_card_details["total_estimations"] : 0} />
+                                overallDataLoad ? <span className="placeholder col-10"></span> :
+                                    <Currency value={singleGroupData.estimation ?? 0} />
                             }
                         </div>
                         <div className="name">
@@ -46,8 +52,8 @@ export default function SingleBillGroup() {
                     <div className="block-left">
                         <div className="amount">
                             {
-                                dummyLoader ? <span className="placeholder col-10"></span> :
-                                    <Currency value={overall_card_details["total_spends"] ? overall_card_details["total_spends"] : 0} />
+                                overallDataLoad ? <span className="placeholder col-10"></span> :
+                                    <Currency value={singleGroupData.actual ?? 0} />
                             }
                         </div>
                         <div className="name">
@@ -64,8 +70,8 @@ export default function SingleBillGroup() {
                     <div className="block-left">
                         <div className="amount">
                             {
-                                dummyLoader ? <span className="placeholder col-10"></span> :
-                                    <Currency value={overall_card_details["total_income"] ? overall_card_details["total_income"] : 0} />
+                                overallDataLoad ? <span className="placeholder col-10"></span> :
+                                    <Currency value={singleGroupData.paid ?? 0} />
                             }
                         </div>
                         <div className="name">
@@ -82,7 +88,7 @@ export default function SingleBillGroup() {
                     <div className="block-left">
                         <div className="amount">
                             {
-                                dummyLoader ? <span className="placeholder col-10"></span> : 0
+                                overallDataLoad ? <span className="placeholder col-10"></span> : singleGroupData.persons?.length ?? 0
                             }
                         </div>
                         <div className="name">

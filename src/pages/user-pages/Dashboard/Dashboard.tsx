@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 
-import "./Dashboard.scss";
-import Currency from "../../../components/Currency";
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import SolidGauge from "highcharts/modules/solid-gauge"
-import Accessibility from "highcharts/modules/accessibility"
-import moment from "moment-timezone";
+import Accessibility from "highcharts/modules/accessibility";
+import SolidGauge from "highcharts/modules/solid-gauge";
+import Currency from "../../../components/Currency";
 import helperService from "../../../services/helper-functions.service";
+import "./Dashboard.scss";
 
 import highchartsMore from "highcharts/highcharts-more";
 import catagoriesApiService from "../../../api/categories.api.service";
-import timeConversionsService from "../../../services/time-conversions.service";
 import transactionLogApiService from "../../../api/transaction-log.api.service";
+import NoData from "../../../components/NoData";
+import timeConversionsService from "../../../services/time-conversions.service";
 import transformationService from "../../../services/transformations.service";
 
 highchartsMore(Highcharts);
@@ -24,13 +24,16 @@ export default function Dashboard() {
     const monthStartTime = new Date(timeConversionsService.dateTimeFormat(new Date(), "YYYY-MM-01 00:00:00"));
     const monthEndTime = new Date(monthStartTime.getFullYear(), monthStartTime.getMonth() + 1, 1);
     const [categoriesObject, updateCategoriesObject] = useState<any>({});
+    const [spendCategories, updateSpendCategories] = useState<any[]>([]);
+    const [incomeCategories, updateIncomeCategories] = useState<any[]>([]);
     const [loadOverallData, updateOverallLoaderFlag] = useState(true);
     const [overallCardData, updateOverallCardData] = useState<Record<string, any>>({})
-
-    const [overall_card_details, setOverallCardDetails] = useState<Record<string, any>>({});
-    const [month_spend_chart, setChartOptions] = useState({})
-    const [overall_gauge, setOverallGaugeChart] = useState({})
-    const [dummy_loader, setDummyLoader] = useState(true)
+    const [overallGauge, setOverallGaugeChart] = useState({});
+    const [validGauge, updateGaugeStatus] = useState(false);
+    const [validLineChart, updateLineChartStatus] = useState(false)
+    const [monthSpendChart, updateMonthSpendChart] = useState({});
+    const [loadCategoryTable, updateCategoryTableFlag] = useState(true);
+    const [categoryTableData, updateCategoryTableData] = useState<any[]>([]);
 
     useEffect(() => {
         getDefaultData()
@@ -38,18 +41,15 @@ export default function Dashboard() {
 
     async function getDefaultData() {
         await getUserCatagories();
-        getPageData()
-    }
-
-    function getPageData() {
-        getUserTransactions();
-        // getCategoryWiseData();
+        getUserTransactions()
     }
 
     async function getUserCatagories() {
-        await catagoriesApiService.getUserCategories().then(res => {
+        await catagoriesApiService.getUserCategories().then(async res => {
             const spendCategories = res.data?.spend_categories ?? [];
             const incomeCategories = res.data?.income_categories ?? [];
+            updateSpendCategories(spendCategories);
+            updateIncomeCategories(incomeCategories);
             let categoriesObject: any = {};
             for (let category of spendCategories) {
                 categoriesObject[category._id] = category
@@ -59,9 +59,16 @@ export default function Dashboard() {
             }
             updateCategoriesObject(categoriesObject)
         }).catch(() => {
-            updateCategoriesObject({})
+            updateCategoriesObject({});
+            updateCategoryTableData([]);
         })
     }
+
+    useEffect(() => {
+        if (Object.keys(categoriesObject).length) {
+            getCategoryWiseData();
+        }
+    }, [categoriesObject])
 
     function getUserTransactions() {
         const body = {
@@ -79,26 +86,49 @@ export default function Dashboard() {
                     max: data.spend.max
                 }
                 updateOverallCardData(overallData)
+                setGaugeChart(overallData)
+                setLineChart(data.spend)
             } catch { }
             updateOverallLoaderFlag(false)
         }).catch(() => {
             updateOverallLoaderFlag(false);
+            updateGaugeStatus(false);
+            updateLineChartStatus(false);
         })
     }
 
-
-    function setLineChart() {
-        let spends_till_now = 0;
-        let categ_arr: any[] = [];
-        let spends_arr: any[] = [];
-        const month_end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-        for (let i = 1; i <= month_end; i++) {
-            const this_day = new Date(new Date().getFullYear(), new Date().getMonth(), i);
-            const spend = i === 1 ? 0 : helperService.generateRandom(100, 500);
-            spends_till_now += spend;
-            categ_arr.push(moment(this_day).format("DD"))
-            spends_arr.push({ y: spend })
+    function setLineChart(spendData: any) {
+        let dayObject: any = {};
+        let categoryArray: any[] = [];
+        let seriesData: any[] = [];
+        let validData = false;
+        try {
+            for (let item of spendData.day_wise) {
+                dayObject[timeConversionsService.dateTimeFormat(item.day, "yyyy-MM-DD HH:mm:ss")] = {
+                    ...item,
+                    day_total: item.data.reduce((sum: number, record: any) => { return (sum + record.value) }, 0)
+                }
+            }
+            const month_end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+            for (let i = 1; i <= month_end; i++) {
+                const thisDay = new Date(new Date().getFullYear(), new Date().getMonth(), i);
+                const dayInUtc = timeConversionsService.convertLocalDateTimeToUtc(thisDay, "yyyy-MM-DD HH:mm:ss") as string;
+                const value = dayObject[dayInUtc] ? dayObject[dayInUtc].day_total : 0
+                seriesData.push({
+                    y: value,
+                    date: thisDay,
+                    display: helperService.formatCurrencyValue(value)
+                })
+                if (value) {
+                    validData = true
+                }
+                categoryArray.push(timeConversionsService.dateTimeFormat(thisDay, "DD"))
+            }
+        } catch {
+            updateLineChartStatus(false)
+            return
         }
+        updateLineChartStatus(validData)
         const options = {
             chart: {
                 backgroundColor: "transparent",
@@ -108,7 +138,7 @@ export default function Dashboard() {
                 text: 'Day Wise Spends'
             },
             xAxis: {
-                categories: categ_arr,
+                categories: categoryArray,
             },
             yAxis: {
                 title: {
@@ -121,8 +151,26 @@ export default function Dashboard() {
                 maxPadding: 0.1
             },
             tooltip: {
-                pointFormat: '{series.name} <b>{point.y}</b><br/>',
-                shared: true
+                formatter: function () {
+                    let this_graph: any = this;
+                    try {
+                        let point = this_graph.point;
+                        return `
+                        <div class="chart-tooltip spend-chart-tooltip">
+                            <div>
+                                 ${timeConversionsService.dateTimeFormat(point.date, "ddd, MMM Do YYYY")} 
+                            </div>
+                            <div class="percentage">
+                                Spend : ${point.display}
+                            </div>
+                        </div>
+                    `
+                    } catch { }
+                    return ""
+                },
+                backgroundColor: 'transparent',
+                borderColor: 'transparent',
+                useHTML: true,
             },
             accessibility: {
                 enabled: false
@@ -148,13 +196,20 @@ export default function Dashboard() {
                 {
                     name: 'Spends',
                     color: "#fa4b42",
-                    data: spends_arr
+                    data: seriesData
                 },]
         };
-        setChartOptions(options)
+        updateMonthSpendChart(options)
     }
 
-    function setGaugeChart() {
+    function setGaugeChart(overallData: any) {
+        if (overallData.spend || overallData.estimation || overallData.income) {
+            updateGaugeStatus(true)
+        }
+        const maxBase = Math.max(overallData.spend, overallData.estimation, overallData.income)
+        const spendPercentage = helperService.calculatePercentage(overallData.spend, maxBase, 2)
+        const estimationPercentage = helperService.calculatePercentage(overallData.estimation, maxBase, 2)
+        const incomePercentage = helperService.calculatePercentage(overallData.income, maxBase, 2)
         const colors = ["#ffb212", "#fa4b42", "#00e272"]
         const options = {
 
@@ -194,17 +249,17 @@ export default function Dashboard() {
             pane: {
                 startAngle: 0,
                 endAngle: 360,
-                background: [{ // Track for Conversion
+                background: [{
                     outerRadius: '112%',
                     innerRadius: '88%',
                     backgroundColor: colors[0] + "4d",
                     borderWidth: 0
-                }, { // Track for Engagement
+                }, {
                     outerRadius: '87%',
                     innerRadius: '63%',
                     backgroundColor: colors[1] + "4d",
                     borderWidth: 0
-                }, { // Track for Feedback
+                }, {
                     outerRadius: '62%',
                     innerRadius: '38%',
                     backgroundColor: colors[2] + "4d",
@@ -236,7 +291,7 @@ export default function Dashboard() {
                     color: colors[0],
                     radius: '112%',
                     innerRadius: '88%',
-                    y: 80
+                    y: estimationPercentage
                 }],
                 custom: {
                     icon: 'filter',
@@ -248,7 +303,7 @@ export default function Dashboard() {
                     color: colors[1],
                     radius: '87%',
                     innerRadius: '63%',
-                    y: 65
+                    y: spendPercentage
                 }],
                 custom: {
                     icon: 'comments-o',
@@ -260,7 +315,7 @@ export default function Dashboard() {
                     color: colors[2],
                     radius: '62%',
                     innerRadius: '38%',
-                    y: 50
+                    y: incomePercentage
                 }],
                 custom: {
                     icon: 'commenting-o',
@@ -271,7 +326,34 @@ export default function Dashboard() {
         setOverallGaugeChart(options)
     }
 
-    function overallDataCard() {
+    function getCategoryWiseData() {
+        const body = {
+            start_time: timeConversionsService.convertLocalDateTimeToUtc(monthStartTime, "yyyy-MM-DD HH:mm:ss"),
+            end_time: timeConversionsService.convertLocalDateTimeToUtc(monthEndTime, "yyyy-MM-DD HH:mm:ss"),
+        }
+        transactionLogApiService.getMonthCategoryWise(body).then(res => {
+            let data: any[] = [];
+            try {
+                const spendData = res.data?.data.debits;
+                for (let item of spendCategories) {
+                    data.push({
+                        ...item,
+                        ...(spendData[item._id] ? { data: spendData[item._id] } : {})
+                    })
+                }
+                data.sort((a, b) => ((a.data?.total ?? 0) < (b.data?.total ?? 0) ? 1 : -1))
+            } catch {
+                data = []
+            }
+            updateCategoryTableData(data)
+            updateCategoryTableFlag(false);
+        }).catch(() => {
+            updateCategoryTableFlag(false);
+            updateCategoryTableData([]);
+        })
+    }
+
+    function overallDataCardTemplate() {
         return <>
             <div className={`overview ${loadOverallData && "placeholder-glow"}`} >
                 <div className="overview-block spend">
@@ -350,13 +432,44 @@ export default function Dashboard() {
         </>
     }
 
+    function categoryTableLoadTemplate() {
+        return <>
+            <div className="custom-table">
+                <table className="sticky-head">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody className="placeholder-glow">
+                        {
+                            Array(10).fill(0).map((_e, i) => (
+                                <tr key={i}>
+                                    {
+                                        Array(3).fill(0).map((_t, j) => (
+                                            <td key={j}>
+                                                <div className="placeholder col-12"></div>
+                                            </td>
+                                        ))
+                                    }
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </>
+    }
+
     return (
         <>
             <div className="page-body no-header">
                 <div className="row m-0">
                     <div className="col-12 p-0">
                         <div className="card-body">
-                            {overallDataCard()}
+                            {overallDataCardTemplate()}
                         </div>
                     </div>
                 </div>
@@ -365,14 +478,23 @@ export default function Dashboard() {
                         <div className="card">
                             <div className="card-body p-1">
                                 {
-                                    dummy_loader ?
+                                    loadOverallData ?
                                         <div className="day-wise-spends placeholder-glow">
                                             <div className="placeholder col-12"></div>
                                         </div>
                                         :
-                                        <div>
-                                            <HighchartsReact containerProps={{ className: "day-wise-spends" }} highcharts={Highcharts} options={month_spend_chart} />
-                                        </div>
+                                        <>
+                                            {
+                                                validLineChart ?
+                                                    <HighchartsReact containerProps={{ className: "day-wise-spends" }} highcharts={Highcharts} options={monthSpendChart} />
+                                                    :
+                                                    <div className="day-wise-spends">
+                                                        <div className="centred-block-full-height">
+                                                            <NoData title="No Data" />
+                                                        </div>
+                                                    </div>
+                                            }
+                                        </>
                                 }
 
                             </div>
@@ -386,51 +508,43 @@ export default function Dashboard() {
                                 Spends Data
                             </div>
                             <div className="card-body category-table p-0">
-                                <div className="custom-table">
-                                    <table className="sticky-head">
-                                        <thead>
-                                            <tr>
-                                                <th>Category</th>
-                                                <th>Amount</th>
-                                                <th>Count</th>
-                                                <th>Remarks</th>
-                                            </tr>
-                                        </thead>
-                                        {
-                                            dummy_loader ?
-                                                <tbody className="placeholder-glow">
-                                                    {
-                                                        Array(10).fill(0).map((_e, i) => (
-                                                            <tr key={i}>
+                                {
+                                    loadCategoryTable ? categoryTableLoadTemplate() :
+                                        <>
+                                            {
+                                                categoryTableData.length ?
+
+                                                    <div className="custom-table">
+                                                        <table className="sticky-head">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Category</th>
+                                                                    <th>Amount</th>
+                                                                    <th>Count</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
                                                                 {
-                                                                    Array(4).fill(0).map((_t, j) => (
-                                                                        <td key={j}>
-                                                                            <div className="placeholder col-12"></div>
-                                                                        </td>
+                                                                    categoryTableData.map(category => (
+                                                                        <tr key={category._id}>
+                                                                            <td>
+                                                                                <i className={`${category.icon} width-30`}></i> {category.name}
+                                                                            </td>
+                                                                            <td><Currency value={category.data?.total ?? 0} /></td>
+                                                                            <td>{category.data?.count ?? 0}</td>
+                                                                        </tr>
                                                                     ))
                                                                 }
-                                                            </tr>
-                                                        ))
-                                                    }
-                                                </tbody>
-                                                :
-                                                <tbody>
-                                                    {
-                                                        Array(10).fill(0).map((_e, i) => (
-                                                            <tr key={i}>
-                                                                <td>
-                                                                    <i className="fa-solid fa-home"></i> Category-{i + 1}
-                                                                </td>
-                                                                <td><Currency value={(i + 1) * 10} /></td>
-                                                                <td>{i + 1}</td>
-                                                                <td>Remarks----{i + 1}</td>
-                                                            </tr>
-                                                        ))
-                                                    }
-                                                </tbody>
-                                        }
-                                    </table>
-                                </div>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    :
+                                                    <div className="centred-block-full-height">
+                                                        <NoData title="No Data" text="No Category Data" />
+                                                    </div>
+                                            }
+                                        </>
+                                }
                             </div>
                         </div>
                     </div>
@@ -481,8 +595,8 @@ export default function Dashboard() {
                                                 <div className="name">
                                                     {overallCardData.max?.category_id ? (categoriesObject[overallCardData.max.category_id].name) : "----"}
                                                 </div>
-                                                <div className={`percentage ${overallCardData.max.percentage > 20 ? "red" : "green"}`}>
-                                                    {transformationService.roundOff(overallCardData.max.percentage ?? 0) ?? 0}%
+                                                <div className={`percentage ${overallCardData.max?.percentage > 20 ? "red" : "green"}`}>
+                                                    {transformationService.roundOff(overallCardData.max?.percentage ?? 0) ?? 0}%
                                                 </div>
                                             </div>
                                         </div>
@@ -492,14 +606,23 @@ export default function Dashboard() {
                                 <div className="card">
                                     <div className="card-body">
                                         {
-                                            dummy_loader ?
+                                            loadOverallData ?
                                                 <div className="month-overall-gauge placeholder-glow">
                                                     <div className="placeholder col-12"></div>
                                                 </div>
                                                 :
-                                                <div>
-                                                    <HighchartsReact containerProps={{ className: "month-overall-gauge" }} highcharts={Highcharts} options={overall_gauge} />
-                                                </div>
+                                                <>
+                                                    {
+                                                        validGauge ?
+                                                            <HighchartsReact containerProps={{ className: "month-overall-gauge" }} highcharts={Highcharts} options={overallGauge} />
+                                                            :
+                                                            <div className="month-overall-gauge placeholder-glow">
+                                                                <div className="centred-block-full-height">
+                                                                    <NoData title="No Data" />
+                                                                </div>
+                                                            </div>
+                                                    }
+                                                </>
                                         }
                                     </div>
                                 </div>

@@ -19,3 +19,9 @@
         margin-right: $i+px !important;
     }
 }
+
+@for $i from 0 through 1000 {
+    .width-#{$i} {
+        width: $i+px !important;
+    }
+}
