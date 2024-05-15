@@ -25,7 +25,6 @@ export default function Dashboard() {
     const monthEndTime = new Date(monthStartTime.getFullYear(), monthStartTime.getMonth() + 1, 1);
     const [categoriesObject, updateCategoriesObject] = useState<any>({});
     const [spendCategories, updateSpendCategories] = useState<any[]>([]);
-    const [incomeCategories, updateIncomeCategories] = useState<any[]>([]);
     const [loadOverallData, updateOverallLoaderFlag] = useState(true);
     const [overallCardData, updateOverallCardData] = useState<Record<string, any>>({})
     const [overallGauge, setOverallGaugeChart] = useState({});
@@ -49,7 +48,6 @@ export default function Dashboard() {
             const spendCategories = res.data?.spend_categories ?? [];
             const incomeCategories = res.data?.income_categories ?? [];
             updateSpendCategories(spendCategories);
-            updateIncomeCategories(incomeCategories);
             let categoriesObject: any = {};
             for (let category of spendCategories) {
                 categoriesObject[category._id] = category
