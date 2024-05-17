@@ -40,6 +40,20 @@ const getPersonBillData = (group: string) => {
     return axios.get(`${environment.API_URL}/split-bill/person-wise/${group}`)
 }
 
+const addNewPersons = (group: string, body: any) => {
+    return axios.post(`${environment.API_URL}/split-bill/group/person/${group}`, body)
+}
+
+const deletePerson = (params: any) => {
+    return axios.delete(`${environment.API_URL}/split-bill/person`, {
+        params
+    })
+}
+
+const updatePersonData = (body: any) => {
+    return axios.patch(`${environment.API_URL}/split-bill/person-details`, body)
+}
+
 const splitBillApiService = {
     createNewGroup,
     getMonthGroups,
@@ -49,7 +63,10 @@ const splitBillApiService = {
     getGroupBillList,
     deleteBill,
     updateGroupBill,
-    getPersonBillData
+    getPersonBillData,
+    addNewPersons,
+    deletePerson,
+    updatePersonData
 }
 
 export default splitBillApiService

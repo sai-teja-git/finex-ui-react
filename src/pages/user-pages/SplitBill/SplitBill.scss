@@ -614,6 +614,10 @@
     height: calc(100vh - 345px);
     overflow: auto;
 
+    &.no-edit {
+        height: calc(100vh - 260px)
+    }
+
     .share-bill-block {
         border: 1px solid var(--card-border-color);
         border-radius: 10px;

@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import splitBillApiService from "../../../api/split-bill.api.service";
 import timeConversionsService from "../../../services/time-conversions.service";
 import transformationService from "../../../services/transformations.service";
+import { v4 as uuidv4 } from 'uuid';
 
 interface ISingleBillGroup {
     overallDataLoad: boolean;
@@ -29,6 +30,16 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
     const [loadBillDelete, updateBillDeleteLoad] = useState(false);
     const [loadPersonData, updatePersonDataLoad] = useState(true);
     const [personBillData, updatePersonBillData] = useState<any>({});
+    const [personToAddBill, updatePersonToAddBill] = useState<any>({});
+    const [personBillLogData, updatePersonBillLogData] = useState<any>({ value: "", name: "" });
+    const [addPersonsFormData, updateAddPersonsFormData] = useState<any>(createNewPersonObj());
+    const [loadPersonAdd, updatePersonAddLoad] = useState(false);
+    const [selectedPersonToDelete, updateDeletingPerson] = useState<any>({});
+    const [loadPersonDelete, updatePersonDeleteLoad] = useState(false);
+    const [personView, updatePersonView] = useState<any>({});
+    const [enablePersonEdit, updatePersonEditFlag] = useState(false);
+    const [personUpdateForm, updatePersonUpdateData] = useState({ name: "", value: "" })
+    const [loadPersonUpdate, updatePersonUpdateLoader] = useState(false)
 
 
     useEffect(() => {
@@ -78,6 +89,75 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
         }
     }
 
+    function createNewPersonObj() {
+        return [{
+            id: uuidv4(),
+            name: ""
+        }]
+    }
+
+    function openAddNewPersons() {
+        updateAddPersonsFormData(createNewPersonObj());
+        $("#addMorePersons").offcanvas("show")
+    }
+
+    function submitNewPersons() {
+        let personNames = addPersonsFormData.filter((e: any) => e.name);
+        if (personNames.length) {
+            if (personNames.length !== addPersonsFormData.length) {
+                toast.error("Remove/Enter empty persons name", {
+                    id: "missing-fields"
+                })
+                return;
+            }
+        } else {
+            toast.error("Add at least one person name", {
+                id: "missing-fields"
+            })
+            return;
+        }
+        const body = addPersonsFormData.map((e: any) => ({
+            name: e.name
+        }))
+        updatePersonAddLoad(true)
+        splitBillApiService.addNewPersons(singleGroupData._id, body).then(() => {
+            toast.success("Person/Persons Added", { duration: 1500 })
+            getPageData();
+            $("#addMorePersons").offcanvas("hide")
+            try {
+                refreshOverallData()
+            } catch { }
+            updatePersonAddLoad(false)
+        }).catch(e => {
+            updatePersonAddLoad(false)
+            toast.error(e?.response?.data?.message ?? `Creation Failed`, { duration: 1500 })
+        })
+    }
+
+    function openPersonDeleteConfirm(person: any) {
+        updateDeletingPerson(person)
+        $("#personDeleteConfirm").modal("show")
+    }
+
+    function deletePerson() {
+        const body = {
+            group: singleGroupData._id,
+            person: selectedPersonToDelete._id
+        }
+        splitBillApiService.deletePerson(body).then(() => {
+            toast.success("Person Deleted", { duration: 1500 })
+            updatePersonDeleteLoad(false)
+            getPageData();
+            try {
+                refreshOverallData()
+            } catch { }
+            $("#personDeleteConfirm").modal("hide")
+        }).catch(e => {
+            updatePersonDeleteLoad(false)
+            toast.error(e?.response?.data?.message ?? `Deletion Failed`, { duration: 1500 })
+        })
+    }
+
     function openAddBill() {
         updateBillLogData(createBillLogObj());
         updateSelectedPersons({});
@@ -87,6 +167,12 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
         updatePersonSearch("")
         $("#billLog").offcanvas("show")
         updateBillLogPersons();
+    }
+
+    function openSinglePersonBillLog(person: any) {
+        updatePersonToAddBill(person)
+        updatePersonBillLogData({ value: "", name: "" })
+        $("#personBillLog").offcanvas("show")
     }
 
     function openUpdateBill(selected: any) {
@@ -288,6 +374,42 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
 
     }
 
+    function submitGroupPersonBill() {
+        if (!personBillLogData.name || !personBillLogData.value) {
+            toast.error("Fill Required fields", {
+                id: "no-bill-assign"
+            });
+            return;
+        }
+        updateBillSubmitLoad(true)
+        let personsData: any[] = [
+            {
+                person_id: personToAddBill._id,
+                value: Number(personBillLogData.value),
+                edited: false
+            }
+        ];
+        const body = {
+            group_id: singleGroupData["_id"],
+            name: personBillLogData.name,
+            value: personBillLogData.value,
+            persons: personsData
+        }
+        splitBillApiService.createNewBill(body).then(() => {
+            toast.success("Bill Created", { duration: 1500 })
+            getPageData();
+            $("#personBillLog").offcanvas("hide")
+            updateBillSubmitLoad(false)
+            try {
+                refreshOverallData()
+            } catch { }
+        }).catch(e => {
+            updateBillSubmitLoad(false)
+            toast.error(e?.response?.data?.message ?? `Creation Failed`, { duration: 1500 })
+        })
+
+    }
+
     function updateGroupBill() {
         let change = false;
         if (
@@ -363,8 +485,58 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
         })
     }
 
-    function openSinglePersonBill() {
+    function openSinglePersonBill(person: any, edit: boolean) {
+        updatePersonView({
+            ...person,
+            billData: personBillData[person._id]
+        })
+        if (edit) {
+            openPersonEdit(person)
+        } else {
+            updatePersonEditFlag(false)
+        }
         $("#viewPersonBill").offcanvas("show")
+    }
+
+    function openPersonEdit(person: any) {
+        updatePersonUpdateData({ name: person.name, value: "" })
+        updatePersonEditFlag(true)
+    }
+
+    function updatePersonDetails() {
+        if (!personUpdateForm.name) {
+            toast.error("Person name should not be empty", {
+                id: "missing_person_fields"
+            })
+            return;
+        }
+        if (personUpdateForm.name === personView.name && !personUpdateForm.value) {
+            toast.error("Add person paid amount", {
+                id: "missing_person_fields"
+            })
+            return;
+        }
+        updatePersonUpdateLoader(true)
+        const body = {
+            group_id: singleGroupData._id,
+            person_id: personView._id,
+            data: {
+                ...(personUpdateForm.name !== personView.name && { name: personUpdateForm.name }),
+                ...(personUpdateForm.value && { paid: Number(personUpdateForm.value) }),
+            }
+        }
+        splitBillApiService.updatePersonData(body).then(() => {
+            toast.success("Person Data Updated", { duration: 1500 })
+            getPageData();
+            $("#viewPersonBill").offcanvas("hide")
+            updatePersonUpdateLoader(false)
+            try {
+                refreshOverallData()
+            } catch { }
+        }).catch(e => {
+            updatePersonUpdateLoader(false)
+            toast.error(e?.response?.data?.message ?? `Update Failed`, { duration: 1500 })
+        })
     }
 
     function singleGroupOverallTemplate() {
@@ -617,7 +789,7 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
                             Person Wise
                         </div>
                         <div className="card-options">
-                            <button className="btn btn-outline-secondary btn-sm" disabled={loadPersonData}><i className="fa-solid fa-plus"></i> Add Persons</button>
+                            <button className="btn btn-outline-secondary btn-sm" disabled={loadPersonData} onClick={openAddNewPersons}><i className="fa-solid fa-plus"></i> Add Persons</button>
                         </div>
                     </div>
                     <div className="card-body">
@@ -660,10 +832,10 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
                                                             <div className="more-option" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                                 <i className="fa-solid fa-ellipsis-vertical"></i>
                                                                 <ul className="dropdown-menu">
-                                                                    <li><a className="dropdown-item">Add Bill</a></li>
-                                                                    <li><a className="dropdown-item" onClick={openSinglePersonBill}>View</a></li>
-                                                                    <li><a className="dropdown-item" onClick={openSinglePersonBill}>Edit</a></li>
-                                                                    <li><a className="dropdown-item">Delete</a></li>
+                                                                    <li><a className="dropdown-item" onClick={() => openSinglePersonBillLog(person)}>Add Bill</a></li>
+                                                                    <li hidden={!personBillData[person._id]?.bills?.length}><a className="dropdown-item" onClick={() => openSinglePersonBill(person, false)}>View</a></li>
+                                                                    <li hidden={!personBillData[person._id]?.bills?.length}><a className="dropdown-item" onClick={() => openSinglePersonBill(person, true)}>Edit</a></li>
+                                                                    <li hidden={singleGroupData.persons.length <= 1} onClick={() => openPersonDeleteConfirm(person)}><a className="dropdown-item">Delete</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -696,7 +868,7 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
                         <div className="col-12 form-group">
                             <div className="bill-value">
                                 <div className="value-field">
-                                    <label className="field-required" htmlFor="value">Value</label>
+                                    <label className="field-required" htmlFor="bill-value">Value</label>
                                     <input type="number" id="bill-value" name="bill-value" className="form-control" placeholder="Enter Value"
                                         value={billLogData.value} disabled={loadBillSubmit} onChange={event => {
                                             updateBillLogData({ ...billLogData, value: event.target.value, disableSpitEven: true });
@@ -793,13 +965,58 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
             </div>
         </div>
 
+        <div className="offcanvas offcanvas-end" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} id="personBillLog" aria-labelledby="staticBackdropLabel">
+            <div className="offcanvas-header border-bottom">
+                <div className="title">
+                    {personToAddBill.name}'s Bill
+                </div>
+                <div className="options">
+                    <div className={`option-item close ${loadBillSubmit ? "disabled-block" : ""}`}>
+                        <i className="fa-solid fa-xmark" data-bs-dismiss="offcanvas"></i>
+                    </div>
+                </div>
+            </div>
+            <div className="offcanvas-body">
+                <div className="bill-log-form">
+                    <div className="row">
+                        <div className="col-12 form-group">
+                            <label className="field-required" htmlFor="person-bill-value">Value</label>
+                            <input type="number" id="person-bill-value" name="person-bill-value" className="form-control" placeholder="Enter Value"
+                                value={personBillLogData.value} disabled={loadBillSubmit} onChange={event => {
+                                    updatePersonBillLogData({ ...personBillLogData, value: event.target.value });
+                                }} />
+                        </div>
+                        <div className="col-12 form-group mt-3">
+                            <label className="field-required" htmlFor="person-bill-name">Name</label>
+                            <input type="text" id="person-bill-name" name="person-bill-name" className="form-control" placeholder="Enter Bill Name"
+                                value={personBillLogData.name} disabled={loadBillSubmit} onChange={event => updatePersonBillLogData({ ...personBillLogData, name: event.target.value })} />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div className="offcanvas-footer end">
+                <div className="option">
+                    <button className="btn btn-outline-secondary" data-bs-dismiss="offcanvas" disabled={loadBillSubmit}><i className="fa-regular fa-circle-xmark"></i> Cancel</button>
+                </div>
+                <div className="option">
+                    {
+                        loadBillSubmit ?
+                            <button className="btn btn-success" disabled><span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Loading...</button>
+                            :
+                            <button className="btn btn-success" onClick={submitGroupPersonBill}><i className="fa-regular fa-circle-check"></i> Submit</button>
+                    }
+                </div>
+            </div>
+        </div>
+
         <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="viewPersonBill" aria-labelledby="staticBackdropLabel">
             <div className="offcanvas-header border-bottom">
                 <div className="title">
                     Mani Bills
                 </div>
                 <div className="options">
-                    <div className="option-item close">
+                    <div className={`option-item close ${loadPersonUpdate ? "disabled-block" : ""}`}>
                         <i className="fa-solid fa-xmark" data-bs-dismiss="offcanvas"></i>
                     </div>
                 </div>
@@ -811,7 +1028,7 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
                             Total
                         </div>
                         <div className="value">
-                            <Currency value={150000} />
+                            <Currency value={personView.billData?.total ?? 0} />
                         </div>
                     </div>
                     <div className="person-value-item">
@@ -819,34 +1036,53 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
                             Paid till now
                         </div>
                         <div className="value">
-                            <Currency value={50000} />
+                            <Currency value={personView.billData?.paid ?? 0} />
                         </div>
                     </div>
                 </div>
-                <div className="row mt-3">
-                    <div className="col-12 form-group">
-                        <label htmlFor="amount-paid-now">Amount paid now</label>
-                        <input type="number" id="amount-paid-now" name="amount-paid-now" className="form-control" placeholder="value" />
+                {
+                    enablePersonEdit &&
+                    <div className="row mt-3">
+                        <div className="col-7 form-group">
+                            <label className="field-required" htmlFor="amount-paid-now">Name</label>
+                            <input type="text" id="edit-person-name" name="edit-person-name" className="form-control" placeholder="Enter Name"
+                                value={personUpdateForm.name} disabled={loadPersonUpdate} onChange={event => {
+                                    updatePersonUpdateData({
+                                        ...personUpdateForm,
+                                        name: event.target.value
+                                    })
+                                }} />
+                        </div>
+                        <div className="col-5 form-group">
+                            <label htmlFor="amount-paid-now">Amount paid now</label>
+                            <input type="number" id="amount-paid-now" name="amount-paid-now" className="form-control" placeholder="value"
+                                value={personUpdateForm.value} disabled={loadPersonUpdate} onChange={event => {
+                                    updatePersonUpdateData({
+                                        ...personUpdateForm,
+                                        value: event.target.value
+                                    })
+                                }} />
+                        </div>
                     </div>
-                </div>
-                <div className="person-share-bills">
+                }
+                <div className={`person-share-bills ${enablePersonEdit ? "" : "no-edit"}`}>
                     {
-                        Array(10).fill(0).map((_e, i) => (
-                            <div className="share-bill-block" key={i}>
+                        personView.billData?.bills.map((bill: any) => (
+                            <div className="share-bill-block" key={bill._id}>
                                 <div className="name">
-                                    <i className="fa-solid fa-file-invoice"></i>Bill name-{i + 1}
+                                    <i className="fa-solid fa-file-invoice"></i>{bill.name}
                                 </div>
                                 <div className="value-block">
                                     <div className="bill-value">
                                         <div className="value-title">Total</div>
                                         <div className="data-value">
-                                            <Currency value={10000} />
+                                            <Currency value={bill.value} />
                                         </div>
                                     </div>
                                     <div className="bill-value">
                                         <div className="value-title">Share</div>
                                         <div className="data-value">
-                                            <Currency value={5000} />
+                                            <Currency value={bill.persons?.value ?? 0} />
                                         </div>
                                     </div>
                                 </div>
@@ -857,13 +1093,85 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
             </div>
             <div className="offcanvas-footer end">
                 <div className="option">
-                    <button className="btn btn-outline-secondary" data-bs-dismiss="offcanvas"><i className="fa-regular fa-circle-xmark"></i> Cancel</button>
+                    <button className="btn btn-outline-secondary" data-bs-dismiss="offcanvas" disabled={loadPersonUpdate}><i className="fa-regular fa-circle-xmark"></i> Cancel</button>
+                </div>
+                {
+                    !enablePersonEdit &&
+                    <div className="option">
+                        <button className="btn btn-outline-secondary" onClick={() => openPersonEdit(personView)}><i className="fa-regular fa-pen-to-square"></i> Edit</button>
+                    </div>
+                }
+                {
+                    enablePersonEdit &&
+                    <div className="option">
+                        <button className="btn btn-success" disabled={loadPersonUpdate} onClick={updatePersonDetails}><i className="fa-regular fa-circle-check"></i> Submit</button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="addMorePersons" aria-labelledby="staticBackdropLabel">
+            <div className="offcanvas-header border-bottom">
+                <div className="title">
+                    Add Persons
+                </div>
+                <div className="options">
+                    <div className={`option-item close ${loadPersonAdd ? "disabled-block" : ""}`}>
+                        <i className="fa-solid fa-xmark" data-bs-dismiss="offcanvas"></i>
+                    </div>
+                </div>
+            </div>
+            <div className="offcanvas-body">
+                <div className="row">
+                    <div className="col-12 form-group mt-3">
+                        <label className="field-required">Persons Name</label>
+                        {
+                            addPersonsFormData.map((person: any, person_ind: number,) => (
+                                <div className="row align-items-center mb-3" key={person.id}>
+                                    <div className="col-9">
+                                        <input type="text" id={"persons-name" + person.id} name={"persons-name" + person.id} className="form-control" placeholder="Enter Name"
+                                            value={addPersonsFormData[person_ind].name} disabled={loadPersonAdd} onChange={event => {
+                                                addPersonsFormData[person_ind].name = event.target.value
+                                                updateAddPersonsFormData([...addPersonsFormData])
+                                            }} />
+                                    </div>
+                                    <div className="col-3">
+                                        {
+                                            addPersonsFormData.length > 1 &&
+                                            <button type="button" className="btn btn-outline-danger btn-sm me-2 ng-star-inserted" disabled={loadPersonAdd} onClick={() => {
+                                                addPersonsFormData.splice(person_ind, 1)
+                                                updateAddPersonsFormData([...addPersonsFormData])
+                                            }}>
+                                                <i className="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        }
+                                        {
+                                            person_ind === addPersonsFormData.length - 1 &&
+                                            <button type="button" className="btn btn-outline-secondary btn-sm ng-star-inserted" disabled={loadPersonAdd} onClick={() => {
+                                                addPersonsFormData.push({ id: uuidv4(), name: "" });
+                                                updateAddPersonsFormData([...addPersonsFormData])
+                                            }}>
+                                                <i className="fa-solid fa-plus"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
+            </div>
+            <div className="offcanvas-footer end">
+                <div className="option">
+                    <button className="btn btn-outline-secondary" data-bs-dismiss="offcanvas" disabled={loadPersonAdd}><i className="fa-regular fa-circle-xmark"></i> Cancel</button>
                 </div>
                 <div className="option">
-                    <button className="btn btn-outline-secondary"><i className="fa-regular fa-pen-to-square"></i> Edit</button>
-                </div>
-                <div className="option">
-                    <button className="btn btn-success" ><i className="fa-regular fa-circle-check"></i> Submit</button>
+                    {
+                        loadPersonAdd ?
+                            <button className="btn btn-success" disabled><span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Loading...</button>
+                            :
+                            <button className="btn btn-success" onClick={submitNewPersons} disabled={loadPersonAdd}><i className="fa-regular fa-circle-check"></i> Submit</button>
+                    }
                 </div>
             </div>
         </div>
@@ -888,6 +1196,34 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
                                         <button className="btn btn-ft-outline-primary" disabled><span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Deleting...</button>
                                         :
                                         <button className="btn btn-ft-outline-primary" onClick={deleteGroupBill}>Delete</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div className="modal fade" id="personDeleteConfirm" data-bs-backdrop="static" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content">
+                    <div className="confirmation-modal">
+                        <div className="icon">
+                            <i className="fa-solid fa-circle-exclamation"></i>
+                        </div>
+                        <div className="text">
+                            Are you sure, You want Delete this person?
+                        </div>
+                        <div className="confirmation-footer">
+                            <div className="option">
+                                <button className="btn btn-secondary" data-bs-dismiss="modal" disabled={loadPersonDelete}>Cancel</button>
+                            </div>
+                            <div className="option">
+                                {
+                                    loadPersonDelete ?
+                                        <button className="btn btn-ft-outline-primary" disabled><span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Deleting...</button>
+                                        :
+                                        <button className="btn btn-ft-outline-primary" onClick={deletePerson}>Delete</button>
                                 }
                             </div>
                         </div>
