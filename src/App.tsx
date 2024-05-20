@@ -7,6 +7,7 @@ import PageNotFound from './components/PageNotFound';
 import { setupInterceptorsTo } from "./interceptors/axios.interceptor";
 import axios from "axios";
 import globalRouter from './services/globalRouter';
+import { PrivateRoute } from './router/PrivateRoute';
 setupInterceptorsTo(axios);
 
 const Dashboard = loadable(() => import("./pages/user-pages/Dashboard/Dashboard"))
@@ -28,12 +29,14 @@ function App() {
       <Route path="sign-up" element={<SignUp />}></Route>
       <Route path="reset-password" element={<UserVerification />}></Route>
       <Route path="email-verification" element={<UserVerification />}></Route>
-      <Route path='pages' element={<UserPages />}>
-        <Route path="dashboard" element={<Dashboard />}></Route>
-        <Route path="transactions" element={<Transactions />}></Route>
-        <Route path="analysis" element={<Analysis />}></Route>
-        <Route path="split-bill" element={<SplitBill />}></Route>
-        <Route path="category-list" element={<CategoryList />}></Route>
+      <Route element={<PrivateRoute />}>
+        <Route path='pages' element={<UserPages />}>
+          <Route path="dashboard" element={<Dashboard />}></Route>
+          <Route path="transactions" element={<Transactions />}></Route>
+          <Route path="analysis" element={<Analysis />}></Route>
+          <Route path="split-bill" element={<SplitBill />}></Route>
+          <Route path="category-list" element={<CategoryList />}></Route>
+        </Route>
       </Route>
       <Route path='' element={<Login />}></Route>
       <Route path='*' element={<PageNotFound />}></Route>

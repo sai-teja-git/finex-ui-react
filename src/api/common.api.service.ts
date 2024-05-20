@@ -1,16 +1,15 @@
 import axios from "axios";
-import { environment } from "../environments/environment.dev";
 
 const getAllTimeZones = () => {
-    return axios.get(`${environment.API_URL}/time-zones`)
+    return axios.get(`${import.meta.env.VITE_API_URL}/time-zones`)
 }
 
 const getAllCurrency = () => {
-    return axios.get(`${environment.API_URL}/currency`)
+    return axios.get(`${import.meta.env.VITE_API_URL}/currency`)
 }
 
 const getAllIcons = () => {
-    return axios.get(`${environment.API_URL}/icons/all`)
+    return axios.get(`${import.meta.env.VITE_API_URL}/icons/all`)
 }
 
 const commonApiService = {

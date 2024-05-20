@@ -1,16 +1,15 @@
 import axios from "axios";
-import { environment } from "../environments/environment.dev";
 
 const getUserCategories = () => {
-    return axios.get(`${environment.API_URL}/user-category`)
+    return axios.get(`${import.meta.env.VITE_API_URL}/user-category`)
 }
 
 const createUserCategories = (body: any) => {
-    return axios.post(`${environment.API_URL}/user-category`, body)
+    return axios.post(`${import.meta.env.VITE_API_URL}/user-category`, body)
 }
 
 const updateUserCategories = (id: string, body: any) => {
-    return axios.patch(`${environment.API_URL}/user-category/${id}`, body)
+    return axios.patch(`${import.meta.env.VITE_API_URL}/user-category/${id}`, body)
 }
 
 const catagoriesApiService = {
