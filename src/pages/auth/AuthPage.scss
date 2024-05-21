@@ -41,7 +41,7 @@
             padding: 26px 24px;
 
             @include mediaBreakPointUp("sm") {
-                width: 300px;
+                width: calc(100vw - 60px);
             }
 
             .form-title {
