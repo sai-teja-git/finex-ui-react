@@ -15,6 +15,8 @@ interface ForgotPassword {
     email: string;
 }
 
+import appLogo from "../../assets/images/logos/finex-logo-dark.png"
+
 export default function Login() {
 
     const navigate = useNavigate()
@@ -159,7 +161,7 @@ export default function Login() {
             <div className="auth-page">
                 <div className="auth-container">
                     <div className="logo-container">
-                        <img src="src/assets/images/logos/finex-logo-dark.png" alt="" />
+                        <img src={appLogo} alt="" />
                     </div>
                     {
                         pageViewType === "login" &&
