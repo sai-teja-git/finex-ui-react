@@ -4,6 +4,8 @@ import { USER_CONST } from "../../const-files/user.const";
 import toast from "react-hot-toast";
 import userApiService from "../../api/user.api.service";
 
+import appLogo from "../../assets/images/logos/finex-logo-dark.png"
+
 interface PasswordData {
     password: string;
     confirm_password: string;
@@ -129,7 +131,7 @@ export default function UserVerification() {
             <div className="auth-page">
                 <div className="auth-container ">
                     <div className="logo-container">
-                        <img src="src/assets/images/logos/finex-logo-dark.png" alt="" />
+                        <img src={appLogo} alt="" />
                     </div>
                     <div className="form-container">
                         <div className="form-title">

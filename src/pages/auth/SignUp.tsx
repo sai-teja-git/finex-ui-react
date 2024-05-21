@@ -4,6 +4,8 @@ import { ROUTER_KEYS } from "../../router/router-keys";
 import toast from "react-hot-toast";
 import userApiService from "../../api/user.api.service";
 
+import appLogo from "../../assets/images/logos/finex-logo-dark.png";
+
 
 export default function SignUp() {
 
@@ -70,7 +72,7 @@ export default function SignUp() {
             <div className="auth-page">
                 <div className="auth-container auto-transform">
                     <div className="logo-container">
-                        <img src="src/assets/images/logos/finex-logo-dark.png" alt="" />
+                        <img src={appLogo} alt="" />
                     </div>
                     <div className="form-container">
                         <div className="form-data">

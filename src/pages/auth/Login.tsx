@@ -15,7 +15,7 @@ interface ForgotPassword {
     email: string;
 }
 
-import appLogo from "../../assets/images/logos/finex-logo-dark.png"
+import appLogo from "../../assets/images/logos/finex-logo-dark.png";
 
 export default function Login() {
 
