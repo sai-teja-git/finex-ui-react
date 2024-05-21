@@ -238,7 +238,7 @@ export default function Header() {
             currency: userDataToEdit.currency?._id,
             timezone: userDataToEdit.timezone?._id
         }
-        let changedKeys = [];
+        let changedKeys: any[] = [];
         try {
             for (let key in currValues) {
                 if (!currValues[key]) {
@@ -541,7 +541,7 @@ export default function Header() {
                                         <div className="field-data">
                                             {
                                                 filterTimeZones.map((timezone) => (
-                                                    <li key={timezone._id}><a className={`dropdown-item ${userDataToEdit.timezone?._id === timezone._id ? "active" : ""}`} onClick={(e) => {
+                                                    <li key={timezone._id}><a className={`dropdown-item ${userDataToEdit.timezone?._id === timezone._id ? "active" : ""}`} onClick={() => {
                                                         updateUserEditedData({
                                                             ...userDataToEdit,
                                                             timezone
