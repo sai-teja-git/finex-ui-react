@@ -10,7 +10,7 @@ import globalRouter from "../services/globalRouter";
 import helperService from "../services/helper-functions.service";
 import CurrencyCode from "./CurrencyCode";
 import NoData from "./NoData";
-import userImage from "../../assets/images/profile/default-profile-image.png"
+import userImage from "../assets/images/profile/default-profile-image.png"
 
 interface PasswordUpdate {
     current_password: string;
