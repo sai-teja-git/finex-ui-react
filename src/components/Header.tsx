@@ -10,6 +10,7 @@ import globalRouter from "../services/globalRouter";
 import helperService from "../services/helper-functions.service";
 import CurrencyCode from "./CurrencyCode";
 import NoData from "./NoData";
+import userImage from "../../assets/images/profile/default-profile-image.png"
 
 interface PasswordUpdate {
     current_password: string;
@@ -326,7 +327,7 @@ export default function Header() {
                     </div>
                     <div className="head-option">
                         <div className="user-profile">
-                            <img src="/src/assets/images/profile/default-profile-image.png" alt="" data-bs-toggle="offcanvas" data-bs-target="#profileDetails" />
+                            <img src={userImage} alt="" data-bs-toggle="offcanvas" data-bs-target="#profileDetails" />
                         </div>
                     </div>
                 </div>
@@ -348,7 +349,7 @@ export default function Header() {
                 <div className="offcanvas-body p-0">
                     <div className="profile-data">
                         <div className="profile-image">
-                            <img src="/src/assets/images/profile/default-profile-image.png" alt="logo" />
+                            <img src={userImage} alt="logo" />
                         </div>
                         <div className="user-name">user_name</div>
                     </div>
