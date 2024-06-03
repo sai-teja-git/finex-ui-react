@@ -124,9 +124,9 @@ export default function Analysis() {
                     day_total: item.data.reduce((sum: number, record: any) => { return (sum + record.value) }, 0)
                 }
             }
-            const month_end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+            const month_end = selectedMonth.endOf("month").get("date");
             for (let i = 1; i <= month_end; i++) {
-                const thisDay = new Date(new Date().getFullYear(), new Date().getMonth(), i);
+                const thisDay = new Date(selectedMonth.get("year"), selectedMonth.get("month"), i);
                 const dayInUtc = timeConversionsService.convertLocalDateTimeToUtc(thisDay, "yyyy-MM-DD HH:mm:ss") as string;
                 const value = dayObject[dayInUtc] ? dayObject[dayInUtc].day_total : 0
                 seriesData.push({
