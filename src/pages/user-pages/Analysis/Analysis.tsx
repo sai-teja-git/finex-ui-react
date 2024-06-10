@@ -112,6 +112,17 @@ export default function Analysis() {
         })
     }
 
+    /**
+     * The function `setLineChart` processes spend data for each day in a selected month and generates
+     * a line chart visualization.
+     * @param {any} spendData - It looks like the code snippet you provided is a TypeScript function
+     * for setting up a line chart based on spend data. The function takes `spendData` as a parameter,
+     * which seems to be an object containing day-wise spending data.
+     * @returns The `setLineChart` function is returning the options object that contains the
+     * configuration for a line chart, which includes the chart type, title, x-axis and y-axis
+     * settings, tooltip formatting, accessibility options, credits, legend, plot options, and series
+     * data for the chart.
+     */
     function setLineChart(spendData: any) {
         let dayObject: any = {};
         let categoryArray: any[] = [];
