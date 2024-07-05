@@ -440,6 +440,14 @@ export default function Analysis() {
         updateAnalysisMonth(event.value)
     }
 
+    /**
+     * The function `openSingleCategoryTransaction` fetches transaction log data for a specific
+     * category within a given month and updates the UI accordingly.
+     * @param {any} category - The `openSingleCategoryTransaction` function takes a `category`
+     * parameter as input. This parameter represents the category for which the transaction log is
+     * being opened. The function then performs various operations such as updating the category log
+     * loader, setting the selected category, clearing the log data, and fetching the transaction log
+     */
     function openSingleCategoryTransaction(category: any) {
         updateSingleCategoryLogLoader(true)
         updateSingleCategory(category)
