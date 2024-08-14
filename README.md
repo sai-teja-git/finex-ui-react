@@ -1,6 +1,6 @@
 # Finex
 
-a financial tracker where it will show the analysis of the month spends with some useful features
+This is a comprehensive financial tracker designed to help you manage and analyze your monthly expenses with ease.
 
 ## GitHub Repository
 
