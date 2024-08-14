@@ -1,30 +1,55 @@
-# React + TypeScript + Vite
+# Finex
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+a financial tracker where it will show the analysis of the month spends with some useful features
 
-Currently, two official plugins are available:
+## GitHub Repository
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[GitHub Repository](https://github.com/sai-teja-git/finex-ui-react.git)
 
-## Expanding the ESLint configuration
+## Website
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+[Finex](https://finexs.vercel.app/)
 
-- Configure the top-level `parserOptions` property like this:
+#### Demo User
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+> User : `test`
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+> Password : `Test@123`
+
+you can create your own user by signing up.
+
+## Description
+
+With your monthly spend logs, the application provides a detailed breakdown of your daily and overall expenditures. It presents this information visually through intuitive charts, allowing you to easily track and monitor your spending habits. Additionally, on the analysis page, you can review and analyze your spending patterns from the previous month, gaining valuable insights to better manage your finances.
+
+### Features
+
+- `Dashboard` : The Dashboard provides a comprehensive overview of your financial activity for the current month. It offers a simple yet powerful analytical view, allowing you to quickly grasp your total income, expenses, and remaining budget at a glance.
+- `Transactions` : The Transactions section is your central hub for recording and managing your monthly expenses. Here, you can easily log your daily spends, make adjustments to any entries within the same month, and even add estimates for upcoming expenses. Additionally, you can input your income to keep track of your financial flow throughout the month.
+- `Analysis` : The Analysis page is designed to help you delve deeper into your financial data. You can review and compare your current and past months' spending patterns, estimations, and income. This section offers both data-driven insights and graphical representations, making it easy to identify trends and make informed financial decisions.
+- `Split Bill` : his feature allows you to easily calculate the division of expenses among a group of people. Whether you're sharing a meal, a trip, or any other group expense, you can input the total bill and split it among any number of participants with ease.
+- `Categories` : In the Categories section, you can customize the types of expenses and income entries that you track in the Transactions page. This allows for a more organized and personalized record-keeping experience, ensuring that your financial data is categorized in a way that best suits your needs.
+
+## Web Pages
+
+### Dashboard
+
+![Dashboard](/src/assets/images/web-page/dashboard.png?raw=true "Dashboard")
+
+### Transactions
+
+![Transactions](/src/assets/images/web-page/transactions.png?raw=true "Transactions")
+
+### Analysis
+
+![Analysis](/src/assets/images/web-page/analysis-1.png?raw=true "Analysis")
+![Analysis](/src/assets/images/web-page/analysis-2.png?raw=true "Analysis")
+
+### Split Bill
+
+![Split Bill](/src/assets/images/web-page/split-bill-1.png?raw=true "Split Bill")
+![Split Bill](/src/assets/images/web-page/split-bill-2.png?raw=true "Split Bill")
+
+### Categories
+
+![Categories](/src/assets/images/web-page/categories.png?raw=true "Categories")
