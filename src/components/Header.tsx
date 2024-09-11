@@ -333,7 +333,7 @@ export default function Header() {
                 </div>
             </div>
 
-            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="profileDetails" aria-labelledby="staticBackdropLabel">
+            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} id="profileDetails" aria-labelledby="staticBackdropLabel">
                 <div className="offcanvas-header">
                     <div className="title">
                         <div className="logout-option" data-bs-target="#logOutConfirmModal" data-bs-toggle="modal">
@@ -457,7 +457,7 @@ export default function Header() {
                 </div>
             </div>
 
-            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="userDataUpdatePage" aria-labelledby="staticBackdropLabel">
+            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} id="userDataUpdatePage" aria-labelledby="staticBackdropLabel">
                 <div className="offcanvas-header border-bottom">
                     <div className="title">
                         Update User Details
@@ -580,7 +580,7 @@ export default function Header() {
                 </div>
             </div>
 
-            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="userPasswordUpdatePage" aria-labelledby="staticBackdropLabel">
+            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} id="userPasswordUpdatePage" aria-labelledby="staticBackdropLabel">
                 <div className="offcanvas-header border-bottom">
                     <div className="title">
                         Update Password
@@ -677,7 +677,7 @@ export default function Header() {
                 </div>
             </div>
 
-            <div className="modal fade" id="logOutConfirmModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="logOutConfirmModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="confirmation-modal">

@@ -349,7 +349,7 @@ export default function CategoryList() {
                 </div>
             </div>
 
-            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="categoryLog" aria-labelledby="staticBackdropLabel">
+            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} id="categoryLog" aria-labelledby="staticBackdropLabel">
                 <div className="offcanvas-header border-bottom">
                     <div className="title">
                         {transformationService.titleCase(formActionType)} {transformationService.titleCase(formCategoryType)} Category

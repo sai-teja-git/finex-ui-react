@@ -217,7 +217,7 @@ export default function UserVerification() {
                 </div>
             </div>
 
-            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="passwordConstraints" aria-labelledby="staticBackdropLabel">
+            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} id="passwordConstraints" aria-labelledby="staticBackdropLabel">
                 <div className="offcanvas-header border-bottom">
                     <div className="title">
                         Password Constraints

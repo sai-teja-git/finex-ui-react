@@ -758,7 +758,7 @@ export default function Analysis() {
                 </div>
             </div>
 
-            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="categoryWiseLog" aria-labelledby="staticBackdropLabel">
+            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} id="categoryWiseLog" aria-labelledby="staticBackdropLabel">
                 <div className="offcanvas-header border-bottom">
                     <div className="title">
                         Spends on category

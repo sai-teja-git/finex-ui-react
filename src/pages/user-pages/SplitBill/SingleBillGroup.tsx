@@ -1010,7 +1010,7 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
             </div>
         </div>
 
-        <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="viewPersonBill" aria-labelledby="staticBackdropLabel">
+        <div className="offcanvas offcanvas-end" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} id="viewPersonBill" aria-labelledby="staticBackdropLabel">
             <div className="offcanvas-header border-bottom">
                 <div className="title">
                     Mani Bills
@@ -1110,7 +1110,7 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
             </div>
         </div>
 
-        <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="addMorePersons" aria-labelledby="staticBackdropLabel">
+        <div className="offcanvas offcanvas-end" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} id="addMorePersons" aria-labelledby="staticBackdropLabel">
             <div className="offcanvas-header border-bottom">
                 <div className="title">
                     Add Persons
@@ -1176,7 +1176,7 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
             </div>
         </div>
 
-        <div className="modal fade" id="groupBillDeleteConfirm" data-bs-backdrop="static" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal fade" id="groupBillDeleteConfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="confirmation-modal">
@@ -1204,7 +1204,7 @@ export default function SingleBillGroup({ overallDataLoad, singleGroupData = {},
             </div>
         </div>
 
-        <div className="modal fade" id="personDeleteConfirm" data-bs-backdrop="static" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal fade" id="personDeleteConfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="confirmation-modal">

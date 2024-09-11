@@ -440,7 +440,7 @@ export default function SplitBill() {
                 }
             </div>
 
-            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" tabIndex={-1} id="groupLog" aria-labelledby="staticBackdropLabel">
+            <div className="offcanvas offcanvas-end" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} id="groupLog" aria-labelledby="staticBackdropLabel">
                 <div className="offcanvas-header border-bottom">
                     <div className="title">
                         {transformationService.titleCase(groupFormAction)} New Group
@@ -529,7 +529,7 @@ export default function SplitBill() {
                 </div>
             </div>
 
-            <div className="modal fade" id="groupDeleteConfirm" data-bs-backdrop="static" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal fade" id="groupDeleteConfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="confirmation-modal">
