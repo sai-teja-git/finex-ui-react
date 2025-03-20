@@ -28,6 +28,10 @@ const updateUserPassword = (body: any) => {
     return axios.patch(`${import.meta.env.VITE_API_URL}/user/password`, body)
 }
 
+const getDeletingUserName = (code: string) => {
+    return axios.get(`${import.meta.env.VITE_API_URL}/user/deleting/${code}`)
+}
+
 const userApiService = {
     signUp,
     verifyUser,
@@ -35,7 +39,8 @@ const userApiService = {
     resetPassword,
     overridePassword,
     updateUserDetails,
-    updateUserPassword
+    updateUserPassword,
+    getDeletingUserName
 }
 
 export default userApiService
