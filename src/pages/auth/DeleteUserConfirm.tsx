@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import appLogo from "../../assets/images/logos/finex-logo-dark.png";
 import userApiService from "../../api/user.api.service";
+import Spinner from "../../components/Spinner/Spinner.tsx"
+import toast from "react-hot-toast";
 
 export default function DeleteUserConfirm() {
     /* The `const pageWaitSec = 4` line is declaring a constant variable named `pageWaitSec` and
@@ -11,9 +13,11 @@ export default function DeleteUserConfirm() {
     const pageWaitSec = 4;
 
     const [searchParams] = useSearchParams();
+    const [chekingLink, setCheckingLink] = useState(true)
+    const [userName, setUserName] = useState("")
     const [loadConfirm, updateloadConfirm] = useState(false);
     const [pageCloseCountDown, updatePageCloseCountDown] = useState(pageWaitSec);
-    const [isDeleted, updateIsDeleted] = useState(false)
+    const [deletedMsg, updateDeletedMsg] = useState("");
 
     useEffect(() => {
         sessionStorage.clear()
@@ -23,7 +27,84 @@ export default function DeleteUserConfirm() {
     }, [])
 
     const getUserName = () => {
-        userApiService.getDeletingUserName(searchParams.get("code") ?? "").then((res) => { console.log("res", res) }).catch(e => e)
+        userApiService.getDeletingUserName(searchParams.get("code") ?? "").then((res) => {
+            const data = res.data
+            setUserName(data.data.name)
+            console.log("res", data)
+            setCheckingLink(false)
+            updateDeletedMsg("");
+        }).catch(() => {
+            updateDeletedMsg("Invalid Link/Link Expired");
+            setCheckingLink(false);
+            startPageCloseCountDown();
+        })
+    }
+
+    useEffect(() => {
+        if (pageCloseCountDown < pageWaitSec) {
+            startPageCloseCountDown()
+        }
+    }, [pageCloseCountDown])
+
+    /**
+     * The function `startPageCloseCountDown` initiates a countdown timer that closes the window after
+     * a specified time if a condition is met.
+     */
+    function startPageCloseCountDown() {
+        setTimeout(() => {
+            if (pageCloseCountDown <= 1) {
+                window.close()
+            } else {
+                const newValue = pageCloseCountDown - 1
+                updatePageCloseCountDown(newValue)
+            }
+        }, 1000)
+    }
+
+    const clickOnDelete = () => {
+        updateloadConfirm(true)
+        userApiService.userDeleteConfirmed(searchParams.get("code") ?? "").then(() => {
+            startPageCloseCountDown();
+            updateDeletedMsg("User Deleted");
+            updateloadConfirm(false)
+            toast.success("User Deleted", { duration: 3000 });
+        }).catch(e => {
+            const msg = e?.response?.data?.message ?? "Failed To Delete User";
+            toast.error(msg, { duration: 3000 });
+            startPageCloseCountDown();
+            updateloadConfirm(false)
+            updateDeletedMsg("Failed To Delte User");
+        })
+    }
+
+    const deleteFormTemplate = () => {
+        if (deletedMsg) {
+            return <>
+                <div className="info-msg">
+                    <div>{deletedMsg}, Page will close in {pageCloseCountDown}</div>
+                </div>
+            </>
+        } else {
+            return <>
+                <div className="form-container">
+                    <div className="form-title as-msg">
+                        Click on &nbsp;<span className="delete-text-info">Delete</span>&nbsp; To delete User :&nbsp;<span className="delete-user-name">{userName}</span>
+                    </div>
+                    <div className="form-data">
+                        <div className="form-btn">
+                            {
+                                loadConfirm ?
+                                    <button className="btn btn-ft-primary w-100" type="button" disabled>
+                                        <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Deleting...
+                                    </button>
+                                    :
+                                    <button className="btn btn-ft-primary w-100" type="button" onClick={clickOnDelete}>Delete</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </>
+        }
     }
 
     return (
@@ -32,30 +113,9 @@ export default function DeleteUserConfirm() {
                 <div className="logo-container">
                     <img src={appLogo} alt="" />
                 </div>
-                <div className="form-container">
-                    <div className="form-title">
-                        Click on &nbsp;<span className="delete-text-info">Delete</span>&nbsp; To delete User :&nbsp;<span className="delete-user-name">Test</span>
-                    </div>
-                    <div className="form-data">
-                        {
-                            isDeleted ?
-                                <div className="info-msg">
-                                    <div>User Deleted, Page will close in {pageCloseCountDown}</div>
-                                </div>
-                                :
-                                <div className="form-btn">
-                                    {
-                                        loadConfirm ?
-                                            <button className="btn btn-ft-primary w-100" type="button" disabled>
-                                                <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Deleting...
-                                            </button>
-                                            :
-                                            <button className="btn btn-ft-primary w-100" type="button">Delete</button>
-                                    }
-                                </div>
-                        }
-                    </div>
-                </div>
+                {
+                    chekingLink ? <Spinner /> : <>{deleteFormTemplate()}</>
+                }
             </div>
         </div>
     )

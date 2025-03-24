@@ -32,6 +32,10 @@ const getDeletingUserName = (code: string) => {
     return axios.get(`${import.meta.env.VITE_API_URL}/user/deleting/${code}`)
 }
 
+const userDeleteConfirmed = (code: string) => {
+    return axios.delete(`${import.meta.env.VITE_API_URL}/user/${code}`)
+}
+
 const userApiService = {
     signUp,
     verifyUser,
@@ -40,7 +44,8 @@ const userApiService = {
     overridePassword,
     updateUserDetails,
     updateUserPassword,
-    getDeletingUserName
+    getDeletingUserName,
+    userDeleteConfirmed
 }
 
 export default userApiService
