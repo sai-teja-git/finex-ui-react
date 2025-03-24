@@ -98,6 +98,7 @@ export default function Login() {
         updateLoadUserLogin(true)
         userApiService.login(signInData).then(res => {
             const data = res.data.data
+            sessionStorage.setItem("user_name", signInData.user_name);
             sessionStorage.setItem("user_alias", data.name);
             sessionStorage.setItem("user_email", data.email);
             sessionStorage.setItem("currency_id", data.currency_id);

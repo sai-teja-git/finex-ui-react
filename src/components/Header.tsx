@@ -57,6 +57,7 @@ export default function Header() {
     useEffect(() => {
         updateTheme();
         const userData = {
+            user_name: sessionStorage.getItem("user_name"),
             name: sessionStorage.getItem("user_alias"),
             email: sessionStorage.getItem("user_email"),
             timezone: sessionStorage.getItem("time_zone"),
@@ -351,7 +352,7 @@ export default function Header() {
                         <div className="profile-image">
                             <img src={userImage} alt="logo" />
                         </div>
-                        <div className="user-name">user_name</div>
+                        <div className="user-name">{userDisplayData.user_name}</div>
                     </div>
                     <div className="theme-action">
                         <div className="title">
