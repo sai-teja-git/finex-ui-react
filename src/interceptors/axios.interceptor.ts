@@ -9,6 +9,7 @@ const onRequest = (config: InternalAxiosRequestConfig) => {
         config.url?.endsWith("/signup") == true,
         config.url?.endsWith("/verify") == true,
         config.url?.endsWith("/override-password") == true,
+        config.url?.includes("/user/deleting/") == true,
     ]
     if (!excludeEndPoints.includes(true)) {
         config.headers.Authorization = `Bearer ${sessionStorage.getItem("access_token")}`

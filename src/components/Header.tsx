@@ -52,17 +52,19 @@ export default function Header() {
     const [currencySearch, updateCurrencySearchText] = useState("");
     const [zoneSearch, updateZoneSearchText] = useState("");
     const [loadUserUpdate, updateUserDataLoaderFlag] = useState(false);
-    const [errorMessage, updateErrorMessage] = useState("")
+    const [errorMessage, updateErrorMessage] = useState("");
+    const [loadDelete, setLoadDelete] = useState(false);
 
     useEffect(() => {
         updateTheme();
+        const last_login = sessionStorage.getItem("last_login")
         const userData = {
             user_name: sessionStorage.getItem("user_name"),
             name: sessionStorage.getItem("user_alias"),
             email: sessionStorage.getItem("user_email"),
             timezone: sessionStorage.getItem("time_zone"),
             currency_name: sessionStorage.getItem("currency_name_plural"),
-            last_login: timeConversionsService.convertUtcDateTimeToLocal(sessionStorage.getItem("last_login") as string, "DD-MM-YYYY HH:mm:ss") as string,
+            last_login: last_login ? timeConversionsService.convertUtcDateTimeToLocal(last_login as string, "DD-MM-YYYY HH:mm:ss") as string : "----",
         }
         updateUserDisplayData({ ...userData });
         getAllTimeZones();
@@ -309,6 +311,20 @@ export default function Header() {
         navigate(ROUTER_KEYS.login.url)
     }
 
+    function deleteUser() {
+        setLoadDelete(true)
+        userApiService.deleteRequest().then(() => {
+            toast.success("User Delete Request was sent to your registered mail", { duration: 5000 })
+            setTimeout(() => {
+                $("#deleteConfirmModal").modal("hide");
+                logout()
+            }, 5000)
+        }).catch(e => {
+            setLoadDelete(false)
+            toast.error(e?.response?.data?.message ?? `Deletion Failed`, { duration: 2000 })
+        })
+    }
+
     return (
         <>
             <div className="app-header">
@@ -451,6 +467,13 @@ export default function Header() {
                                     <div>
                                         {userDisplayData?.last_login ? userDisplayData.last_login as string : "---"}
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="profile-item">
+                            <div className="details">
+                                <div className="delete" data-bs-target="#deleteConfirmModal" data-bs-toggle="modal">
+                                    Delete Account
                                 </div>
                             </div>
                         </div>
@@ -694,6 +717,34 @@ export default function Header() {
                                 </div>
                                 <div className="option">
                                     <button className="btn btn-ft-outline-primary" data-bs-dismiss="modal" onClick={logout}>Logout</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="deleteConfirmModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                        <div className="confirmation-modal">
+                            <div className="icon">
+                                <i className="fa-solid fa-circle-exclamation"></i>
+                            </div>
+                            <div className="text">
+                                Are you sure, You want to Delete User?
+                            </div>
+                            <div className="confirmation-footer">
+                                <div className="option">
+                                    <button className="btn btn-secondary" data-bs-dismiss="modal" disabled={loadDelete}>Cancel</button>
+                                </div>
+                                <div className="option">
+                                    {
+                                        loadDelete ?
+                                            <button className="btn btn-ft-outline-primary" disabled><span className="spinner-border spinner-border-sm" aria-hidden="true"></span> Deleting...</button>
+                                            :
+                                            <button className="btn btn-ft-outline-primary" onClick={deleteUser}>Delete</button>
+                                    }
                                 </div>
                             </div>
                         </div>
