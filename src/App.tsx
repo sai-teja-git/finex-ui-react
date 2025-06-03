@@ -17,6 +17,7 @@ const SplitBill = loadable(() => import("./pages/user-pages/SplitBill/SplitBill"
 const CategoryList = loadable(() => import("./pages/user-pages/CategoryList/CategoryList"))
 const SignUp = loadable(() => import("./pages/auth/SignUp"))
 const UserVerification = loadable(() => import("./pages/auth/UserVerification"))
+const DeleteUserConfirm = loadable(() => import("./pages/auth/DeleteUserConfirm"))
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
       <Route path="sign-up" element={<SignUp />}></Route>
       <Route path="reset-password" element={<UserVerification />}></Route>
       <Route path="email-verification" element={<UserVerification />}></Route>
+      <Route path="user-delete-confirmation" element={<DeleteUserConfirm />}></Route>
       <Route element={<PrivateRoute />}>
         <Route path='pages' element={<UserPages />}>
           <Route path="dashboard" element={<Dashboard />}></Route>

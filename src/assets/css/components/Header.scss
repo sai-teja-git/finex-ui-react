@@ -300,6 +300,18 @@
                     }
                 }
             }
+
+            .delete {
+                font-size: 15px;
+                transition: 0.3s ease all;
+                cursor: pointer;
+                color: var(--logout-init);
+
+                &:hover {
+                    transition: 0.3s ease all;
+                    color: var(--logout-hover);
+                }
+            }
         }
     }
 }

@@ -30,6 +30,10 @@
                     font-size: 18px;
                     transition: .3s ease all;
 
+                    @include mediaBreakPointUp("sm") {
+                        font-size: 20px;
+                    }
+
                     i {
                         cursor: pointer;
                         transition: .3s ease all;
